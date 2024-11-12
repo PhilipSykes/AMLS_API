@@ -1,4 +1,4 @@
-using UserService;
+using Services;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddHostedService<Worker>();

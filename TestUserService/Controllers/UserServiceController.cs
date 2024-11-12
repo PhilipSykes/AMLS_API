@@ -1,30 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace AMLS_API.Controllers;
+namespace TestUserService.Controllers;
 
 [ApiController]
-[Route("weatherforecast")]
-[Produces("application/json")]
+[Route("/weatherforecast")]
 public class WeatherForecastController : ControllerBase
 {
-    private readonly ILogger<WeatherForecastController> _logger;
-
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
-    {
-        _logger = logger;
-    }
-
     private static readonly string[] Summaries = new[]
     {
         "Freezing", "Bracing", "Skibidi", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<WeatherForecast>), StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<WeatherForecast>> Get()
+    public IEnumerable<WeatherForecast> Get()
     {
-        _logger.LogInformation("WeatherForecast Get endpoint called");
-
         var forecast = Enumerable.Range(1, 5).Select(index =>
                 new WeatherForecast
                 (
@@ -33,9 +22,8 @@ public class WeatherForecastController : ControllerBase
                     Summaries[Random.Shared.Next(Summaries.Length)]
                 ))
             .ToArray();
-
-        _logger.LogInformation($"Generated {forecast.Length} forecasts");
-        return Ok(forecast);
+        
+        return forecast;
     }
 
     public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

@@ -1,4 +1,4 @@
-namespace UserService;
+namespace Services;
 
 public class Worker : BackgroundService
 {
