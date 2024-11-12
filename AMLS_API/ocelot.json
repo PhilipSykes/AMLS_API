@@ -1,3 +1,19 @@
 ﻿{
-  
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:5000"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/orders/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT" ],
+      "DownstreamPathTemplate": "/api/orders/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5000
+        }
+      ]
+    }
+  ]
 }
