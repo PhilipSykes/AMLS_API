@@ -17,25 +17,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="04defc78-8bee-48bf-841a-8f48fa4576b3" name="Changes" comment="please fix gitignore">
-      <change afterPath="$PROJECT_DIR$/Gateway/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TestUserService/Controllers/UserServiceController.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TestUserService/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AMLS_API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AMLS_API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/config/applicationhost.config" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/config/applicationhost.config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AMLS_API.sln" beforeDir="false" afterPath="$PROJECT_DIR$/AMLS_API.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AMLS_API/AMLS_API.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/AMLS_API/AMLS_API.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AMLS_API/AMLS_API.http" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AMLS_API/Controllers/UserServiceController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AMLS_API/Controllers/UserServiceController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AMLS_API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AMLS_API/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AMLS_API/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/AMLS_API/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AMLS_API/ocelot.json" beforeDir="false" afterPath="$PROJECT_DIR$/Gateway/ocelot.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Services/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Services/Properties/launchSettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/UserService.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Services/Services.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/Worker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Services/Worker.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/Services/appsettings.Development.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UserService/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Services/appsettings.json" afterDir="false" />
     </list>
     <list id="f10881e2-bc39-4e56-8233-b26ce92a246b" name="Changes by jobye" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -312,7 +295,7 @@
       <workItem from="1731339562069" duration="1050000" />
       <workItem from="1731411301920" duration="3872000" />
       <workItem from="1731415755279" duration="2079000" />
-      <workItem from="1731418636564" duration="7775000" />
+      <workItem from="1731418636564" duration="8981000" />
     </task>
     <task id="LOCAL-00001" summary="please fix gitignore">
       <option name="closed" value="true" />
