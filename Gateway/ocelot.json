@@ -1,0 +1,19 @@
+﻿{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7500"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/weatherforecast",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/weatherforecast",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5001
+        }
+      ]
+    }
+  ]
+}
