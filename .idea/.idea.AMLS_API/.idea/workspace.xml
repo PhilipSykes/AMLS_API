@@ -10,14 +10,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="04defc78-8bee-48bf-841a-8f48fa4576b3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="04defc78-8bee-48bf-841a-8f48fa4576b3" name="Changes" comment="please fix gitignore">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AMLS_API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AMLS_API/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <list id="f10881e2-bc39-4e56-8233-b26ce92a246b" name="Changes by jobye" comment="">
+      <change beforePath="$PROJECT_DIR$/AMLS_API/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/AMLS_API/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AMLS_API/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/AMLS_API/Properties/launchSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AMLS_API/ocelot.json" beforeDir="false" afterPath="$PROJECT_DIR$/AMLS_API/ocelot.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DpaMonitoringSettings">
+    <option name="autoShow" value="false" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -28,12 +35,20 @@
     &quot;assignee&quot;: &quot;Jobster9&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/PhilipSykes/AMLS_API.git",
-    "accountId": "04b18fc0-5c4d-45b3-8406-7df981bfc582"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/PhilipSykes/AMLS_API.git&quot;,
+    &quot;accountId&quot;: &quot;04b18fc0-5c4d-45b3-8406-7df981bfc582&quot;
   }
-}]]></component>
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f3f8cbdfe5e51e3c0118068ff2ee9903be798f660f8f5ade3366167cebe3/Process.Unix.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="false" />
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -45,19 +60,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.AMLS_API: IIS Express.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;structure__refactor&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.AMLS_API: IIS Express.executor": "Run",
+    ".NET Launch Settings Profile.AMLS_API: http.executor": "Debug",
+    ".NET Launch Settings Profile.AMLS_API: https.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "structure__refactor",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "sqlserver",
+      "mongo"
+    ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.AMLS_API: IIS Express">
     <configuration name="AMLS_API: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/AMLS_API/AMLS_API.csproj" />
@@ -70,6 +93,7 @@
       <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
       <option name="SEND_DEBUG_REQUEST" value="1" />
       <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <option name="RUNTIME_TYPE" value="coreclr" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -119,6 +143,12 @@
         <option name="Build" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue=".NET Launch Settings Profile.AMLS_API: http" />
+      <item itemvalue=".NET Launch Settings Profile.AMLS_API: https" />
+      <item itemvalue=".NET Launch Settings Profile.AMLS_API: IIS Express" />
+      <item itemvalue=".NET Launch Settings Profile.UserService" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -129,8 +159,18 @@
       <option name="presentableId" value="Default" />
       <updated>1731339559811</updated>
       <workItem from="1731339562069" duration="1050000" />
-      <workItem from="1731411301920" duration="364000" />
+      <workItem from="1731411301920" duration="3872000" />
+      <workItem from="1731415755279" duration="2079000" />
     </task>
+    <task id="LOCAL-00001" summary="please fix gitignore">
+      <option name="closed" value="true" />
+      <created>1731411682970</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1731411682970</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -138,8 +178,21 @@
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="false" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="please fix gitignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="please fix gitignore" />
   </component>
 </project>
