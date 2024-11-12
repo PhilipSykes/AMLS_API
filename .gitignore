@@ -32,3 +32,6 @@ x86/
 # Environment-specific files
 appsettings.Development.json
 *.env
+.idea/.idea.AMLS_API/.idea/workspace.xml
+/.idea/.idea.AMLS_API/.idea
+/.idea
