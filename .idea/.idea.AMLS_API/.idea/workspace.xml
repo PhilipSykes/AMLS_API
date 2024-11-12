@@ -11,7 +11,6 @@
   <component name="ChangeListManager">
     <list default="true" id="04defc78-8bee-48bf-841a-8f48fa4576b3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AMLS_API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AMLS_API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Services/Services.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Services/Services.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,7 +109,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1731339559811</updated>
-      <workItem from="1731339562069" duration="1050000" />
+      <workItem from="1731339562069" duration="4068000" />
     </task>
     <servers />
   </component>
