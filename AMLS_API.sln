@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMLS_API", "AMLS_API\AMLS_API.csproj", "{CE050280-29EC-40C1-9B3E-6E96D0E36B62}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{CE050280-29EC-40C1-9B3E-6E96D0E36B62}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{D8F21F95-2A7A-4EEA-9D81-AEBE733FDD56}"
 EndProject
