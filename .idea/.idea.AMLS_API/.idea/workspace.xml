@@ -4,6 +4,7 @@
     <projectFile profileName="IIS Express">AMLS_API/AMLS_API.csproj</projectFile>
     <projectFile profileName="http">AMLS_API/AMLS_API.csproj</projectFile>
     <projectFile profileName="https">AMLS_API/AMLS_API.csproj</projectFile>
+    <projectFile>Api/Api.csproj</projectFile>
     <projectFile profileName="http">Gateway/Gateway.csproj</projectFile>
     <projectFile profileName="https">Gateway/Gateway.csproj</projectFile>
     <projectFile profileName="UserService">Services/Services.csproj</projectFile>
@@ -13,10 +14,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="04defc78-8bee-48bf-841a-8f48fa4576b3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.AMLS_API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AMLS_API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gateway/ocelot.json" beforeDir="false" afterPath="$PROJECT_DIR$/Gateway/ocelot.json" afterDir="false" />
-    </list>
+    <list default="true" id="04defc78-8bee-48bf-841a-8f48fa4576b3" name="Changes" comment="" />
     <list id="f10881e2-bc39-4e56-8233-b26ce92a246b" name="Changes by jobye" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,29 +58,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.AMLS_API: IIS Express.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.AMLS_API: http.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.AMLS_API: https.executor&quot;: &quot;Run&quot;,
-    &quot;.NET Launch Settings Profile.Gateway: https.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;structure__refactor&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.gutterIcons&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.AMLS_API: IIS Express.executor": "Run",
+    ".NET Launch Settings Profile.AMLS_API: http.executor": "Run",
+    ".NET Launch Settings Profile.AMLS_API: https.executor": "Run",
+    ".NET Launch Settings Profile.Gateway: https.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "#3 on structure__refactor",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "editor.preferences.gutterIcons",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;sqlserver&quot;,
-      &quot;mongo&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "sqlserver",
+      "mongo"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.AMLS_API: https">
     <configuration name="AMLS_API: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Api/Api.csproj" />
