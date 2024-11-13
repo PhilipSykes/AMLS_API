@@ -1,6 +1,34 @@
+
+# .NET Build results and temp files
 bin/
 obj/
+
+# NuGet Packages
 /packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Rider
+.idea/
 riderModule.iml
 /_ReSharper.Caches/
-/.idea/
+
+# Visual Studio files (in case anyone in your team uses VS)
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+
+# Environment-specific files
+appsettings.Development.json
+*.env
