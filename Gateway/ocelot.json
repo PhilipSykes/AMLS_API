@@ -8,6 +8,7 @@
       "UpstreamHttpMethod": [ "GET" ],
       "DownstreamPathTemplate": "/weatherforecast",
       "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
