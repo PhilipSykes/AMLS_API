@@ -11,19 +11,27 @@ using Common.Database;
 using System.Net;
 using System.Xml.Linq;
 
+
 //Test Code
+
+/*
 SearchRepository search = new SearchRepository("c1023778:X4M8yMPq6DNgrOck");
-
 List<Filter> filters = new List<Filter>();
-Filter filter1 = new Filter("title", "The Hunger Games", '='); // Example filter
-filters.Add(filter1);
+filters.Add(new Filter("rating", 4, '>'));
 List<BsonDocument> test = await search.SearchMediaInfo(filters);
+PrintResults(test);
+*/
 
-
-foreach (BsonDocument testDoc in test)
+void PrintResults(List<BsonDocument> list)
 {
-    Console.WriteLine(testDoc);
+    foreach (BsonDocument doc in list)
+    {
+        Console.WriteLine(doc);
+    }
 }
+//TODO, write functions for these tests, so i don't have to keep re-writing them
+
+
 
 namespace Common.Database
 {
@@ -88,6 +96,7 @@ namespace Common.Database
         // Oh god its hideous, future me will hate this.
         public async Task<List<BsonDocument>> Search(IMongoCollection<BsonDocument> collection, List<Filter> filterO)
         {
+
             return await collection.Find(filterBuilder.BuildFilter(filterO)).ToListAsync();
         }
     }
@@ -116,7 +125,7 @@ namespace Common.Database
             return await Search(collection, filters);
         }
 
-        public async Task<List<BsonDocument>> SearchPhysicalMedia(List<Filter> filters)
+        public async Task<List<BsonDocument>> SearchPhysicalMedia(List<Filter> filters = null)
         {
             var collection = database.Database.GetCollection<BsonDocument>("PhysicalMedia");
             return await Search(collection, filters);
