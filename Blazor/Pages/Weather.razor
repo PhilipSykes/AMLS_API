@@ -1,11 +1,12 @@
 ﻿@page "/weather"
 
-@using System.Net.Http.Json
 @inject HttpClient HttpClient
 
 <PageTitle>Weather</PageTitle>
 
 <h1>Weather Forecast</h1>
+
+<SearchResultListComponent/>
 
 @if (_weatherForecasts == null)
 {
