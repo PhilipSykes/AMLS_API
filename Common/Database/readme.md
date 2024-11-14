@@ -52,9 +52,9 @@ Searches the MediaInfo table with the given filters
 ```c#
 Task<List<BsonDocument>> SearchPhysicalMedia(List<Filter> filters);
 ```
-	 - Returns a list of BsonDocument
-	 - Takes in a list of Filter objects
-
+	- Returns a list of BsonDocument
+	- Takes in a list of Filter objects
+	- Asynchronous
 Searches the PhysicalMedia table with the given filters
 
 
