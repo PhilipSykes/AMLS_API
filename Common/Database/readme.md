@@ -21,8 +21,8 @@ Filter is a class for transporting filter settings from the UI to the database q
 	 - '>' - Greater than
 	 - '<' - Less than
 	 - '!' - Not equal to
-	Many more operations are possible, but I think this is all we need
 ###### Notes:
+Many more operations are possible, but I think this is all we need
 All attributes are currently public, though i might make them private, I don't think they need to change
 ###### Example:
 Where rating is greater than 4
