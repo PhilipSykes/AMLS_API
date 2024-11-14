@@ -22,8 +22,8 @@ Filter is a class for transporting filter settings from the UI to the database q
 	 - '<' - Less than
 	 - '!' - Not equal to
 ###### Notes:
-Many more operations are possible, but I think this is all we need
-All attributes are currently public, though i might make them private, I don't think they need to change
+- Many more operations are possible, but I think this is all we need
+- All attributes are currently public, though i might make them private, I don't think they need to change
 ###### Example:
 Where rating is greater than 4
 ```c#
@@ -34,8 +34,12 @@ new Filter("rating", 4, '>');
 
 
 ##### SearchRepository
-SearchRepository is a class for providing database access to the search service.
-All search methods' filters will be applied together, so there is not currently an OR, only AND.
+
+```c#
+SearchRepository search = new SearchRepository("c1023778:X4M8yMPq6DNgrOck");
+```
+- SearchRepository is a class for providing database access to the search service.
+- All search methods' filters will be applied together, so there is not currently an OR, only AND.
 ##### Methods (2):
 
 ###### SearchMediaInfo:
