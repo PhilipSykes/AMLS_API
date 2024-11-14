@@ -10,7 +10,7 @@ builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorClient",
-        policy => policy.WithOrigins("https://localhost:7001") // Replace with Blazor client URL
+        policy => policy.WithOrigins("https://localhost:7001")
             .AllowAnyMethod()
             .AllowAnyHeader());
 });

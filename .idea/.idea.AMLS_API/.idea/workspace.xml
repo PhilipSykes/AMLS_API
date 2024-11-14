@@ -17,37 +17,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="766bf481-cb84-4368-9852-308f87053b12" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Blazor/App.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/Blazor.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/Layout/MainLayout.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/Layout/MainLayout.razor.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/Layout/NavMenu.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/Layout/NavMenu.razor.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/Pages/Counter.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/Pages/Home.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/Pages/Weather.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/Program.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/Properties/launchSettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/_Imports.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/appsettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/wwwroot/css/app.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/wwwroot/css/bootstrap/bootstrap.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/wwwroot/css/bootstrap/bootstrap.min.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/wwwroot/favicon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/wwwroot/icon-192.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/wwwroot/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Blazor/wwwroot/sample-data/weather.json" afterDir="false" />
+    <list default="true" id="766bf481-cb84-4368-9852-308f87053b12" name="Changes" comment=" Makes test call from blazor, set up CORS between gateway and blazor (has some issues)">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AMLS_API/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AMLS_API/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AMLS_API.sln" beforeDir="false" afterPath="$PROJECT_DIR$/AMLS_API.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Api/Api.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Api/Api.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Api/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Api/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Api/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Api/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Api/certificates/local-dev-certificate.p12" beforeDir="false" afterPath="$PROJECT_DIR$/Common/certificates/local-dev-certificate.p12" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gateway/Gateway.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Gateway/Gateway.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Blazor/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Blazor/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Gateway/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Gateway/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gateway/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/Gateway/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gateway/certificates/local-gateway-certificate.p12" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,10 +45,10 @@
     &quot;accountId&quot;: &quot;04b18fc0-5c4d-45b3-8406-7df981bfc582&quot;
   }
 }</component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="false" />
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -89,20 +62,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.Api: https.executor": "Run",
-    ".NET Launch Settings Profile.Blazor: https.executor": "Run",
-    ".NET Launch Settings Profile.Gateway: https.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "blazor-implementation",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.Api: https.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.Blazor: https.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.Gateway: https.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;blazor-implementation&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.Blazor: https">
     <configuration name="Api: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/Api/Api.csproj" />
@@ -196,7 +169,7 @@
         <ExecutableRowSnapshot>
           <option name="condition">
             <ConditionSnapshot>
-              <option name="type" value="afterPreviousFinished" />
+              <option name="type" value="immediately" />
             </ConditionSnapshot>
           </option>
           <option name="executable">
@@ -244,7 +217,17 @@
       <updated>1731512604006</updated>
       <workItem from="1731512605739" duration="250000" />
       <workItem from="1731512961210" duration="4841000" />
+      <workItem from="1731582990671" duration="549000" />
     </task>
+    <task id="LOCAL-00001" summary=" Makes test call from blazor, set up CORS between gateway and blazor (has some issues)">
+      <option name="closed" value="true" />
+      <created>1731583042600</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1731583042601</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -252,4 +235,8 @@
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="false" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value=" Makes test call from blazor, set up CORS between gateway and blazor (has some issues)" />
+    <option name="LAST_COMMIT_MESSAGE" value=" Makes test call from blazor, set up CORS between gateway and blazor (has some issues)" />
+  </component>
 </project>
