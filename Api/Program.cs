@@ -1,3 +1,6 @@
+using Api.MessageBroker;
+using Common.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
@@ -7,7 +10,12 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = null;
     });
 
-// Add logging
+// Add RabbitMQ configuration
+builder.Services.Configure<RabbitMQConfig>(
+    builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.AddSingleton<Exchange>();
+
+
 builder.Services.AddLogging(logging =>
 {
     logging.AddConsole();
@@ -16,9 +24,13 @@ builder.Services.AddLogging(logging =>
 
 var app = builder.Build();
 
-// Add UseRouting before MapControllers
+
 app.UseRouting();
 app.UseHttpsRedirection();
 app.MapControllers();
+
+// Initialize RabbitMQ Exchange as a background process
+var exchange = app.Services.GetRequiredService<Exchange>();
+await exchange.InitializeConnection();
 
 app.Run();
