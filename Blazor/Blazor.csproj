@@ -11,4 +11,10 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.8" PrivateAssets="all"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="Pages\RatingStar.razor">
+        <DependentUpon>SearchResultListComponent.razor</DependentUpon>
+      </Content>
+    </ItemGroup>
+
 </Project>

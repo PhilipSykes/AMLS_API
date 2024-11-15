@@ -6,15 +6,21 @@
             <div class="pill">@pill</div>
         }
     </div>
-    <div id="search-star-rating">@rating</div>
+    <div id="search-star-rating">
+        @for (int i = 1; i <= 5; i++)
+        {
+            <RatingStar colorValue="@(i <= rating)"></RatingStar>
+        }
+    </div>
     <p id="search-genres">@genres</p>
 </div>
+
 
 @code
 {
     public static string title = "Book Title";
     public static string[] pills { get; set; } = new string[] { "book", "e-book" };
-    public static int rating = 4;
+    public static int rating = 3;
     public static List<string> genreList = new List<string> { "Adventure", "Comedy", "Horror" };
 
     private string genres = GetGenreString();
@@ -22,5 +28,10 @@
     public static string GetGenreString()
     {
         return string.Join(" • ", genreList);
+    }
+    
+    private bool GetStarColor(int starNumber)
+    {
+        return true;
     }
 }
