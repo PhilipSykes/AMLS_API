@@ -25,7 +25,7 @@ public static class MessageTypes
         public const string GetSubscriptions = "get_subscriptions";
         public const string GetPurchases = "get_purchases";
         public const string UpdateSubscription = "update_subscription";
-        public const string Get = "get_history";
+        public const string GetHistory = "get_history";
     }
 
     public static class Media
