@@ -13,11 +13,11 @@ using System.Xml.Linq;
 
 
 //Test Code
-
 /*
 SearchRepository search = new SearchRepository("c1023778:X4M8yMPq6DNgrOck");
+
 List<Filter> filters = new List<Filter>();
-filters.Add(new Filter("rating", 4, '>'));
+filters.Add(new Filter("title", "hunger", '~'));
 List<BsonDocument> test = await search.SearchMediaInfo(filters);
 PrintResults(test);
 */
@@ -138,6 +138,14 @@ namespace Common.Database
     // Class for converting filter formats between filter objects from the UI, to mongo Bson format
     public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
     {
+        enum Operations
+        { // Possible this should be moved so it can be distributed to services/UI? makes making them a bit easier
+            Equals = '=',
+            NotEquals = '!',
+            GreaterThan = '>',
+            LessThan = '<',
+            Contains = '~'
+        }
 
         public FilterDefinition<BsonDocument> BuildFilter(List<Filter> filtersIn)
         {
@@ -147,19 +155,23 @@ namespace Common.Database
 
             foreach (var filterIn in filtersIn)
             {
+                //TODO, figure out how i can search arrays/nested fields
                 switch (filterIn.operation)
                 { // Note: There are many more operations than this, but i think this is all we need
-                    case '=': // Equals
+                    case (char)Operations.Equals:
                         filters.Add(builder.Eq(filterIn.key, filterIn.value));
                         break;
-                    case '>': // Greater than
+                    case (char)Operations.GreaterThan:
                         filters.Add(builder.Gt(filterIn.key, filterIn.value));
                         break;
-                    case '<': // Less than
+                    case (char)Operations.LessThan:
                         filters.Add(builder.Lt(filterIn.key, filterIn.value));
                         break;
-                    case '!': // Not equal to
+                    case (char)Operations.NotEquals:
                         filters.Add(builder.Not(builder.Eq(filterIn.key, filterIn.value))); // This line might not be right, test later
+                        break;
+                    case (char)Operations.Contains:
+                        filters.Add(builder.Regex(filterIn.key, new BsonRegularExpression($".*{filterIn.value}.*", "i"))); // TODO, Check if it is string, also look into regex i general
                         break;
                 }
             }
