@@ -12,14 +12,20 @@
     </ItemGroup>
 
     <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css.map" />
+    </ItemGroup>
+
+    <ItemGroup>
       <Content Update="Pages\RatingStar.razor">
         <DependentUpon>SearchResultListComponent.razor</DependentUpon>
       </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css.map" />
+      <Compile Update="Pages\MediaSearchModel.cs">
+        <DependentUpon>MediaSearchForm.razor</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

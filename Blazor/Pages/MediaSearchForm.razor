@@ -1,0 +1,60 @@
+@using Blazor.Models
+
+<EditForm Model="@searchModel" OnValidSubmit="@onSubmit">
+    <div>
+        <label>Media Title</label>
+        <InputText @bind-Value="searchModel.mediaTitle"/>
+        <div class="genre">
+            <label>Genre</label>
+            <InputText @bind-Value="activeGenre" @oninput="OnInputGenreChange"/>
+            <div class="genre-lists">
+                @foreach (string genre in filteredGenreList)
+                {
+                    <div class="genre-suggestion" @onclick="() => AddGenre(genre)">@genre</div>
+                }
+                @foreach (string selectedGenre in searchModel.mediaGenres)
+                {
+                    <div class="selected-genre">
+                        <div class="selected-genre-title">@selectedGenre</div>
+                        <div class="selected-genre-close"></div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+
+@code
+{
+    private MediaSearchModel searchModel = new MediaSearchModel();
+    
+    private string activeGenre { get; set; }
+    private List<string> genresList = new List<string> { "Action" , "Horror" , "Thriller", "Comedy"};
+    private List<string> filteredGenreList { get; set; } = new List<string>();
+
+    private void onSubmit()
+    {
+        
+    }
+
+    private void OnInputGenreChange(ChangeEventArgs e)
+    {
+        activeGenre = e.Value?.ToString() ?? string.Empty;
+        if (activeGenre != "")
+        {
+            filteredGenreList = genresList
+                .Where(g => g.Contains(activeGenre, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+        else
+        {
+            filteredGenreList.Clear();
+        }
+    }
+
+    private async Task AddGenre(string genre)
+    {
+        searchModel.mediaGenres.Add(genre);
+    }
+}

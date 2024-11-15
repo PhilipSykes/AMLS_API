@@ -1,0 +1,48 @@
+.genre {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.genre-lists {
+    display: flex;
+    flex-direction: row;
+    gap: 7px;
+}
+
+.genre-suggestion {
+    font-family: "Regular", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+
+    margin: 0;
+    padding-inline: 7px;
+    padding-block: 3px;
+    border-radius: 100px;
+
+    background: #D6D3D1;
+    color: #FAFAF9;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+}
+.selected-genre {
+    font-family: "Regular", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+
+    margin: 0;
+    padding-inline: 7px;
+    padding-block: 3px;
+    border-radius: 100px;
+
+    background: #D6D3D1;
+    color: #FAFAF9;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    text-transform: uppercase;
+}
+
+/* TODO this CSS is really hacky*/
