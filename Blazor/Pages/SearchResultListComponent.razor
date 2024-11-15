@@ -1,0 +1,37 @@
+<div class="search-card">
+    <h3 id="search-media-title">@Title</h3>
+    <div id="search-pill-container">
+        @foreach (string pill in Pills)
+        {
+            <div class="pill">@pill</div>
+        }
+    </div>
+    <div id="search-star-rating">
+        @for (int i = 1; i <= 5; i++)
+        {
+            <RatingStar colorValue="@(i <= Rating)"></RatingStar>
+        }
+    </div>
+    <p id="search-genres">@_genres</p>
+</div>
+
+
+@code
+{
+    [Parameter] public static string Title { get; set; }
+    [Parameter] public static string[] Pills { get; set; }
+    [Parameter] public static int Rating { get; set; }
+    [Parameter] public static List<string> GenreList { get; set; }
+    
+    private string _genres = GetGenreString();
+    
+    private static string GetGenreString()
+    {
+        return string.Join(" • ", GenreList);
+    }
+    
+    private bool GetStarColor(int starNumber)
+    {
+        return true;
+    }
+}

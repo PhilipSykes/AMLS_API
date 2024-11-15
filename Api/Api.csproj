@@ -19,7 +19,10 @@
     </ItemGroup>
 
     <ItemGroup>
+
+      <Folder Include="MessageBroker\" />
       <ProjectReference Include="..\Common\Common.csproj" />
+
     </ItemGroup>
 
 </Project>

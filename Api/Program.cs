@@ -29,8 +29,10 @@ app.UseRouting();
 app.UseHttpsRedirection();
 app.MapControllers();
 
+
 // Initialize RabbitMQ Exchange as a background process
 var exchange = app.Services.GetRequiredService<Exchange>();
 await exchange.InitializeConnection();
+
 
 app.Run();
