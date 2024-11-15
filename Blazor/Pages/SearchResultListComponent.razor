@@ -1,7 +1,7 @@
 <div class="search-card">
-    <h3 id="search-media-title">@title</h3>
+    <h3 id="search-media-title">@Title</h3>
     <div id="search-pill-container">
-        @foreach (string pill in pills)
+        @foreach (string pill in Pills)
         {
             <div class="pill">@pill</div>
         }
@@ -9,25 +9,25 @@
     <div id="search-star-rating">
         @for (int i = 1; i <= 5; i++)
         {
-            <RatingStar colorValue="@(i <= rating)"></RatingStar>
+            <RatingStar colorValue="@(i <= Rating)"></RatingStar>
         }
     </div>
-    <p id="search-genres">@genres</p>
+    <p id="search-genres">@_genres</p>
 </div>
 
 
 @code
 {
-    public static string title = "Book Title";
-    public static string[] pills { get; set; } = new string[] { "book", "e-book" };
-    public static int rating = 3;
-    public static List<string> genreList = new List<string> { "Adventure", "Comedy", "Horror" };
-
-    private string genres = GetGenreString();
+    [Parameter] public static string Title { get; set; }
+    [Parameter] public static string[] Pills { get; set; }
+    [Parameter] public static int Rating { get; set; }
+    [Parameter] public static List<string> GenreList { get; set; }
     
-    public static string GetGenreString()
+    private string _genres = GetGenreString();
+    
+    private static string GetGenreString()
     {
-        return string.Join(" • ", genreList);
+        return string.Join(" • ", GenreList);
     }
     
     private bool GetStarColor(int starNumber)

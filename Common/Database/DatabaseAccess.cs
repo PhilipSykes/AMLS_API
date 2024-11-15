@@ -22,13 +22,6 @@ List<BsonDocument> test = await search.SearchMediaInfo(filters);
 PrintResults(test);
 */
 
-void PrintResults(List<BsonDocument> list)
-{
-    foreach (BsonDocument doc in list)
-    {
-        Console.WriteLine(doc);
-    }
-}
 //TODO, write functions for these tests, so i don't have to keep re-writing them
 
 
