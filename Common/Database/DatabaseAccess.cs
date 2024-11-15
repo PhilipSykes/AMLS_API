@@ -205,12 +205,6 @@ namespace Common.Database
         public object value { get; set; }
         public char operation { get; set; }
 
-        public Filter(string key, object value, char operation)
-        {
-            this.key = key;
-            this.value = value;
-            this.operation = operation;
-        }
     }
 }
 

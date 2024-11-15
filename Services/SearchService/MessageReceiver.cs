@@ -21,7 +21,7 @@ public class SearchServiceMessageReceiver : BaseMessageReceiver
     {
         Console.WriteLine(message);
         SearchRepository search = new SearchRepository("c1023778:X4M8yMPq6DNgrOck");
-        //search.SearchMediaInfo()
+        search.SearchMediaInfo()
         
     }
 }
