@@ -1,7 +1,7 @@
 using RabbitMQ.Client;
 using System.Text;
 using Microsoft.Extensions.Options;
-using Common.Configuration;
+using Common;
 
 namespace Api.MessageBroker;
 public class Exchange(IOptions<RabbitMQConfig> options)
@@ -40,4 +40,12 @@ public class Exchange(IOptions<RabbitMQConfig> options)
                 await channel.BasicPublishAsync(_config.ExchangeName, type, body);
                 Console.WriteLine($"Published {type} notification: {message}");
             }
+        
+        public async Task PublishSearch(string type, string message)
+        {
+            var channel = await _connection.CreateChannelAsync();
+            var body = Encoding.UTF8.GetBytes(message);
+            await channel.BasicPublishAsync(_config.ExchangeName, type, body);
+            Console.WriteLine($"Published {type} value: {message}");
+        }
     }

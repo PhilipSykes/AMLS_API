@@ -1,5 +1,5 @@
 
-namespace Common.Configuration;
+namespace Common;
 
 public class RabbitMQConfig
 {

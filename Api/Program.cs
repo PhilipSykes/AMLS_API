@@ -1,5 +1,5 @@
 using Api.MessageBroker;
-using Common.Configuration;
+using Common;
 
 var builder = WebApplication.CreateBuilder(args);
 

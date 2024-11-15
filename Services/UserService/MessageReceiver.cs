@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Options;
 using Common;
 using Common.Constants;
-using Common.Configuration;
 
 namespace Services.UserService;
 

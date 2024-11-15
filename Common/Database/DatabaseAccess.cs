@@ -22,6 +22,13 @@ List<BsonDocument> test = await search.SearchMediaInfo(filters);
 PrintResults(test);
 */
 
+// void PrintResults(List<BsonDocument> list)
+// {
+//     foreach (BsonDocument doc in list)
+//     {
+//         Console.WriteLine(doc);
+//     }
+// }
 //TODO, write functions for these tests, so i don't have to keep re-writing them
 
 
@@ -48,7 +55,8 @@ namespace Common.Database
 
         public DatabaseConnection(string authorisation)
         {
-            string settings = "retryWrites=true&w=majority&appName=Cluster0"; //Probably should find a better solution for this
+            string settings =
+                "retryWrites=true&w=majority&appName=Cluster0"; //Probably should find a better solution for this
             string connectionString = $"mongodb+srv://{authorisation}@cluster0.simvp.mongodb.net/?{settings}";
             connection = new MongoClient(connectionString);
             Database = connection.GetDatabase("AdvancedMediaLibrary");
@@ -77,6 +85,7 @@ namespace Common.Database
     {
         protected IDatabaseConnection database;
         protected IFilterBuilder<BsonDocument> filterBuilder = new BsonFilterBuilder();
+
         public BaseRepository(string authorisation)
         {
             // Look at this later
@@ -139,7 +148,8 @@ namespace Common.Database
     public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
     {
         enum Operations
-        { // Possible this should be moved so it can be distributed to services/UI? makes making them a bit easier
+        {
+            // Possible this should be moved so it can be distributed to services/UI? makes making them a bit easier
             Equals = '=',
             NotEquals = '!',
             GreaterThan = '>',
@@ -157,7 +167,8 @@ namespace Common.Database
             {
                 //TODO, figure out how i can search arrays/nested fields
                 switch (filterIn.operation)
-                { // Note: There are many more operations than this, but i think this is all we need
+                {
+                    // Note: There are many more operations than this, but i think this is all we need
                     case (char)Operations.Equals:
                         filters.Add(builder.Eq(filterIn.key, filterIn.value));
                         break;
@@ -168,10 +179,14 @@ namespace Common.Database
                         filters.Add(builder.Lt(filterIn.key, filterIn.value));
                         break;
                     case (char)Operations.NotEquals:
-                        filters.Add(builder.Not(builder.Eq(filterIn.key, filterIn.value))); // This line might not be right, test later
+                        filters.Add(builder.Not(builder.Eq(filterIn.key,
+                            filterIn.value))); // This line might not be right, test later
                         break;
                     case (char)Operations.Contains:
-                        filters.Add(builder.Regex(filterIn.key, new BsonRegularExpression($".*{filterIn.value}.*", "i"))); // TODO, Check if it is string, also look into regex i general
+                        filters.Add(
+                            builder.Regex(filterIn.key,
+                                new BsonRegularExpression($".*{filterIn.value}.*",
+                                    "i"))); // TODO, Check if it is string, also look into regex i general
                         break;
                 }
             }
@@ -184,11 +199,18 @@ namespace Common.Database
 
 
     // Filter class for transporting filter settings from the UI to the database queries
-    public class Filter(string key, object value, char operation)
+    public class Filter
     {
-        public string key = key;
-        public object value = value;
-        public char operation = operation;
+        public string key { get; set; }
+        public object value { get; set; }
+        public char operation { get; set; }
+
+        public Filter(string key, object value, char operation)
+        {
+            this.key = key;
+            this.value = value;
+            this.operation = operation;
+        }
     }
 }
 

@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Options;
-using Common.Configuration;
 using Common.Constants;
 using Common;
 using Services.NotificationService.Handlers;
