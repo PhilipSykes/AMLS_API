@@ -2,4 +2,11 @@
 
 <PageTitle>Home</PageTitle>
 
-<SearchResultListComponent Title="" Pills="" Rating="" GenreList=""></SearchResultListComponent>
+<SearchResultListComponent Title="A" Pills=@list Rating="3" GenreList=@list></SearchResultListComponent>
+
+
+@code {
+
+    public List<string> list = new List<string> { "a", "b" };
+
+}

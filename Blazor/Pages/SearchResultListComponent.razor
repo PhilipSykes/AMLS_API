@@ -18,20 +18,20 @@
 
 @code
 {
-    [Parameter] public static string Title { get; set; }
-    [Parameter] public static string[] Pills { get; set; }
-    [Parameter] public static int Rating { get; set; }
-    [Parameter] public static List<string> GenreList { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public List<string> Pills { get; set; }
+    [Parameter] public int Rating { get; set; }
+    [Parameter] public List<string> GenreList { get; set; }
     
-    private string _genres = GetGenreString();
-    
-    private static string GetGenreString()
+    public string _genres;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _genres = this.GetGenreString();
+    }
+
+    public string GetGenreString()
     {
         return string.Join(" • ", GenreList);
-    }
-    
-    private bool GetStarColor(int starNumber)
-    {
-        return true;
     }
 }
