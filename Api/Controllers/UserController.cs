@@ -17,7 +17,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login([FromBody] Models.LoginRequest request)
+    public async Task<ActionResult> Login([FromBody] LoginRequest request)
     {
         Console.WriteLine($"Login request for user: {request.UserId}");
         

@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Options;
 using Common.Constants;
 using Common;
-using Services.NotificationService.Handlers;
 
 namespace Services.NotificationService;
 public class NotificationMessageReceiver : BaseMessageReceiver

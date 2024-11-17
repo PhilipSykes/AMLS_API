@@ -1,37 +1,51 @@
-using System.Text.Json;
-using Api.MessageBroker;
-using Common.Constants;
-using Common.Database;
+using Common.Models;
+using Services.SearchService;
+
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers;
-
-
-[ApiController]
-[Route("[controller]")]  
-public class SearchController : ControllerBase
+namespace Api.Controllers
 {
-    private readonly Exchange _exchange;
-    
-    public SearchController(Exchange exchange)
+    [ApiController]
+    [Route("[controller]")]
+    public class MediaSearchController : ControllerBase 
     {
-        _exchange = exchange;
-    }
+        private readonly IMediaSearchService _mediaSearchService;
 
-    [HttpPost]
-    public async Task<ActionResult> Search([FromBody] List<Filter> requests)
-    {
-        var searchMessage = requests.Select(filter => new
+        public MediaSearchController(IMediaSearchService mediaSearchService)
         {
-            key = filter.key,
-            value = filter.value,
-            operation = filter.operation
-        }).ToList();
+            _mediaSearchService = mediaSearchService;
+        }
 
-        await _exchange.PublishSearch(
-            MessageTypes.Media.Search, 
-            JsonSerializer.Serialize(searchMessage));
-        
-        return Ok(new { message = "Searching..." });
+        [HttpPost]
+        public async Task<ActionResult<SearchResponse>> Search([FromBody] List<Filter> filters)
+        {
+            Console.WriteLine($"Received media search request with {filters.Count} filters");
+            var response = await _mediaSearchService.SearchMediaAsync(filters);
+            
+            if (!string.IsNullOrEmpty(response.Error))
+            {
+                Console.WriteLine($"Media search failed: {response.Error}");
+                return StatusCode(500, response);
+            }
+
+            Console.WriteLine("Media search completed successfully");
+            return Ok(response);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<SearchResponse>> GetInitialMedia() 
+        {
+            Console.WriteLine("Received request for initial media content");
+            var response = await _mediaSearchService.GetInitialMediaAsync();
+            
+            if (!string.IsNullOrEmpty(response.Error))
+            {
+                Console.WriteLine($"Initial media fetch failed: {response.Error}");
+                return StatusCode(500, response);
+            }
+
+            Console.WriteLine("Initial media fetch completed successfully");
+            return Ok(response);
+        }
     }
 }

@@ -1,4 +1,4 @@
-namespace Services.NotificationService.Handlers;
+namespace Services.NotificationService;
 
 public class NotificationHandler
 {
