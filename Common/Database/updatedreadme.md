@@ -143,7 +143,7 @@ The search system requires MongoDB connection details in appsettings.json:
 ```json
 {
   "MongoDB": {
-    "ConnectionString": "your-connection-string",
+    "ConnectionString": "your-connection-string+connection settings",
     "DatabaseName": "AdvancedMediaLibrary"
   }
 }
