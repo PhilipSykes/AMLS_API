@@ -1,10 +1,9 @@
+using Microsoft.AspNetCore.Mvc;
 using Common.Models;
 using Services.SearchService;
 
-using Microsoft.AspNetCore.Mvc;
+namespace Api.Controllers;
 
-namespace Api.Controllers
-{
     [ApiController]
     [Route("[controller]")]
     public class MediaSearchController : ControllerBase 
@@ -27,13 +26,13 @@ namespace Api.Controllers
                 Console.WriteLine($"Media search failed: {response.Error}");
                 return StatusCode(500, response);
             }
-
+            
             Console.WriteLine("Media search completed successfully");
             return Ok(response);
         }
 
         [HttpGet]
-        public async Task<ActionResult<SearchResponse>> GetInitialMedia() 
+        public async Task<ActionResult<SearchResponse>> GetInitialMedia()
         {
             Console.WriteLine("Received request for initial media content");
             var response = await _mediaSearchService.GetInitialMediaAsync();
@@ -43,9 +42,8 @@ namespace Api.Controllers
                 Console.WriteLine($"Initial media fetch failed: {response.Error}");
                 return StatusCode(500, response);
             }
-
+            
             Console.WriteLine("Initial media fetch completed successfully");
             return Ok(response);
         }
     }
-}

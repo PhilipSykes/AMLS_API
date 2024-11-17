@@ -1,5 +1,8 @@
 using Api.MessageBroker;
 using Common;
+using Common.Database;
+using Common.Database.Interfaces;
+using Services.SearchService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +18,16 @@ builder.Services.Configure<RabbitMQConfig>(
     builder.Configuration.GetSection("RabbitMQ"));
 builder.Services.AddSingleton<Exchange>();
 
+//Add Mongo configuration
+builder.Services.Configure<MongoDBConfig>(
+    builder.Configuration.GetSection("MongoDB"));
+
+// Register Database Services
+builder.Services.AddScoped<IDatabaseConnection, DatabaseConnection>();
+builder.Services.AddScoped<ISearchRepository, SearchRepository>();
+
+// Register Application Services
+builder.Services.AddScoped<IMediaSearchService, MediaSearchService>();
 
 builder.Services.AddLogging(logging =>
 {
@@ -36,3 +49,5 @@ await exchange.InitializeConnection();
 
 
 app.Run();
+
+Console.WriteLine("I am running.");
