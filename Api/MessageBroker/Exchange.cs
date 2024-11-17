@@ -15,7 +15,7 @@ public class Exchange(IOptions<RabbitMQConfig> options)
                 HostName = _config.HostName,
                 Port = _config.Port,
                 UserName = _config.UserName,
-                Password = _config.Password
+                Password = _config.Password,
             };
             
             _connection = await factory.CreateConnectionAsync();
