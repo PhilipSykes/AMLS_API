@@ -1,15 +1,38 @@
 ﻿@page "/"
+@using MongoDB.Bson
 
 <PageTitle>Home</PageTitle>
 
-<SearchResultListComponent Title="Book Title" Pills=@list Rating="3" GenreList=@genres></SearchResultListComponent>
+<MediaSearchForm OnSubmitCallback="MakeSearch" />
+<SearchResultListComponent result="@bsonDoc"></SearchResultListComponent>
 
+@if (test)
+{
+    <div>@test</div>
+}
 
 
 @code {
-
+    bool test = false;
+    BsonDocument bsonDoc = new BsonDocument
+    {
+        { "_id", new BsonDocument { { "$oid", "673b4072ff2437d1be919cc6" } } },
+        { "title", "The Hunger Games" },
+        { "publisher", "Scholastic Press" },
+        { "language", "English" },
+        { "description", "WINNING MEANS FAME AND FORTUNE..." },
+        { "isbn", "9780439023481" },
+        { "author", "Suzanne Collins" },
+        { "rating", 4.33 },
+        { "publishDate", new BsonDocument { { "$date", "2008-09-14T00:00:00.000Z" } } },
+        { "type", "Book" },
+        { "genres", new BsonArray { "young adult", "fiction", "dystopia", "fantasy", "science fiction", "romance", "adventure", "teen", "post apocalyptic", "action" } }
+    };
     
-    public List<string> list = new List<string> { "book", "e-book" };
-    public List<string> genres = new List<string> { "Adventure","Comedy", "Horror"};
 
+    public void MakeSearch(List<Filter> filters)
+    {
+        test = true;
+        StateHasChanged();
+    }
 }

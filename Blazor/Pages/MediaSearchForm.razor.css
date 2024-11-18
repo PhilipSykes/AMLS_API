@@ -1,0 +1,73 @@
+*{
+    user-select: none;
+}
+
+.genre {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.genre-lists {
+    display: flex;
+    flex-direction: row;
+    gap: 7px;
+}
+
+.genre-suggestion {
+    font-family: "Regular", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+
+    margin: 0;
+    padding-inline: 7px;
+    padding-block: 3px;
+    border-radius: 100px;
+
+    background: #D6D3D1;
+    color: #FAFAF9;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+}
+.selected-genre {
+    font-family: "Regular", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+
+    margin: 0;
+    padding-inline: 7px;
+    padding-block: 3px;
+    border-radius: 100px;
+
+    background: #D6D3D1;
+    color: #FAFAF9;
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    align-items: center;
+    text-transform: uppercase;
+}
+
+
+.text-field{
+    border-radius: 50rem; 
+    padding: 0.5rem 1rem;
+    border: 1px solid #ced4da;
+    width: 100%;
+    transition: border-color 0.15s ease-in-out;
+}
+
+.search-container{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.close-btn{
+    width: 10px;
+    height: 10px;
+    
+}
+
+/* TODO this CSS is really hacky*/
