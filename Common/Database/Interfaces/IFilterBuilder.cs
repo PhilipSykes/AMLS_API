@@ -5,5 +5,5 @@ namespace Common.Database.Interfaces;
 
     public interface IFilterBuilder<T>
     {
-        FilterDefinition<T> BuildFilter(List<Filter> filtersIn);
+        FilterDefinition<T> BuildFilter(List<Filter> filterObjectsIn);
     }
