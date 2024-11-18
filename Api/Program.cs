@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Api.MessageBroker;
 using Common;
 using Common.Database;
@@ -11,6 +12,7 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = null;
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
 // Add RabbitMQ configuration

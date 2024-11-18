@@ -1,3 +1,4 @@
+using Common.Constants;
 using Common.Models;
 using Common.Database.Interfaces;
 using Microsoft.Extensions.Options;
@@ -12,16 +13,11 @@ namespace Common.Database
         {
         }
 
-        public async Task<SearchResponse> SearchMediaInfo(List<Filter> filters)
+        public async Task<SearchResponse> Search(List<Filter> filters,string documentType)
         {
-            var collection = Database.GetCollection<BsonDocument>("MediaInfo");
+            var collection = Database.GetCollection<BsonDocument>(documentType);
             return await Search(collection, filters);
         }
 
-        public async Task<SearchResponse> SearchPhysicalMedia(List<Filter> filters = null)
-        {
-            var collection = Database.GetCollection<BsonDocument>("PhysicalMedia");
-            return await Search(collection, filters ?? new List<Filter>());
-        }
     }
 }

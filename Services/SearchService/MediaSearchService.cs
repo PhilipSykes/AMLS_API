@@ -1,3 +1,4 @@
+using Common.Constants;
 using Common.Database;
 using Common.Database.Interfaces;
 using Common.Models;
@@ -25,7 +26,7 @@ namespace Services.SearchService
             try
             {
                 Console.WriteLine($"Performing media search with {filters.Count} filters");
-                var response = await _searchRepository.SearchMediaInfo(filters);
+                var response = await _searchRepository.Search(filters,DocumentTypes.MediaInfo);
                 Console.WriteLine($"Search completed. Found {response.TotalCount} results");
         
                 return response; 
@@ -36,7 +37,7 @@ namespace Services.SearchService
                 return new SearchResponse 
                 { 
                     Error = $"Failed to perform search: {ex.Message}",
-                    Results = new List<BsonDocument>(),
+                    Results = new List<string>(),
                     TotalCount = 0
                 };
             }
@@ -47,7 +48,7 @@ namespace Services.SearchService
             try
             {
                 Console.WriteLine("Fetching initial media results");
-                var response = await _searchRepository.SearchMediaInfo(new List<Filter>());
+                var response = await _searchRepository.Search(new List<Filter>(),DocumentTypes.MediaInfo);
                 Console.WriteLine($"Initial fetch completed. Found {response.TotalCount} results");
         
                 return response; 
@@ -58,7 +59,7 @@ namespace Services.SearchService
                 return new SearchResponse
                 {
                     Error = $"Failed to fetch initial results: {ex.Message}",
-                    Results = new List<BsonDocument>(),
+                    Results = new List<string>(),
                     TotalCount = 0
                 };
             }

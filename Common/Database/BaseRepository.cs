@@ -21,14 +21,15 @@ namespace Common.Database
 
         protected async Task<SearchResponse> Search(
             IMongoCollection<BsonDocument> collection, 
-            List<Filter> filterO)
+            List<Filter> filters)
         {
             try
             {
-                var results = await collection.Find(FilterBuilder.BuildFilter(filterO)).ToListAsync();
+                var results = await collection.Find(FilterBuilder.BuildFilter(filters)).ToListAsync();
+                var jsonStrings = results.Select(doc => doc.ToJson()).ToList();
                 return new SearchResponse 
                 { 
-                    Results = results,
+                    Results = jsonStrings,
                     TotalCount = results.Count
                 };
             }
@@ -37,7 +38,7 @@ namespace Common.Database
                 Console.WriteLine($"Search error: {ex.Message}");
                 return new SearchResponse 
                 { 
-                    Results = new List<BsonDocument>(),
+                    Results = new List<string>(),
                     Error = "Failed to perform search"
                 };
             }
