@@ -1,4 +1,5 @@
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
 
 namespace Common.Models
 {
@@ -25,7 +26,7 @@ namespace Common.Models
 
     public class SearchResponse
     {
-        public List<BsonDocument> Results { get; set; } = new();
+        public List<string> Results { get; set; } = new();
         public int TotalCount { get; set; }
         public string? Error { get; set; }
     }
