@@ -50,7 +50,7 @@ h3{
     font-weight: 400;
     font-family: "Regular", sans-serif;
     font-size: 11px;
-    
+    text-transform: capitalize;
 }
 
 #search-star-rating{
