@@ -45,11 +45,11 @@ public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
                 case (char)Operations.Contains:
                     if (filterObject.Value is string) // This is a temp hack, fix properly later
                     {
-                        mongoFilters.Add(builder.Regex(filterObject.key, new BsonRegularExpression($".*{filterObject.value}.*", "i"))); 
+                        mongoFilters.Add(builder.Regex(filterObject.Key, new BsonRegularExpression($".*{filterObject.Value}.*", "i"))); 
                     }
                     else
                     {
-                        mongoFilters.Add(builder.AnyEq(filterObject.key, (string)filterObject.value));
+                        mongoFilters.Add(builder.AnyEq(filterObject.Key, (string)filterObject.Value));
                     }
                     break;
             }
