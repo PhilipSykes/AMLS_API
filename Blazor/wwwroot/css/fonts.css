@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Serif-Title';
+    src: url('fonts/NewYork.ttf') format('truetype');
+    font-style: normal;
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: 'Regular';
+    src: url('fonts/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');
+    font-style: normal;
+    font-weight: normal;
+}

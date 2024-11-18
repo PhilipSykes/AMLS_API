@@ -1,0 +1,63 @@
+*{
+    user-select: none;
+}
+
+h3{
+    font-family: 'Serif-Title', serif;
+    font-variation-settings: "opsz" 12;
+    font-weight: 496;
+    color: #1C1917;
+    font-size: 24px;
+    text-transform: capitalize;
+}
+#search-media-title{
+    margin: 0;
+}
+
+#search-card{
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 20px;
+}
+
+#search-pill-container {
+    display: flex;
+    flex-direction: row;
+    gap: 7px;
+}
+
+.pill {
+    font-family: "Regular", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    
+    margin: 0;
+    padding-inline: 7px;
+    padding-block: 3px;
+    border-radius: 100px;
+    
+    background-color: #D6D3D1;
+    color: #44403C;
+    text-transform: uppercase;
+}
+
+#search-genres{
+    display: flex;
+    margin: 0;
+    padding: 0;
+    color: #44403C;
+    font-weight: 400;
+    font-family: "Regular", sans-serif;
+    font-size: 11px;
+    
+}
+
+#search-star-rating{
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    margin: 0;
+    margin-left: -1px;
+    padding: 0;
+}
