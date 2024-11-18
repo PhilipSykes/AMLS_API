@@ -9,6 +9,10 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.8"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.8" PrivateAssets="all"/>
+        <PackageReference Include="Wasm" Version="0.1.7" />
+        <PackageReference Include="Wasm.Sdk" Version="1.0.0" />
+        <PackageReference Include="Wasm.Sdk.Analyzer" Version="1.0.0" />
+        <PackageReference Include="Wasm.Sdk.DevServer" Version="1.0.0" />
     </ItemGroup>
 
     <ItemGroup>
