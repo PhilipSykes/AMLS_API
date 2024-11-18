@@ -43,7 +43,7 @@ public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
                     mongoFilters.Add(builder.Not(builder.Eq(filterObject.Key, filterObject.Value)));
                     break;
                 case (char)Operations.Contains:
-                    if (filterObject.value is string) // This is a temp hack, fix properly later
+                    if (filterObject.Value is string) // This is a temp hack, fix properly later
                     {
                         mongoFilters.Add(builder.Regex(filterObject.key, new BsonRegularExpression($".*{filterObject.value}.*", "i"))); 
                     }
