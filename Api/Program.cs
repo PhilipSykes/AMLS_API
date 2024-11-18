@@ -52,4 +52,3 @@ await exchange.InitializeConnection();
 
 app.Run();
 
-Console.WriteLine("I am running.");

@@ -25,8 +25,8 @@ namespace Common.Database
         {
             try
             {
-                var results = await collection.Find(FilterBuilder.BuildFilter(filters)).ToListAsync();
-                var jsonStrings = results.Select(doc => doc.ToJson()).ToList();
+                List<BsonDocument> results = await collection.Find(FilterBuilder.BuildFilter(filters)).ToListAsync();
+                List<string>jsonStrings = results.Select(doc => doc.ToJson()).ToList();
                 return new SearchResponse 
                 { 
                     Results = jsonStrings,

@@ -46,8 +46,9 @@
         }
         StateHasChanged();
     }
-    private void MakeSearch(List<Filter> filters)
+    private async Task MakeSearch(List<Filter> filters)
     {
-        GetSearchResults(filters);
+        bsonDocs.Clear();
+        await GetSearchResults(filters);
     }
 }

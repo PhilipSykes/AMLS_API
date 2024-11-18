@@ -13,10 +13,10 @@ namespace Common.Models
     public class Filter
     {
         public string Key { get; set; }
-        public object Value { get; set; }
+        public string Value { get; set; }
         public char Operation { get; set; }
 
-        public Filter(string key, object value, char operation)
+        public Filter(string key, string value, char operation)
         {
             Key = key;
             Value = value;
