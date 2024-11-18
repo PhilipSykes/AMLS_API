@@ -44,8 +44,30 @@
     color: #FAFAF9;
     display: flex;
     flex-direction: row;
+    gap: 3px;
     align-items: center;
     text-transform: uppercase;
+}
+
+
+.text-field{
+    border-radius: 50rem; 
+    padding: 0.5rem 1rem;
+    border: 1px solid #ced4da;
+    width: 100%;
+    transition: border-color 0.15s ease-in-out;
+}
+
+.search-container{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.close-btn{
+    width: 10px;
+    height: 10px;
+    
 }
 
 /* TODO this CSS is really hacky*/
