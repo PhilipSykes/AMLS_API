@@ -1,21 +1,19 @@
 ﻿@page "/"
+@using MongoDB.Bson
 
 <PageTitle>Home</PageTitle>
 
-<MediaSearchForm />
+<MediaSearchForm OnSubmitCallback="MakeSearch" />
 <SearchResultListComponent Title="Book Title" Pills=@list Rating="3" GenreList=@genres></SearchResultListComponent>
 
 
 
 @code {
-
-    private search List<>
     public List<string> list = new List<string> { "book", "e-book" };
     public List<string> genres = new List<string> { "Adventure","Comedy", "Horror"};
 
-    public List<>()
+    public void MakeSearch(List<Filter> filters)
     {
         
     }
-
 }

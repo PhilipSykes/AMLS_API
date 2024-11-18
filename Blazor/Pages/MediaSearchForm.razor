@@ -1,6 +1,7 @@
 @using Blazor.Models
 
-<EditForm Model="@searchModel" OnValidSubmit="@onSubmit">
+
+<EditForm Model="@searchModel" OnValidSubmit="@OnSubmit">
     <div class="search-container">
         <div>
             <label>Media Title</label>
@@ -15,7 +16,7 @@
                 {
                     <div class="genre-suggestion" @onclick="() => AddGenre(genre)">@genre</div>
                 }
-                @foreach (string selectedGenre in searchModel.mediaGenres)
+                @foreach (string selectedGenre in searchModel.MediaGenres)
                 {
                     
                     <div class="selected-genre">
@@ -25,21 +26,26 @@
                 }
             </div>
         </div>
+        <button type="submit">Search</button>
     </div>
 </EditForm>
 
 
 @code
 {
+    [Parameter] public Action<List<Filter>> OnSubmitCallback { get; set; }
+
     private MediaSearchModel searchModel = new MediaSearchModel();
+    private List<Filter> search = new List<Filter>();
     
     private string activeGenre { get; set; }
     private List<string> genresList = new List<string> { "Action" , "Horror" , "Thriller", "Comedy"};
     private List<string> filteredGenreList { get; set; } = new List<string>();
 
-    private void onSubmit()
+    public void OnSubmit()
     {
-        
+        FormatSearchFilters(searchModel);
+        OnSubmitCallback?.Invoke(search);
     }
 
     private void OnInputGenreChange(ChangeEventArgs e)
@@ -50,7 +56,7 @@
             filteredGenreList = genresList
                 .Where(g => g.Contains(activeGenre, StringComparison.OrdinalIgnoreCase))
                 //filter selected genres
-                .Where(g => !searchModel.mediaGenres.Contains(g, StringComparer.OrdinalIgnoreCase))
+                .Where(g => !searchModel.MediaGenres.Contains(g, StringComparer.OrdinalIgnoreCase))
                 .ToList();
         }
         else
@@ -61,9 +67,9 @@
 
     private async Task AddGenre(string genre)
     {
-        if (!searchModel.mediaGenres.Any(entry => entry.Contains(genre)))
+        if (!searchModel.MediaGenres.Any(entry => entry.Contains(genre)))
         {
-            searchModel.mediaGenres.Add(genre);
+            searchModel.MediaGenres.Add(genre);
             filteredGenreList.Remove(genre);
             StateHasChanged();
         }
@@ -71,7 +77,19 @@
 
     private async Task RemoveGenre(string genre)
     {
-        searchModel.mediaGenres.Remove(genre);
+        searchModel.MediaGenres.Remove(genre);
         StateHasChanged();
+    }
+    
+    public void FormatSearchFilters(MediaSearchModel model)
+    {
+        Filter titleFilter = new Filter("name",model.mediaTitle,'~');
+        search.Add(titleFilter);
+
+        foreach (var genre in model.MediaGenres)
+        {
+            Filter genreFilter = new Filter("genre", genre, '~');
+            search.Add(genreFilter);
+        }
     }
 }

@@ -1,13 +1,12 @@
 namespace Blazor.Models;
 
-//TODO Use filter objects in the model
-
 public class MediaSearchModel
 {
     public string mediaTitle { get; set; }
-    public List<string> mediaGenres { get; set; } = new List<string>();
+    public List<string> MediaGenres { get; set; } = new List<string>();
     
-    public bool isValid =>
+    public bool IsValid =>
     !string.IsNullOrWhiteSpace(mediaTitle) ||
-    !mediaGenres.Any();
+    !MediaGenres.Any();
+    
 }
