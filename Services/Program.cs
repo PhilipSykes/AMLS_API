@@ -1,5 +1,3 @@
-
-using Common.Configuration;
 using Common.Notification.Email;
 using Common;
 using Common.Database;
