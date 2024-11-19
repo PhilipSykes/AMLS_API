@@ -9,6 +9,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7500") });
+builder.Services.AddScoped<Common.Notification.Email.EmailService>();
+
 
 
 await builder.Build().RunAsync();
