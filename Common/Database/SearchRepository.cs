@@ -13,10 +13,11 @@ namespace Common.Database
         {
         }
 
-        public async Task<SearchResponse> Search(List<Filter> filters,string documentType)
+        //Todo - Evaluate need for base repo search function
+        public async Task<SearchResponse> Search(string documentType,(int, int) pagination ,List<Filter> filters = null)
         {
             var collection = Database.GetCollection<BsonDocument>(documentType);
-            return await Search(collection, filters);
+            return await Search(collection,pagination, filters);
         }
 
     }

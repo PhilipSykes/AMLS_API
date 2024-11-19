@@ -21,11 +21,12 @@ namespace Common.Database
 
         protected async Task<SearchResponse> Search(
             IMongoCollection<BsonDocument> collection, 
-            List<Filter> filters)
+            (int, int) pagination,
+            List<Filter> filters = null)
         {
             try
             {
-                List<BsonDocument> results = await collection.Find(FilterBuilder.BuildFilter(filters)).ToListAsync();
+                List<BsonDocument> results = await collection.Find(FilterBuilder.BuildFilter(filters)).Skip(pagination.Item1).Limit(pagination.Item2).ToListAsync();
                 List<string>jsonStrings = results.Select(doc => doc.ToJson()).ToList();
                 return new SearchResponse 
                 { 

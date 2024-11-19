@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using MongoDB.Bson.IO
 @inject HttpClient HttpClient
 
 <PageTitle>Home</PageTitle>
@@ -18,6 +19,7 @@
 @code {
     private List<string> bsonDocs = new();
     private bool test = false;
+    (int, int) pagination = (1, 3); // temp for testing
 
     protected override async Task OnInitializedAsync()
     {
@@ -26,7 +28,7 @@
 
     private async Task GetMedia()
     {
-        var response = await HttpClient.GetFromJsonAsync<SearchResponse>("api/mediaSearch");
+        var response = await HttpClient.GetFromJsonAsync<SearchResponse>($"api/mediaSearch?page={pagination.Item1}&count={pagination.Item2}");
         if (response != null && response.Results != null)
         {
             bsonDocs = response.Results;
@@ -35,7 +37,7 @@
 
     private async Task GetSearchResults(List<Filter> filters)
     {
-        var response = await HttpClient.PostAsJsonAsync("api/mediaSearch", filters);
+        var response = await HttpClient.PostAsJsonAsync($"api/mediaSearch?page={pagination.Item1}&count={pagination.Item2}", filters);
         if (response.IsSuccessStatusCode)
         {
             var searchResponse = await response.Content.ReadFromJsonAsync<SearchResponse>();

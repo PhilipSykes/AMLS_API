@@ -5,5 +5,5 @@ namespace Common.Database.Interfaces;
 
 public interface ISearchRepository
 {
-    Task<SearchResponse> Search(List<Filter> filters,string documentType);
+    Task<SearchResponse> Search(string documentType, (int, int) pagination, List<Filter> filters = null);
 }
