@@ -24,6 +24,12 @@ public static class MessageTypes
         public const string GetHistory = "get_history";
     }
 
+    public static class EmailNotifications
+    {
+        public const string BorrowMedia = "email_borrow_media";
+        public const string ReserveMedia = "email_reserve_media";
+    }
+
     public static class Subscription 
     { 
       public const string CancelSubscription =           "cancel_subscription";
