@@ -2,10 +2,11 @@ using Microsoft.Extensions.Options;
 using Common.Configuration;
 using Common.Constants;
 using Common;
+using Common.Models;
 using Common.Notification.Email;
 
 namespace Services.NotificationService;
-public class NotificationMessageReceiver : BaseMessageReceiver<Dictionary<string, string>>
+public class NotificationMessageReceiver : BaseMessageReceiver<EmailDetails>
 {
     private readonly IEmailService _emailService;
     private static readonly string[] NotificationTypes =
@@ -23,7 +24,7 @@ public class NotificationMessageReceiver : BaseMessageReceiver<Dictionary<string
         _emailService = emailService;
     }
 
-    protected override async Task HandleMessage(string messageType, Dictionary<string, string> data)
+    protected override async Task HandleMessage(string messageType, EmailDetails data)
     {
         switch (messageType)
         {

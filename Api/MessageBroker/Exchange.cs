@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Common.Configuration;
+using Common.Models;
 
 namespace Api.MessageBroker;
 public class Exchange(IOptions<RabbitMQConfig> options)
@@ -34,12 +35,12 @@ public class Exchange(IOptions<RabbitMQConfig> options)
             Console.WriteLine("Published weather request");
         }
         
-        public async Task PublishNotification(string type, Dictionary<string,string> message)
+        public async Task PublishNotification(string type, EmailDetails emailDetails)
             {
                 var channel = await _connection.CreateChannelAsync();
-                string serializedMessage = JsonSerializer.Serialize(message);
+                string serializedMessage = JsonSerializer.Serialize(emailDetails);
                 var body = Encoding.UTF8.GetBytes(serializedMessage);
                 await channel.BasicPublishAsync(_config.ExchangeName, type, body);
-                Console.WriteLine($"Published {type} notification: {message}");
+                Console.WriteLine($"Published {type} notification: {emailDetails}");
             }
     }

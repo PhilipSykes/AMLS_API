@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Api.MessageBroker;
 using Common.Constants;
 using Common.Models;
@@ -19,15 +20,17 @@ public class MediaController : ControllerBase
     [HttpPost("reserve")]
     public async Task<ActionResult> Reserve([FromBody] ReserveRequest request)
     {
-        Console.WriteLine($"Reserve media request for user: {request.UserId}");
+        if (request.EmailDetails.RecipientAddresses.Count == 0)
+        {
+            return BadRequest("Email recipients required");
+        }
         
-        // TODO: create reserve media operations & implement logic 
-        
-        
+        //TODO actual reservation operation
+
         await _exchange.PublishNotification(
             MessageTypes.EmailNotifications.ReserveMedia, 
-            request.EmailDetails); 
-        
+            request.EmailDetails);
+    
         return Ok(new { message = "Reservation made" });
     }
 }

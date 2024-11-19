@@ -47,7 +47,6 @@ public abstract class BaseMessageReceiver<TMessage> : BackgroundService
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             var messageType = ea.RoutingKey;
-
             try 
             {
                 var typedMessage = JsonSerializer.Deserialize<TMessage>(message);
@@ -56,7 +55,6 @@ public abstract class BaseMessageReceiver<TMessage> : BackgroundService
             catch (JsonException ex)
             {
                 Console.WriteLine($"Failed to deserialize message: {ex.Message}");
-                // Consider implementing error handling strategy here
             }
         };
 
