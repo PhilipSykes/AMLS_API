@@ -1,3 +1,7 @@
+*{
+    user-select: none;
+}
+
 h3{
     font-family: 'Serif-Title', serif;
     font-variation-settings: "opsz" 12;
@@ -46,7 +50,7 @@ h3{
     font-weight: 400;
     font-family: "Regular", sans-serif;
     font-size: 11px;
-    
+    text-transform: capitalize;
 }
 
 #search-star-rating{
@@ -54,5 +58,6 @@ h3{
     flex-direction: row;
     gap: 0;
     margin: 0;
+    margin-left: -1px;
     padding: 0;
 }

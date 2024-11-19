@@ -1,3 +1,6 @@
+@using System.Reflection.Metadata
+@using MongoDB.Bson
+@using Wasm
 <div id="search-card">
     <h3 id="search-media-title">@Title</h3>
     <div id="search-pill-container">
@@ -18,16 +21,46 @@
 
 @code
 {
-    [Parameter] public string Title { get; set; }
-    [Parameter] public List<string> Pills { get; set; }
-    [Parameter] public int Rating { get; set; }
-    [Parameter] public List<string> GenreList { get; set; }
+    [Parameter]
+    public string resultString { get; set; }
+
     
-    public string _genres;
+    private BsonArray genresBsonArray;
+    private List<string> GenreList = new List<string>();
+    private double ratingDouble;
+    private List<string> Pills;
+    private string type;
+    private string Title;
+    private int Rating;
+    private string _genres;
 
     protected override async Task OnInitializedAsync()
     {
-        _genres = this.GetGenreString();
+        BsonDocument result = BsonDocument.Parse(resultString);
+        //Round Rating
+        ratingDouble = result.GetValue("rating").AsDouble;
+        Rating = (int)Math.Round(ratingDouble);
+        
+        //Add type Pills
+        Pills = new List<string>();
+        type = result.GetValue("type").AsString;
+        Pills.Add(type);
+        
+        //Form Genre String
+        genresBsonArray = result.GetValue("genres").AsBsonArray;
+        //Add 
+        string[] genresArray = genresBsonArray.Select(x => x.AsString).ToArray();
+        foreach (string genre in genresArray)
+        {
+            if (Array.IndexOf(genresArray, genre) < 3)
+            {
+                GenreList.Add(genre);
+            }
+        }
+        _genres = GetGenreString();
+        
+        //Set Title
+        Title = result.GetValue("title").AsString;
     }
 
     public string GetGenreString()
