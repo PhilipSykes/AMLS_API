@@ -9,7 +9,7 @@ namespace Common.Database
 {
     public interface ISearchRepository
     {
-        Task<SearchResponse> Search(string documentType, (int, int)pagination ,List<Filter> filters);
+        Task<SearchResponse> Search(string documentType, (int, int)pagination ,List<Filter> filters = null);
     }
 
     public class SearchRepository : ISearchRepository

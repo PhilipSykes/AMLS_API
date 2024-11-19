@@ -23,7 +23,7 @@ namespace Api.Controllers;
             Console.WriteLine($"Received POST media search request with {filters.Count} filters");
             Console.WriteLine($"Received pagination settings: {pagination} page:{page} count:{count}");
 
-            var response = await _mediaSearchService.SearchMediaAsync(pagination, filters);
+            var response = await _mediaSearchService.SearchMedia(pagination, filters);
             
             if (!string.IsNullOrEmpty(response.Error))
             {
@@ -42,7 +42,7 @@ namespace Api.Controllers;
             Console.WriteLine("Received GET request for initial media content");
             Console.WriteLine($"Received pagination settings: {pagination} page:{page} count:{count}");
 
-            var response = await _mediaSearchService.GetInitialMediaAsync(pagination);
+            var response = await _mediaSearchService.GetInitialMedia(pagination);
             
             if (!string.IsNullOrEmpty(response.Error))
             {
