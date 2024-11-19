@@ -1,4 +1,6 @@
 using System.Text;
+using System.Text.Json;
+using Common.Configuration;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -6,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Common;
 
-public abstract class BaseMessageReceiver : BackgroundService
+public abstract class BaseMessageReceiver<TMessage> : BackgroundService
 {
     private readonly RabbitMQConfig _config;
     private readonly string[] _messageTypes;
@@ -45,8 +47,15 @@ public abstract class BaseMessageReceiver : BackgroundService
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             var messageType = ea.RoutingKey;
-
-            await HandleMessage(messageType, message);
+            try 
+            {
+                var typedMessage = JsonSerializer.Deserialize<TMessage>(message);
+                await HandleMessage(messageType, typedMessage);
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Failed to deserialize message: {ex.Message}");
+            }
         };
 
         await channel.BasicConsumeAsync(queueName, true, consumer);
@@ -60,7 +69,5 @@ public abstract class BaseMessageReceiver : BackgroundService
             Console.WriteLine("Service shutting down...");
         }
     }
-
-    // Abstract method that each service must implement
-    protected abstract Task HandleMessage(string messageType, string message);
+    protected abstract Task HandleMessage(string messageType, TMessage message);
 }

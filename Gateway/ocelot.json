@@ -43,9 +43,9 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/api/mediaSearch",
-      "UpstreamHttpMethod": [ "POST","GET" ],
-      "DownstreamPathTemplate": "/mediaSearch",
+      "UpstreamPathTemplate": "/api/media/{everything}",
+      "UpstreamHttpMethod": [ "POST", "GET" ],
+      "DownstreamPathTemplate": "/media/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [

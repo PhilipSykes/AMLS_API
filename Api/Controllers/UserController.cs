@@ -24,8 +24,8 @@ public class UserController : ControllerBase
         // TODO: Actual login logic here
         
         await _exchange.PublishNotification(
-            MessageTypes.Notifications.Login, 
-            $"User {request.UserId} logged in");
+            MessageTypes.EmailNotifications.Login, 
+            request.EmailDetails);
         
         return Ok(new { message = "Login successful" });
     }

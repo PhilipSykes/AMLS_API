@@ -2,14 +2,6 @@ namespace Common.Constants;
 
 public static class MessageTypes 
 {
-    public static class Notifications
-    {
-        public const string Login = "login";
-        public const string Logout = "logout";
-        public const string PasswordReset = "password_reset";
-        public const string ProfileUpdate = "profile_update";
-    }
-
     public static class User
     {
         public const string Create = "user_create";
@@ -22,6 +14,15 @@ public static class MessageTypes
         public const string ProcessFine = "process_fine"; 
         public const string GetPurchases = "get_purchases";
         public const string GetHistory = "get_history";
+    }
+
+    public static class EmailNotifications
+    {
+        public const string BorrowMedia = "email_borrow_media";
+        public const string ReserveMedia = "email_reserve_media";
+        public const string Login = "email_login";
+        public const string PasswordReset = "email_password_reset";
+        public const string ProfileUpdate = "email_profile_update";
     }
 
     public static class Subscription 
