@@ -42,7 +42,7 @@
 
 @code
 {
-    [Parameter] public Action<List<Filter>> OnSubmitCallback { get; set; }
+    [Parameter] public EventCallback<List<Filter>> OnSubmitCallback { get; set; }
 
     private MediaSearchModel searchModel = new MediaSearchModel();
     private List<Filter> search = new List<Filter>();
@@ -351,10 +351,10 @@
     };
 
 
-    public void OnSubmit()
+    public async Task OnSubmit()
     {
         FormatSearchFilters(searchModel);
-        OnSubmitCallback?.Invoke(search);
+        await OnSubmitCallback.InvokeAsync(search);
     }
 
     private void OnInputGenreChange(ChangeEventArgs e)
@@ -392,12 +392,21 @@
     
     public void FormatSearchFilters(MediaSearchModel model)
     {
-        Filter titleFilter = new Filter("name",model.mediaTitle,'~');
-        search.Add(titleFilter);
+        search.Clear();
+        
+        Console.WriteLine("I am formatting filters");
+        if (!string.IsNullOrEmpty(model.mediaTitle))
+        {
+            Filter titleFilter = new Filter("title",model.mediaTitle,'~');
+            Console.WriteLine("titleFilter:"+titleFilter);
+            search.Add(titleFilter);
+        }
+        
 
         foreach (var genre in model.MediaGenres)
         {
-            Filter genreFilter = new Filter("genre", genre, '~');
+            Filter genreFilter = new Filter("genres", genre, '~');
+            Console.WriteLine("genreFilter key:"+genreFilter.Key+"genre value:"+genreFilter.Value+"operation"+genreFilter.Operation);
             search.Add(genreFilter);
         }
     }

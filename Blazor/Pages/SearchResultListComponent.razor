@@ -22,9 +22,9 @@
 @code
 {
     [Parameter]
-    public BsonDocument result { get; set; }
+    public string resultString { get; set; }
 
-
+    
     private BsonArray genresBsonArray;
     private List<string> GenreList = new List<string>();
     private double ratingDouble;
@@ -36,6 +36,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        BsonDocument result = BsonDocument.Parse(resultString);
         //Round Rating
         ratingDouble = result.GetValue("rating").AsDouble;
         Rating = (int)Math.Round(ratingDouble);
@@ -47,11 +48,14 @@
         
         //Form Genre String
         genresBsonArray = result.GetValue("genres").AsBsonArray;
-        //Add Genres
-        for (int i = 0; i < 3; i++)
+        //Add 
+        string[] genresArray = genresBsonArray.Select(x => x.AsString).ToArray();
+        foreach (string genre in genresArray)
         {
-            string genre = genresBsonArray[i].AsString;
-            GenreList.Add(genre);
+            if (Array.IndexOf(genresArray, genre) < 3)
+            {
+                GenreList.Add(genre);
+            }
         }
         _genres = GetGenreString();
         

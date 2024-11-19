@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers;
 
 [ApiController]
-[Route("weatherforecast")]
+[Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
     private readonly Exchange _exchange;

@@ -1,5 +1,5 @@
 
-namespace Common.Configuration;
+namespace Common;
 
 public class RabbitMQConfig
 {
@@ -8,6 +8,12 @@ public class RabbitMQConfig
     public string UserName { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
     public string ExchangeName { get; set; } = string.Empty;
-    
 }
+
+public class MongoDBConfig
+{
+    public string ConnectionString { get; set; } = string.Empty;
+    public string DatabaseName { get; set; } = string.Empty;
+}
+
 
