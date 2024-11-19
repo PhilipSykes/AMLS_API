@@ -16,10 +16,14 @@ namespace Api.Controllers;
         }
 
         [HttpPost]
-        public async Task<ActionResult<SearchResponse>> Search([FromBody] List<Filter> filters)
+        public async Task<ActionResult<SearchResponse>> Search([FromBody] List<Filter> filters, [FromQuery] int page, [FromQuery] int count)
         {
-            Console.WriteLine($"Received media search request with {filters.Count} filters");
-            var response = await _mediaSearchService.SearchMedia(filters);
+            // Todo - Check url contains the pagination data. Mostly not a problem unless someone calls directly
+            (int, int )pagination = ((page - 1) * count, count); 
+            Console.WriteLine($"Received POST media search request with {filters.Count} filters");
+            Console.WriteLine($"Received pagination settings: {pagination} page:{page} count:{count}");
+
+            var response = await _mediaSearchService.SearchMediaAsync(pagination, filters);
             
             if (!string.IsNullOrEmpty(response.Error))
             {
@@ -32,10 +36,13 @@ namespace Api.Controllers;
         }
 
         [HttpGet]
-        public async Task<ActionResult<SearchResponse>> GetInitialMediaPage()
+        public async Task<ActionResult<SearchResponse>> GetInitialMedia([FromQuery] int page, [FromQuery] int count)
         {
-            Console.WriteLine("Received request for initial media content");
-            var response = await _mediaSearchService.GetInitialMedia();
+            (int, int )pagination = ((page - 1) * count, count); 
+            Console.WriteLine("Received GET request for initial media content");
+            Console.WriteLine($"Received pagination settings: {pagination} page:{page} count:{count}");
+
+            var response = await _mediaSearchService.GetInitialMediaAsync(pagination);
             
             if (!string.IsNullOrEmpty(response.Error))
             {
