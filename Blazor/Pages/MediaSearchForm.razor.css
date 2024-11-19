@@ -2,26 +2,51 @@
     user-select: none;
     font-family: "Regular", sans-serif;
 }
-
-.genre {
+#sidebar{
+    width: 250px;
+    margin-right: 40px;
     display: flex;
-    flex-direction: row;
-    gap: 10px;
+    flex-direction: column;
 }
 
-.genre-lists {
+.label-input-pair{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.label-input-pair label{
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: capitalize;
+    color: #44403C;
+}
+
+.tag-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tag-lists {
     display: flex;
     flex-direction: row;
     gap: 7px;
+    flex-wrap: wrap;
 }
 
-.genre-wrap {
+.tag-wrap {
     white-space: nowrap;        
     overflow: hidden;           
     text-overflow: ellipsis;
 }
 
-.genre-suggestion {
+.tag-group-divider:not(:last-child){
+    padding-bottom: 10px;
+    border-bottom: 1px solid #D6D3D1;
+    margin-bottom: 5px;
+}
+
+.tag-suggestion {
     font-family: "Regular", sans-serif;
     font-size: 10px;
     font-weight: 600;
@@ -38,7 +63,7 @@
     text-transform: uppercase;
     max-width: 100px;
 }
-.selected-genre {
+.selected-tag {
     font-family: "Regular", sans-serif;
     font-size: 10px;
     font-weight: 600;
@@ -68,25 +93,102 @@
     color: #44403C;
     background: #FAFAF9;
     border: 1px solid #D6D3D1;
-    width: 200px;
-    transition: border-color 0.15s ease-in-out;
+    width: 250x;
+    transition: border-color 0.3s ease;
 }
 .text-field:focus{
-    border: 1px solid #44403C;
     outline: none;
-    
 }
 
 .search-container{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 20px;
+    padding: 10px;
+}
+@media (max-width: 868px) {
+    .search-container {
+        flex-direction: row;
+    }
+}
+@media (max-width: 560px) {
+    .search-container {
+        flex-direction: column;
+    }
 }
 
 .close-btn{
     width: 10px;
     height: 10px;
+    cursor: pointer;
     
 }
 
-/* TODO this CSS is really hacky*/
+.glow{
+    transition: box-shadow 0.3s ease;
+}
+.glow:focus{
+    animation: fade-in 0.3s forwards, rotating-glow 5s infinite linear;
+    animation-delay: 0s, 0.3s;
+    transition: box-shadow 0.3s ease;
+    border: 1px solid #FAFAF9;
+}
+.glow:not(:focus) {
+    animation: fade-out 0.3s forwards;
+}
+@keyframes fade-in {
+    0% {
+        box-shadow: none;
+    }
+    100% {
+        box-shadow: 0 0 4px 1px rgba(255, 182, 193, 0.8),
+        6px 0 8px 1px rgba(173, 216, 230, 0.8),
+        0 6px 8px 1px rgba(144, 238, 144, 0.8),
+        -6px 0 8px 1px rgba(255, 222, 173, 0.8);
+    }
+}
+
+@keyframes fade-out {
+    0% {
+        box-shadow: 0 0 4px 1px rgba(255, 182, 193, 0.8),
+        6px 0 8px 1px rgba(173, 216, 230, 0.8),
+        0 6px 8px 1px rgba(144, 238, 144, 0.8),
+        -6px 0 8px 1px rgba(255, 222, 173, 0.8);
+    }
+    100% {
+        box-shadow: none;
+    }
+}
+
+@keyframes rotating-glow {
+    0% {
+        box-shadow: 0 0 4px 1px rgba(255, 182, 193, 0.8),
+        6px 0 8px 1px rgba(173, 216, 230, 0.8),
+        0 6px 8px 1px rgba(144, 238, 144, 0.8),
+        -6px 0 8px 1px rgba(255, 222, 173, 0.8);
+    }
+    25% {
+        box-shadow: 6px 0 8px 1px rgba(255, 182, 193, 0.8),
+        0 6px 8px 1px rgba(173, 216, 230, 0.8),
+        -6px 0 8px 1px rgba(144, 238, 144, 0.8),
+        0 -6px 8px 1px rgba(255, 222, 173, 0.8);
+    }
+    50% {
+        box-shadow: 0 6px 8px 1px rgba(255, 182, 193, 0.8),
+        -6px 0 8px 1px rgba(173, 216, 230, 0.8),
+        0 -6px 8px 1px rgba(144, 238, 144, 0.8),
+        6px 0 8px 1px rgba(255, 222, 173, 0.8);
+    }
+    75% {
+        box-shadow: -6px 0 8px 1px rgba(255, 182, 193, 0.8),
+        0 -6px 8px 1px rgba(173, 216, 230, 0.8),
+        6px 0 8px 1px rgba(144, 238, 144, 0.8),
+        0 6px 8px 1px rgba(255, 222, 173, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 4px 1px rgba(255, 182, 193, 0.8),
+        6px 0 8px 1px rgba(173, 216, 230, 0.8),
+        0 6px 8px 1px rgba(144, 238, 144, 0.8),
+        -6px 0 8px 1px rgba(255, 222, 173, 0.8);
+    }
+}
