@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="NotificationService\Handlers\" />
       <Folder Include="UserService\Handlers\" />
     </ItemGroup>
 

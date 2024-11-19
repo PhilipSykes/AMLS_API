@@ -2,11 +2,12 @@ using Microsoft.Extensions.Options;
 using Common.Configuration;
 using Common.Constants;
 using Common;
-using Services.NotificationService.Handlers;
+using Common.Notification.Email;
 
 namespace Services.NotificationService;
-public class NotificationMessageReceiver : BaseMessageReceiver
+public class NotificationMessageReceiver : BaseMessageReceiver<Dictionary<string, string>>
 {
+    private readonly IEmailService _emailService;
     private static readonly string[] NotificationTypes =
     [
         MessageTypes.EmailNotifications.Login,
@@ -16,13 +17,33 @@ public class NotificationMessageReceiver : BaseMessageReceiver
         MessageTypes.EmailNotifications.ReserveMedia,
     ];
 
-    public NotificationMessageReceiver(IOptions<RabbitMQConfig> options) 
+    public NotificationMessageReceiver(IOptions<RabbitMQConfig> options, IEmailService emailService) 
         : base(options, NotificationTypes)
     {
+        _emailService = emailService;
     }
 
-    protected override async Task HandleMessage(string messageType, string message)
+    protected override async Task HandleMessage(string messageType, Dictionary<string, string> data)
     {
-        await NotificationHandler.HandleNotification(messageType, message);
+        switch (messageType)
+        {
+            case MessageTypes.EmailNotifications.Login:
+                //TODO create new login email 
+                break;
+            case MessageTypes.EmailNotifications.PasswordReset:
+                //TODO create password reset email 
+                break;
+            case MessageTypes.EmailNotifications.ProfileUpdate:
+                //TODO create profile update email 
+                break;
+            case MessageTypes.EmailNotifications.BorrowMedia:
+                //TODO create borrow media email 
+                break;
+            case MessageTypes.EmailNotifications.ReserveMedia:
+                await _emailService.SendReserveEmailAsync(data);
+                break;
+            
+        }
+        await Task.CompletedTask;
     }
 }

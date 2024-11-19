@@ -1,5 +1,6 @@
 using RabbitMQ.Client;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Common.Configuration;
 
@@ -33,10 +34,11 @@ public class Exchange(IOptions<RabbitMQConfig> options)
             Console.WriteLine("Published weather request");
         }
         
-        public async Task PublishNotification(string type, string message)
+        public async Task PublishNotification(string type, Dictionary<string,string> message)
             {
                 var channel = await _connection.CreateChannelAsync();
-                var body = Encoding.UTF8.GetBytes(message);
+                string serializedMessage = JsonSerializer.Serialize(message);
+                var body = Encoding.UTF8.GetBytes(serializedMessage);
                 await channel.BasicPublishAsync(_config.ExchangeName, type, body);
                 Console.WriteLine($"Published {type} notification: {message}");
             }
