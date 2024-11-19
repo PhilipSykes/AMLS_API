@@ -6,12 +6,12 @@
     <div class="search-container">
         <div>
             <label>Media Title</label>
-            <InputText DisplayName="Title"  @bind-Value="searchModel.mediaTitle"/>
+            <input type="text" class="text-field" @bind="searchModel.mediaTitle"/>
         </div>
 
         <div class="genre">
             <label>Genre</label>
-            <InputText DisplayName="" class="text-field" @bind-Value="activeGenre" @oninput="OnInputGenreChange"/>
+            <input type="text" class="text-field" @bind="activeGenre" @oninput="OnInputGenreChange"/>
             <div class="genre-lists">
                 @foreach(string genre in filteredGenreList)
                 {
