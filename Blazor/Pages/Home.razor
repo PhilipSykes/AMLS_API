@@ -4,22 +4,24 @@
 
 <PageTitle>Home</PageTitle>
 
-<MediaSearchForm OnSubmitCallback="MakeSearch" />
-@foreach (var doc in bsonDocs)
-{
-    <SearchResultListComponent resultString="@doc"></SearchResultListComponent>
-}
-
-@if (test)
-{
-    <div>@test</div>
-}
+<div id="responsive-layout">
+    <MediaSearchForm OnSubmitCallback="MakeSearch" />
+    <div id="search-results">
+        @foreach (var doc in bsonDocs)
+        {
+            <SearchResultListComponent resultString="@doc"></SearchResultListComponent>
+        }
+    </div>
+</div>
 
 
 @code {
+    
+    //TODO: do something to stop the glow fade-out on page load
+    
     private List<string> bsonDocs = new();
     private bool test = false;
-    (int, int) _pagination = (1, 5); // temp for testing
+    (int, int) _pagination = (1, 20); // temp for testing
 
     protected override async Task OnInitializedAsync()
     {
