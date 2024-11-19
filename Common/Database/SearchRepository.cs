@@ -9,7 +9,7 @@ namespace Common.Database
 {
     public interface ISearchRepository
     {
-        Task<SearchResponse> Search(List<Filter> filters, string documentType);
+        Task<SearchResponse> Search(string documentType, (int, int)pagination ,List<Filter> filters);
     }
 
     public class SearchRepository : ISearchRepository
@@ -24,18 +24,13 @@ namespace Common.Database
             _database = client.GetDatabase(config.DatabaseName);
             _filterBuilder = new BsonFilterBuilder();
         }
-//TODO: Will fix this
-        /*public async Task<SearchResponse> Search(string documentType,(int, int) pagination ,List<Filter> filters = null)
-        {
-            var collection = Database.GetCollection<BsonDocument>(documentType);
-            return await Search(collection,pagination, filters);
-        }*/
-        public async Task<SearchResponse> Search(List<Filter> filters, string documentType)
+
+        public async Task<SearchResponse> Search(string documentType, (int, int) pagination, List<Filter> filters = null)
         {
             var collection = _database.GetCollection<BsonDocument>(documentType);
             try
             {
-                List<BsonDocument> results = await collection.Find(_filterBuilder.BuildFilter(filters)).ToListAsync();
+                List<BsonDocument> results = await collection.Find(_filterBuilder.BuildFilter(filters)).Skip(pagination.Item1).Limit(pagination.Item2).ToListAsync();
                 List<string> jsonStrings = results.Select(doc => doc.ToJson()).ToList();
                 return new SearchResponse
                 {

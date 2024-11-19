@@ -23,10 +23,11 @@ namespace Services.SearchService
 
         public async Task<SearchResponse> SearchMediaAsync((int, int) pagination, List<Filter> filters)
         {
+            
             try
             {
                 Console.WriteLine($"Performing media search with {filters.Count} filters");
-                var response = await _searchRepository.Search(filters,DocumentTypes.MediaInfo);
+                var response = await _searchRepository.Search(DocumentTypes.MediaInfo, pagination, filters);
                 Console.WriteLine($"Search completed. Found {response.TotalCount} results");
         
                 return response; 
