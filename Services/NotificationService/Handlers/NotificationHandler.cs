@@ -1,3 +1,5 @@
+using Common.Constants;
+
 namespace Services.NotificationService.Handlers;
 
 public class NotificationHandler
@@ -6,18 +8,22 @@ public class NotificationHandler
     {
         switch (type)
         {
-            case "login":
+            case MessageTypes.EmailNotifications.Login:
                 Console.WriteLine($"New login: {message}");
                 break;
-            case "logout":
-                Console.WriteLine($"User logout: {message}");
-                break;
-            case "password_reset":
+            case MessageTypes.EmailNotifications.PasswordReset:
                 Console.WriteLine($"Password reset requested: {message}");
                 break;
-            case "profile_update":
+            case MessageTypes.EmailNotifications.ProfileUpdate:
                 Console.WriteLine($"Profile updated: {message}");
                 break;
+            case MessageTypes.EmailNotifications.BorrowMedia:
+                Console.WriteLine($"Profile updated: {message}");
+                break;
+            case MessageTypes.EmailNotifications.ReserveMedia:
+                Console.WriteLine($"Profile updated: {message}");
+                break;
+            
         }
         await Task.CompletedTask;
     }

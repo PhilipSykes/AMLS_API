@@ -9,10 +9,11 @@ public class NotificationMessageReceiver : BaseMessageReceiver
 {
     private static readonly string[] NotificationTypes =
     [
-        MessageTypes.Notifications.Login,
-        MessageTypes.Notifications.Logout,
-        MessageTypes.Notifications.PasswordReset,
-        MessageTypes.Notifications.ProfileUpdate
+        MessageTypes.EmailNotifications.Login,
+        MessageTypes.EmailNotifications.PasswordReset,
+        MessageTypes.EmailNotifications.ProfileUpdate,
+        MessageTypes.EmailNotifications.BorrowMedia,
+        MessageTypes.EmailNotifications.ReserveMedia,
     ];
 
     public NotificationMessageReceiver(IOptions<RabbitMQConfig> options) 

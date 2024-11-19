@@ -61,7 +61,5 @@ public abstract class BaseMessageReceiver : BackgroundService
             Console.WriteLine("Service shutting down...");
         }
     }
-
-    // Abstract method that each service must implement
     protected abstract Task HandleMessage(string messageType, string message);
 }
