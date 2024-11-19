@@ -9,14 +9,14 @@ namespace Api.Controllers;
     public class MediaSearchController : ControllerBase 
     {
         private readonly IMediaSearchService _mediaSearchService;
-        
+
         public MediaSearchController(IMediaSearchService mediaSearchService)
         {
             _mediaSearchService = mediaSearchService;
         }
 
         [HttpPost]
-        public async Task<ActionResult<SearchResponse>> Search([FromBody] List<Filter> filters, [FromQuery] int page, [FromQuery] int count)
+        public async Task<ActionResult<SearchResponse>> Search([FromBody] List<Filter> filters)
         {
             // Todo - Check url contains the pagination data. Mostly not a problem unless someone calls directly
             (int, int )pagination = ((page - 1) * count, count); 

@@ -1,5 +1,6 @@
 *{
     user-select: none;
+    font-family: "Regular", sans-serif;
 }
 
 .genre {
@@ -51,11 +52,21 @@
 
 
 .text-field{
-    border-radius: 50rem; 
-    padding: 0.5rem 1rem;
-    border: 1px solid #ced4da;
-    width: 100%;
+    margin: 0;
+    padding-inline: 7px;
+    padding-block: 3px;
+    border-radius: 100px;
+
+    color: #44403C;
+    background: #FAFAF9;
+    border: 1px solid #D6D3D1;
+    width: 200px;
     transition: border-color 0.15s ease-in-out;
+}
+.text-field:focus{
+    border: 1px solid #44403C;
+    outline: none;
+    
 }
 
 .search-container{

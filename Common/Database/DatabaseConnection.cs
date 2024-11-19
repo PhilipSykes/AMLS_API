@@ -4,6 +4,11 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 namespace Common.Database
 {
+    public interface IDatabaseConnection
+    {
+        IMongoDatabase Database { get; }
+        Task<bool> HealthCheckAsync();
+    }
     public class DatabaseConnection : IDatabaseConnection
     {
         private readonly MongoClient _connection;
