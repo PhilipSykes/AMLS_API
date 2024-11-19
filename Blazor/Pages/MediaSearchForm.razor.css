@@ -15,6 +15,12 @@
     gap: 7px;
 }
 
+.genre-wrap {
+    white-space: nowrap;        
+    overflow: hidden;           
+    text-overflow: ellipsis;
+}
+
 .genre-suggestion {
     font-family: "Regular", sans-serif;
     font-size: 10px;
@@ -30,6 +36,7 @@
     display: flex;
     align-items: center;
     text-transform: uppercase;
+    max-width: 100px;
 }
 .selected-genre {
     font-family: "Regular", sans-serif;
@@ -48,6 +55,7 @@
     gap: 3px;
     align-items: center;
     text-transform: uppercase;
+    max-width: 80px;
 }
 
 
