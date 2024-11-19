@@ -1,0 +1,17 @@
+#responsive-layout {
+    display: flex;
+    flex-direction: row;
+}
+
+@media (max-width: 868px) {
+    #responsive-layout {
+        flex-direction: column;
+    }
+}
+
+#search-reset {
+    height: 100vh;
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+}
