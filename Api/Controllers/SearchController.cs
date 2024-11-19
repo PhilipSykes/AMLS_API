@@ -19,7 +19,7 @@ namespace Api.Controllers;
         public async Task<ActionResult<SearchResponse>> Search([FromBody] List<Filter> filters)
         {
             Console.WriteLine($"Received media search request with {filters.Count} filters");
-            var response = await _mediaSearchService.SearchMediaAsync(filters);
+            var response = await _mediaSearchService.SearchMedia(filters);
             
             if (!string.IsNullOrEmpty(response.Error))
             {
@@ -32,10 +32,10 @@ namespace Api.Controllers;
         }
 
         [HttpGet]
-        public async Task<ActionResult<SearchResponse>> GetInitialMedia()
+        public async Task<ActionResult<SearchResponse>> GetInitialMediaPage()
         {
             Console.WriteLine("Received request for initial media content");
-            var response = await _mediaSearchService.GetInitialMediaAsync();
+            var response = await _mediaSearchService.GetInitialMedia();
             
             if (!string.IsNullOrEmpty(response.Error))
             {

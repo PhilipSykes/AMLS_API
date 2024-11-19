@@ -8,8 +8,8 @@ namespace Services.SearchService
 {
     public interface IMediaSearchService
     {
-        Task<SearchResponse> SearchMediaAsync(List<Filter> filters);
-        Task<SearchResponse> GetInitialMediaAsync(); 
+        Task<SearchResponse> SearchMedia(List<Filter> filters);
+        Task<SearchResponse> GetInitialMedia(); 
     }
 
     public class MediaSearchService : IMediaSearchService 
@@ -21,48 +21,20 @@ namespace Services.SearchService
             _searchRepository = searchRepository;
         }
 
-        public async Task<SearchResponse> SearchMediaAsync(List<Filter> filters)
+        public async Task<SearchResponse> SearchMedia(List<Filter> filters)
         {
-            try
-            {
                 Console.WriteLine($"Performing media search with {filters.Count} filters");
                 var response = await _searchRepository.Search(filters,DocumentTypes.MediaInfo);
                 Console.WriteLine($"Search completed. Found {response.TotalCount} results");
-        
                 return response; 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error performing media search: {ex.Message}");
-                return new SearchResponse 
-                { 
-                    Error = $"Failed to perform search: {ex.Message}",
-                    Results = new List<string>(),
-                    TotalCount = 0
-                };
-            }
         }
 
-        public async Task<SearchResponse> GetInitialMediaAsync()
+        public async Task<SearchResponse> GetInitialMedia()
         {
-            try
-            {
                 Console.WriteLine("Fetching initial media results");
                 var response = await _searchRepository.Search(new List<Filter>(),DocumentTypes.MediaInfo);
                 Console.WriteLine($"Initial fetch completed. Found {response.TotalCount} results");
-        
                 return response; 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error fetching initial results: {ex.Message}");
-                return new SearchResponse
-                {
-                    Error = $"Failed to fetch initial results: {ex.Message}",
-                    Results = new List<string>(),
-                    TotalCount = 0
-                };
-            }
         }
     }
 }
