@@ -1,5 +1,8 @@
+/*TODO: Move all colour references to global CSS variables*/
+
 body{
     background-color: #FAFAF9;
+    margin: 0;
 }
 #blazor-error-ui {
     background: lightyellow;
