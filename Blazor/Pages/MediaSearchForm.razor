@@ -19,7 +19,7 @@
                         {
                             @if (FilteredGenreList.IndexOf(genre) < 5)
                             {
-                                <div class="tag-suggestion" @onclick="() => AddTag(genre)" title="@genre">
+                                <div class="tag-suggestion tag-hover" @onclick="() => AddTag(genre)" title="@genre">
                                     <div class="tag-wrap">
                                         @genre
                                     </div>
@@ -36,7 +36,7 @@
                     @foreach (string selectedGenre in _searchModel.MediaGenres)
                     {
 
-                        <div class="selected-tag">
+                        <div class="selected-tag tag-hover">
                             <div title="@selectedGenre" class="selected-tag-title tag-wrap">
                                 @selectedGenre
                             </div>
