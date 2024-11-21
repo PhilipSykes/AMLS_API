@@ -1,5 +1,8 @@
+/*TODO: Move all colour references to global CSS variables*/
+
 body{
     background-color: #FAFAF9;
+    margin: 0;
 }
 #blazor-error-ui {
     background: lightyellow;
@@ -65,4 +68,18 @@ body{
 
 code {
     color: #c02d76;
+}
+
+.validation-errors{
+    padding: 0;
+    padding-left: 3px;
+    margin-top: 7px;
+}
+.validation-message {
+    font-family: "Regular", sans-serif;
+    color: #44403C;
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: capitalize;
+    list-style-type: none;
 }

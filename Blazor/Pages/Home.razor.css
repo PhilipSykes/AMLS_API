@@ -1,6 +1,7 @@
 #responsive-layout {
     display: flex;
     flex-direction: row;
+    height: 100vh;
 }
 
 @media (max-width: 868px) {
@@ -9,8 +10,9 @@
     }
 }
 
-#search-reset {
+#search-results {
     height: 100vh;
+    width: 100%;
     overflow: scroll;
     display: flex;
     flex-direction: column;
