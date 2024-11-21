@@ -25,9 +25,9 @@ public class UserController : ControllerBase
         //Console.WriteLine($"Login request for user: {request.Data.Username}");
         
         
-        var response = await _userSearchService.GetUserCredentials(request.SearchFilters);
+        var response = await _userSearchService.GetLoginCredentials(request.SearchFilters);
             
-        Console.WriteLine(response.Results);
+        //Console.WriteLine(response.Results);
         if (!string.IsNullOrEmpty(response.Error))
         {
             Console.WriteLine($"User credentials not found: {response.Error}");

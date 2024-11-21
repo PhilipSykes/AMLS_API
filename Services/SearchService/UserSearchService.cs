@@ -1,14 +1,15 @@
 using Common.Constants;
 using Common.Database;
 using Common.Models;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 
 namespace Services.SearchService;
 
 public interface IUserSearchService
 {
-    Task<SearchResponse> GetInitialUsers((int, int) pagination, List<Filter> filters);
-    Task<SearchResponse> SearchUsers((int, int) pagination, List<Filter> filters);
-    Task<SearchResponse> GetUserCredentials(List<Filter> filters); 
+    Task<Operations.Response<List<Entities.Members>>> SearchUsers((int, int) pagination, List<Filter> filters);
+    Task<Operations.Response<List<Entities.Login>>> GetLoginCredentials(List<Filter> filters); 
 }
 
 public class UserSearchService : IUserSearchService
@@ -20,25 +21,32 @@ public class UserSearchService : IUserSearchService
         _searchRepository = searchRepository;
     }
 
-    public async Task<SearchResponse> GetUserCredentials(List<Filter> filters)
+    public async Task<Operations.Response<List<Entities.Login>>> GetLoginCredentials(List<Filter> filters)
     {
-        var response = await _searchRepository.Search(DocumentTypes.Login, filters);
-        return response;
+        List<BsonDocument> bsonDocuments = await _searchRepository.Search(DocumentTypes.Login, filters);
+        
+        List<Entities.Login> loginCredentials =  await _searchRepository.ConvertBsonToEntity<Entities.Login>(bsonDocuments);
+        
+        return new Operations.Response<List<Entities.Login>>
+        {
+            Success = true,
+            Data = loginCredentials
+        };
     }
 
-    public async Task<SearchResponse> SearchUsers((int, int) pagination, List<Filter> filters)
+    public async Task<Operations.Response<List<Entities.Members>>> SearchUsers((int, int) pagination, List<Filter> filters)
     {
         Console.WriteLine($"Performing user search with {filters.Count} filters");
-        var response = await _searchRepository.Search(DocumentTypes.Login, pagination, filters);
-        Console.WriteLine($"Search completed. Found {response.TotalCount} results");
-        return response;
-    }
+        List<BsonDocument> bsonDocuments = await _searchRepository.Search(DocumentTypes.Members, pagination, filters);
+        
+        List<Entities.Members> users =  await _searchRepository.ConvertBsonToEntity<Entities.Members>(bsonDocuments);
 
-    public async Task<SearchResponse> GetInitialUsers((int, int) pagination, List<Filter> filters)
-    {
-        Console.WriteLine("Fetching initial user results");
-        var response = await _searchRepository.Search(DocumentTypes.Login, pagination);
-        Console.WriteLine($"Initial fetch completed. Found {response.TotalCount} results");
-        return response; 
+        Console.WriteLine($"Search completed. Found {users.Count} results");
+        return new Operations.Response<List<Entities.Members>>
+        {
+            Success = true,
+            Data = users
+        };
     }
+    
 }
