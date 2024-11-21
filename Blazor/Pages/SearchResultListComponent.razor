@@ -52,10 +52,7 @@
         string[] genresArray = genresBsonArray.Select(x => x.AsString).ToArray();
         foreach (string genre in genresArray)
         {
-            if (Array.IndexOf(genresArray, genre) < 3)
-            {
-                GenreList.Add(genre);
-            }
+            GenreList.Add(genre);
         }
         _genres = GetGenreString();
         
@@ -65,6 +62,6 @@
 
     public string GetGenreString()
     {
-        return string.Join(" • ", GenreList);
+        return string.Join(" • ", GenreList.Take(3));
     }
 }
