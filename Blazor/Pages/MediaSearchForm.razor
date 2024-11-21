@@ -104,7 +104,7 @@
         Console.WriteLine("I am formatting filters");
         if (!string.IsNullOrEmpty(model.MediaTitle))
         {
-            var titleFilter = new Filter("title",model.MediaTitle,'~');
+            var titleFilter = new Filter("title",model.MediaTitle,DbOperations.Contains);
             Console.WriteLine("titleFilter:"+titleFilter);
             _search.Add(titleFilter);
         }
@@ -112,7 +112,7 @@
 
         foreach (var genre in model.MediaGenres)
         {
-            var genreFilter = new Filter("genres", genre, '~');
+            var genreFilter = new Filter("genres", genre, DbOperations.Contains);
             Console.WriteLine("genreFilter key:"+genreFilter.Key+"genre value:"+genreFilter.Value+"operation"+genreFilter.Operation);
             _search.Add(genreFilter);
         }

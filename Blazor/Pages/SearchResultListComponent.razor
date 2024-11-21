@@ -8,6 +8,15 @@
         {
             <div class="pill">@pill</div>
         }
+        @if (IsAvailable)
+        {
+            <div class="pill available">Available Near You</div>
+        }
+        else
+        {
+            <div class="pill unavailable">Not Available Near You</div>
+        }
+        
     </div>
     <div id="search-star-rating">
         @for (int i = 1; i <= 5; i++)
@@ -23,6 +32,8 @@
 {
     [Parameter]
     public string resultString { get; set; }
+    [Parameter]
+    public bool IsAvailable { get; set; }
 
     
     private BsonArray genresBsonArray;

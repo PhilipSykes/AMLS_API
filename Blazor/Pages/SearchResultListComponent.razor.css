@@ -41,6 +41,14 @@ h3{
     color: #44403C;
     text-transform: uppercase;
 }
+.pill.available{
+    background-color: #BBF7D0;
+    color: #15803D;
+}
+.pill.unavailable{
+    background-color: #FECDD3;
+    color: #BE123C;
+}
 
 #search-genres{
     display: flex;
