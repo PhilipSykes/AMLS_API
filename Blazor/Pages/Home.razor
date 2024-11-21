@@ -9,14 +9,15 @@
     <div id="search-results">
         @foreach (var doc in bsonDocs)
         {
-            <SearchResultListComponent resultString="@doc"></SearchResultListComponent>
+            <SearchResultListComponent resultString="@doc" IsAvailable="@available"></SearchResultListComponent>
         }
     </div>
 </div>
 
 
 @code {
-    
+
+    bool available = true;
     //TODO: do something to stop the glow fade-out on page load
     
     private List<string> bsonDocs = new();
