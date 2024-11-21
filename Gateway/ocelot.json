@@ -54,19 +54,6 @@
           "Port": 5001
         }
       ]
-    },
-    {
-      "UpstreamPathTemplate": "/api/mediaSearch/{everything}",
-      "UpstreamHttpMethod": [ "POST", "GET" ],
-      "DownstreamPathTemplate": "/mediaSearch/{everything}",
-      "DownstreamScheme": "https",
-      "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ]
     }
   ]
 }
