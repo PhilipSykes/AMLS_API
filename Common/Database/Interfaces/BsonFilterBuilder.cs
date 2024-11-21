@@ -1,20 +1,13 @@
 using Common.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Common.Constants;
 
 namespace Common.Database.Interfaces;
 
 public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
 {
-    private enum Operations
-    {
-        Equals = '=',
-        NotEquals = '!',
-        GreaterThan = '>',
-        LessThan = '<',
-        Contains = '~'
-    }
-
+  
     public FilterDefinition<BsonDocument> BuildFilter(List<Filter> filterObjectsIn)
     {
         var builder = Builders<BsonDocument>.Filter;
@@ -31,19 +24,19 @@ public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
         {
             switch (filterObject.Operation)
             {
-                case (char)Operations.Equals:
+                case DbOperations.Equals:
                     mongoFilters &= builder.Eq(filterObject.Key, filterObject.Value);
                     break;
-                case (char)Operations.GreaterThan:
+                case DbOperations.GreaterThan:
                     mongoFilters &= builder.Gt(filterObject.Key, filterObject.Value);
                     break;
-                case (char)Operations.LessThan:
+                case DbOperations.LessThan:
                     mongoFilters &= builder.Lt(filterObject.Key, filterObject.Value);
                     break;
-                case (char)Operations.NotEquals:
+                case DbOperations.NotEquals:
                     mongoFilters &= builder.Not(builder.Eq(filterObject.Key, filterObject.Value));
                     break;
-                case (char)Operations.Contains:
+                case DbOperations.Contains:
                     if (filterObject.Value is string) // This is a temp hack, fix properly later
                     {
                         mongoFilters &= builder.Regex(filterObject.Key, new BsonRegularExpression($".*{filterObject.Value}.*", "i")); 

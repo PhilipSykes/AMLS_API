@@ -1,5 +1,6 @@
 
 
+using Common.Constants;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 
@@ -31,9 +32,9 @@ namespace Common.Models
     {
         public string Key { get; set; }
         public string Value { get; set; }
-        public char Operation { get; set; }
+        public DbOperations Operation { get; set; }
 
-        public Filter(string key, string value, char operation)
+        public Filter(string key, string value, DbOperations operation)
         {
             Key = key;
             Value = value;
