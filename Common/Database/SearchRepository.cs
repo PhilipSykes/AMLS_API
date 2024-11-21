@@ -10,6 +10,7 @@ namespace Common.Database
     public interface ISearchRepository
     {
         Task<SearchResponse> Search(string documentType, (int, int)pagination ,List<Filter> filters = null);
+        Task<SearchResponse> Search(string documentType,List<Filter> filters = null);
     }
 
     public class SearchRepository : ISearchRepository
@@ -31,6 +32,31 @@ namespace Common.Database
             try
             {
                 List<BsonDocument> results = await collection.Find(_filterBuilder.BuildFilter(filters)).Skip(pagination.Item1).Limit(pagination.Item2).ToListAsync();
+                List<string> jsonStrings = results.Select(doc => doc.ToJson()).ToList();
+                return new SearchResponse
+                {
+                    Results = jsonStrings,
+                    TotalCount = results.Count
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"{documentType} Search error: {ex.Message}");
+                return new SearchResponse
+                {
+                    Results = new List<string>(),
+                    Error = "Failed to perform search"
+                };
+            }
+
+        }
+        
+        public async Task<SearchResponse> Search(string documentType, List<Filter> filters = null)
+        {
+            var collection = _database.GetCollection<BsonDocument>(documentType);
+            try
+            {
+                List<BsonDocument> results = await collection.Find(_filterBuilder.BuildFilter(filters)).ToListAsync();
                 List<string> jsonStrings = results.Select(doc => doc.ToJson()).ToList();
                 return new SearchResponse
                 {

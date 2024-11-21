@@ -1,15 +1,21 @@
-
-
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 
 namespace Common.Models
 {
+//TODO Refactor 
     public class EmailDetails
     {
         public string UserId { get; init; } = string.Empty;
         public List<string> RecipientAddresses { get; init; } = new List<string>();
         public Dictionary<string,string> EmailBody { get; init; } = new Dictionary<string, string>();
+    }
+
+    public class User
+    {
+        public string Id { get; init; } = string.Empty;
+        public string Email { get; init; } = string.Empty;
+        public string PasswordHash { get; init; } = string.Empty;
     }
     
     public class ReserveRequest
@@ -18,8 +24,6 @@ namespace Common.Models
         public string UserId { get; init; } = string.Empty;
         public EmailDetails EmailDetails { get; init; } = new EmailDetails();
     }
-
-
     public class LoginRequest
     {
         public string UserId { get; init; } = string.Empty;

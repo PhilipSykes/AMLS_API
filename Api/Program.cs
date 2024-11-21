@@ -30,6 +30,7 @@ builder.Services.AddScoped<ISearchRepository, SearchRepository>();
 
 // Register Application Services
 builder.Services.AddScoped<IMediaSearchService, MediaSearchService>();
+builder.Services.AddScoped<IUserSearchService, UserSearchService>();
 
 builder.Services.AddLogging(logging =>
 {
