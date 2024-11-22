@@ -1,4 +1,4 @@
-namespace Common.Utils;
+namespace Api;
 
 public class CookieService
 {
