@@ -17,22 +17,9 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/api/user/login",
-      "UpstreamHttpMethod": [ "POST" ],
-      "DownstreamPathTemplate": "/user/login",
-      "DownstreamScheme": "https",
-      "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ]
-    },
-    {
-      "UpstreamPathTemplate": "/api/user",
+      "UpstreamPathTemplate": "/api/user/{everything}",
       "UpstreamHttpMethod": [ "POST", "GET" ],
-      "DownstreamPathTemplate": "/user",
+      "DownstreamPathTemplate": "/user/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [

@@ -1,18 +1,17 @@
 using Common.Constants;
 using Common.Database;
-using Common.Database.Interfaces;
 using Common.Models;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 
 namespace Services.SearchService
 {
     public interface IMediaSearchService
     {
-        Task<SearchResponse> SearchMedia((int, int) pagination, List<Filter> filters);
-        Task<SearchResponse> GetInitialMedia((int, int) pagination); 
+        Task<Operations.Response<List<Entities.MediaInfo>>> SearchMedia((int, int) pagination, List<Filter> filters);
     }
 
-    public class MediaSearchService : IMediaSearchService 
+    public class MediaSearchService : IMediaSearchService
     {
         private readonly ISearchRepository _searchRepository;
 
@@ -21,20 +20,20 @@ namespace Services.SearchService
             _searchRepository = searchRepository;
         }
 
-        public async Task<SearchResponse> SearchMedia((int, int) pagination, List<Filter> filters)
+        public async Task<Operations.Response<List<Entities.MediaInfo>>> SearchMedia((int, int) pagination,
+            List<Filter> filters)
         {
-                Console.WriteLine($"Performing media search with {filters.Count} filters");
-                var response = await _searchRepository.Search(DocumentTypes.MediaInfo, pagination, filters);
-                Console.WriteLine($"Search completed. Found {response.TotalCount} results");
-                return response; 
-        }
+            //Console.WriteLine($"Performing media search with {filters.Count} filters");
+            List<BsonDocument> bsonDocuments = await _searchRepository.Search(DocumentTypes.MediaInfo, pagination, filters);
+            
+            List<Entities.MediaInfo> mediaInfoList = await _searchRepository.ConvertBsonToEntity<Entities.MediaInfo>(bsonDocuments);
 
-        public async Task<SearchResponse> GetInitialMedia((int, int) pagination)
-        {
-                Console.WriteLine("Fetching initial media results");
-                var response = await _searchRepository.Search(DocumentTypes.MediaInfo, pagination);
-                Console.WriteLine($"Initial fetch completed. Found {response.TotalCount} results");
-                return response; 
+            Console.WriteLine($"Search completed. Found {mediaInfoList.Count} results");
+            return new Operations.Response<List<Entities.MediaInfo>>
+            {
+                Success = true,
+                Data = mediaInfoList
+            };
         }
     }
 }

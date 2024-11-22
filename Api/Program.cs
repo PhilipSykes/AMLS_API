@@ -24,12 +24,16 @@ builder.Services.AddSingleton<Exchange>();
 builder.Services.Configure<MongoDBConfig>(
     builder.Configuration.GetSection("MongoDB"));
 
+
+builder.Services.AddHttpContextAccessor();
+
 // Register Database Services
 builder.Services.AddScoped<IDatabaseConnection, DatabaseConnection>();
 builder.Services.AddScoped<ISearchRepository, SearchRepository>();
 
 // Register Application Services
 builder.Services.AddScoped<IMediaSearchService, MediaSearchService>();
+builder.Services.AddScoped<IUserSearchService, UserSearchService>();
 
 builder.Services.AddLogging(logging =>
 {
@@ -39,6 +43,10 @@ builder.Services.AddLogging(logging =>
 
 var app = builder.Build();
 
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Strict
+});
 
 app.UseRouting();
 app.UseHttpsRedirection();

@@ -7,9 +7,9 @@
 <div id="responsive-layout">
     <MediaSearchForm OnSubmitCallback="MakeSearch" />
     <div id="search-results">
-        @foreach (var doc in bsonDocs)
+        @foreach (var media in mediaResults)
         {
-            <SearchResultListComponent resultString="@doc" IsAvailable="@available"></SearchResultListComponent>
+            <SearchResultListComponent Media="@media" IsAvailable="@available"></SearchResultListComponent>
         }
     </div>
 </div>
@@ -20,7 +20,7 @@
     bool available = true;
     //TODO: do something to stop the glow fade-out on page load
     
-    private List<string> bsonDocs = new();
+    private List<Entities.MediaInfo> mediaResults = new();
     private bool test = false;
     (int, int) _pagination = (1, 20); // temp for testing
 
@@ -31,10 +31,10 @@
 
     private async Task GetMedia()
     {
-        var response = await HttpClient.GetFromJsonAsync<SearchResponse>($"api/media/?page={_pagination.Item1}&count={_pagination.Item2}");
-        if (response != null && response.Results != null)
+        var response = await HttpClient.GetFromJsonAsync<Operations.Response<List<Entities.MediaInfo>>>($"api/media/?page={_pagination.Item1}&count={_pagination.Item2}");
+        if (response?.Success == true && response.Data != null)
         {
-            bsonDocs = response.Results;
+            mediaResults = response.Data;
         }
     }
 
@@ -43,17 +43,17 @@
         var response = await HttpClient.PostAsJsonAsync($"api/media/search?page={_pagination.Item1}&count={_pagination.Item2}", filters);
         if (response.IsSuccessStatusCode)
         {
-            var searchResponse = await response.Content.ReadFromJsonAsync<SearchResponse>();
+            var searchResponse = await response.Content.ReadFromJsonAsync<Operations.Response<List<Entities.MediaInfo>>>();
             if (searchResponse != null)
             {
-                bsonDocs = searchResponse.Results;
+                mediaResults = searchResponse.Data;
             }
         }
         StateHasChanged();
     }
     private async Task MakeSearch(List<Filter> filters)
     {
-        bsonDocs.Clear();
+        mediaResults.Clear();
         await GetSearchResults(filters);
     }
 }

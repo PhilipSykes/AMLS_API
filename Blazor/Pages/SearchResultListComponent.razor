@@ -2,12 +2,9 @@
 @using MongoDB.Bson
 @using Wasm
 <div id="search-card">
-    <h3 id="search-media-title">@Title</h3>
+    <h3 id="search-media-title">@Media.Title</h3>
     <div id="search-pill-container">
-        @foreach (string pill in Pills)
-        {
-            <div class="pill">@pill</div>
-        }
+        <div class="pill">@Media.Type</div>
         @if (IsAvailable)
         {
             <div class="pill available">Available Near You</div>
@@ -16,7 +13,7 @@
         {
             <div class="pill unavailable">Not Available Near You</div>
         }
-        
+
     </div>
     <div id="search-star-rating">
         @for (int i = 1; i <= 5; i++)
@@ -31,48 +28,13 @@
 @code
 {
     [Parameter]
-    public string resultString { get; set; }
+    public Entities.MediaInfo Media { get; set; } = new();
     [Parameter]
     public bool IsAvailable { get; set; }
 
-    
-    private BsonArray genresBsonArray;
-    private List<string> GenreList = new List<string>();
-    private double ratingDouble;
     private List<string> Pills;
-    private string type;
-    private string Title;
-    private int Rating;
-    private string _genres;
+    private int Rating => (int)Math.Round(Media.Rating);
+    private string _genres => string.Join(" • ", Media.Genres.Take(3));
 
-    protected override async Task OnInitializedAsync()
-    {
-        BsonDocument result = BsonDocument.Parse(resultString);
-        //Round Rating
-        ratingDouble = result.GetValue("rating").AsDouble;
-        Rating = (int)Math.Round(ratingDouble);
-        
-        //Add type Pills
-        Pills = new List<string>();
-        type = result.GetValue("type").AsString;
-        Pills.Add(type);
-        
-        //Form Genre String
-        genresBsonArray = result.GetValue("genres").AsBsonArray;
-        //Add 
-        string[] genresArray = genresBsonArray.Select(x => x.AsString).ToArray();
-        foreach (string genre in genresArray)
-        {
-            GenreList.Add(genre);
-        }
-        _genres = GetGenreString();
-        
-        //Set Title
-        Title = result.GetValue("title").AsString;
-    }
 
-    public string GetGenreString()
-    {
-        return string.Join(" • ", GenreList.Take(3));
-    }
 }
