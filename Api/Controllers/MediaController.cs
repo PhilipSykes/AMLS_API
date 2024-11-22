@@ -27,7 +27,7 @@ public class MediaController : ControllerBase
         Console.WriteLine("Received GET request for initial media content");
         Console.WriteLine($"Received pagination settings: {pagination} page:{page} count:{count}");
 
-        var response = await _mediaSearchService.SearchMedia(pagination,filters: null);
+        Operations.Response<List<Entities.MediaInfo>> response = await _mediaSearchService.SearchMedia(pagination,filters: null);
             
         if (!string.IsNullOrEmpty(response.Error))
         {
@@ -47,7 +47,7 @@ public class MediaController : ControllerBase
         Console.WriteLine($"Received POST media search request with {filters.Count} filters");
         Console.WriteLine($"Received pagination settings: {pagination} page:{page} count:{count}");
 
-        var response = await _mediaSearchService.SearchMedia(pagination, filters);
+        Operations.Response<List<Entities.MediaInfo>> response = await _mediaSearchService.SearchMedia(pagination, filters);
             
         if (!string.IsNullOrEmpty(response.Error))
         {

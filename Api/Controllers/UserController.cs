@@ -49,4 +49,21 @@ public class UserController : ControllerBase
         // cookieService.SetUserCookie(HttpContext, response.Data[0].User.ToString());
         return Ok(new { message = "Login successful",response.Data[0].User});
     }
+
+    public async Task HashAllPasswords()
+    {
+        var response = await _userSearchService.GetLoginCredentials(null);
+ 
+        var passwordService = new PasswordService();
+        var updatedLogins = response.Data.Select(login => new Entities.Login
+        {
+            ObjectID = login.ObjectID,
+            User = login.User,
+            Email = login.Email,
+            PasswordHash = passwordService.HashPassword(login.PasswordHash),
+            Role = login.Role
+        }).ToList();
+
+        //TODO write method needed UpdateLoginCredentials(updatedLogins);
+    }
 }
