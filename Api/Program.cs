@@ -3,7 +3,8 @@ using Api.MessageBroker;
 using Common;
 using Common.Database;
 using Common.Database.Interfaces;
-using Services.SearchService;
+using Services.MediaService;
+using Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,8 +33,8 @@ builder.Services.AddScoped<IDatabaseConnection, DatabaseConnection>();
 builder.Services.AddScoped<ISearchRepository, SearchRepository>();
 
 // Register Application Services
-builder.Services.AddScoped<IMediaSearchService, MediaSearchService>();
-builder.Services.AddScoped<IUserSearchService, UserSearchService>();
+builder.Services.AddScoped<IMediaSearch, MediaSearch>();
+builder.Services.AddScoped<IUserSearch, UserSearch>();
 
 builder.Services.AddLogging(logging =>
 {

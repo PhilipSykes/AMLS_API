@@ -1,6 +1,7 @@
 using Common.Constants;
 using Common.Models;
 using Common.Database.Interfaces;
+using Common.Exceptions;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -12,7 +13,6 @@ namespace Common.Database
     {
         Task<List<BsonDocument>> Search(string documentType, (int, int)pagination, List<Filter> filters = null);
         Task<List<BsonDocument>> Search(string documentType, List<Filter> filters = null);
-        Task<List<T>> ConvertBsonToEntity<T>(List<BsonDocument> bsonDocuments);
     }
 
     public class SearchRepository : ISearchRepository
@@ -28,42 +28,36 @@ namespace Common.Database
             _filterBuilder = new BsonFilterBuilder();
         }
 
-        public async Task<List<BsonDocument>> Search(string documentType, (int, int) pagination, List<Filter> filters = null)
+        public async Task<List<BsonDocument>> Search(string documentType, (int, int) pagination, List<Filter> filters)
         {
-            var collection = _database.GetCollection<BsonDocument>(documentType);
             try
             {
-                return await collection.Find(_filterBuilder.BuildFilter(filters)).Skip(pagination.Item1).Limit(pagination.Item2).ToListAsync();
+                var collection = _database.GetCollection<BsonDocument>(documentType);
+                
+                return await collection.Find(_filterBuilder.BuildFilter(filters))
+                    .Skip(pagination.Item1)
+                    .Limit(pagination.Item2)
+                    .ToListAsync();
             }
-            catch (Exception ex)
+            catch (MongoException) 
             {
-                Console.WriteLine($"{documentType} Search error: {ex.Message}");
-                throw;
+                throw new SearchException(SearchException.SearchErrorType.Database);
             }
-
         }
-        
+
         public async Task<List<BsonDocument>> Search(string documentType, List<Filter> filters = null)
         {
-            var collection = _database.GetCollection<BsonDocument>(documentType);
             try
             {
+                var collection = _database.GetCollection<BsonDocument>(documentType);
+
                 return await collection.Find(_filterBuilder.BuildFilter(filters)).ToListAsync();
             }
-            catch (Exception ex)
+            catch (MongoException)
             {
-                Console.WriteLine($"{documentType} Search error: {ex.Message}");
-                throw;
+                throw new SearchException(SearchException.SearchErrorType.Database);
             }
 
-        }
-
-        public async Task<List<T>> ConvertBsonToEntity<T>(List<BsonDocument> bsonDocuments)
-        {
-           List<T>entities  = bsonDocuments
-                .Select(doc => BsonSerializer.Deserialize<T>(doc))
-                .ToList();
-           return entities;
         }
     }
 }

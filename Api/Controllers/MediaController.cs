@@ -3,7 +3,7 @@ using Api.MessageBroker;
 using Common.Constants;
 using Common.Models;
 using Microsoft.AspNetCore.Mvc;
-using Services.SearchService;
+using Services.MediaService;
 
 namespace Api.Controllers;
 
@@ -12,12 +12,12 @@ namespace Api.Controllers;
 public class MediaController : ControllerBase
 {
     private readonly Exchange _exchange;
-    private readonly IMediaSearchService _mediaSearchService;
+    private readonly IMediaSearch _mediaSearch;
     
-    public MediaController(Exchange exchange,IMediaSearchService mediaSearchService)
+    public MediaController(Exchange exchange,IMediaSearch mediaSearch)
     {
         _exchange = exchange;
-        _mediaSearchService = mediaSearchService;
+        _mediaSearch = mediaSearch;
     }
     
     [HttpGet]
@@ -27,14 +27,8 @@ public class MediaController : ControllerBase
         Console.WriteLine("Received GET request for initial media content");
         Console.WriteLine($"Received pagination settings: {pagination} page:{page} count:{count}");
 
-        Operations.Response<List<Entities.MediaInfo>> response = await _mediaSearchService.SearchMedia(pagination,filters: null);
-            
-        if (!string.IsNullOrEmpty(response.Error))
-        {
-            Console.WriteLine($"Initial media fetch failed: {response.Error}");
-            return StatusCode(500, response);
-        }
-            
+        Operations.Response<List<Entities.MediaInfo>> response = await _mediaSearch.SearchMedia(pagination,filters: null);
+   
         Console.WriteLine("Initial media fetch completed successfully");
         return Ok(response);
     }
@@ -47,14 +41,8 @@ public class MediaController : ControllerBase
         Console.WriteLine($"Received POST media search request with {filters.Count} filters");
         Console.WriteLine($"Received pagination settings: {pagination} page:{page} count:{count}");
 
-        Operations.Response<List<Entities.MediaInfo>> response = await _mediaSearchService.SearchMedia(pagination, filters);
-            
-        if (!string.IsNullOrEmpty(response.Error))
-        {
-            Console.WriteLine($"Media search failed: {response.Error}");
-            return StatusCode(500, response);
-        }
-            
+        Operations.Response<List<Entities.MediaInfo>> response = await _mediaSearch.SearchMedia(pagination, filters);
+
         Console.WriteLine("Media search completed successfully");
         return Ok(response);
     }
