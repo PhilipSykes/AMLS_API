@@ -1,20 +1,13 @@
-using System.Text.Json.Serialization;
 using Api.MessageBroker;
 using Common;
 using Common.Database;
-using Common.Database.Interfaces;
 using Services.MediaService;
 using Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.PropertyNamingPolicy = null;
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    });
+builder.Services.AddControllers();
 
 // Add RabbitMQ configuration
 builder.Services.Configure<RabbitMQConfig>(
