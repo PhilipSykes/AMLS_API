@@ -13,8 +13,8 @@ public static class Operations
     public record Response<T>
     {
         public T? Data { get; init; }
-        public bool Success { get; init; }
-        public string? Error { get; init; }
+        public bool Success { get; set; }
+        public string? Error { get; set; }
     }
 
 }

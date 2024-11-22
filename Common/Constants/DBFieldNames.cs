@@ -12,7 +12,7 @@ namespace Common.Constants
         {
             public const string User = "user";
             public const string Email = "email";
-            public const string PasswordHash = "passwordHash";
+            public const string PasswordHash = "password";
             public const string Role = "role";
         }
 
@@ -46,8 +46,8 @@ namespace Common.Constants
             public const string FormatSpecificDetails = "formatSpecificDetails";
         }
 
-        // Members fields
-        public static class Members
+        // Users fields
+        public static class Users
         {
             public const string FirstName = "firstName";
             public const string LastName = "lastName";

@@ -8,7 +8,7 @@ namespace Services.SearchService;
 
 public interface IUserSearchService
 {
-    Task<Operations.Response<List<Entities.Members>>> SearchUsers((int, int) pagination, List<Filter> filters);
+    Task<Operations.Response<List<Entities.Users>>> SearchUsers((int, int) pagination, List<Filter> filters);
     Task<Operations.Response<List<Entities.Login>>> GetLoginCredentials(List<Filter> filters); 
 }
 
@@ -27,6 +27,16 @@ public class UserSearchService : IUserSearchService
         
         List<Entities.Login> loginCredentials =  await _searchRepository.ConvertBsonToEntity<Entities.Login>(bsonDocuments);
         
+        Console.WriteLine($"Search completed. Found {loginCredentials.Count} results");
+        if (loginCredentials.Count == 0)
+        {
+            return new Operations.Response<List<Entities.Login>>
+            {
+                Success = false,
+                Data = null,
+                Error = "User Credentials do not match any existing users."
+            };
+        }
         return new Operations.Response<List<Entities.Login>>
         {
             Success = true,
@@ -34,15 +44,24 @@ public class UserSearchService : IUserSearchService
         };
     }
 
-    public async Task<Operations.Response<List<Entities.Members>>> SearchUsers((int, int) pagination, List<Filter> filters)
+    public async Task<Operations.Response<List<Entities.Users>>> SearchUsers((int, int) pagination, List<Filter> filters)
     {
         Console.WriteLine($"Performing user search with {filters.Count} filters");
-        List<BsonDocument> bsonDocuments = await _searchRepository.Search(DocumentTypes.Members, pagination, filters);
+        List<BsonDocument> bsonDocuments = await _searchRepository.Search(DocumentTypes.Users, pagination, filters);
         
-        List<Entities.Members> users =  await _searchRepository.ConvertBsonToEntity<Entities.Members>(bsonDocuments);
+        List<Entities.Users> users =  await _searchRepository.ConvertBsonToEntity<Entities.Users>(bsonDocuments);
 
         Console.WriteLine($"Search completed. Found {users.Count} results");
-        return new Operations.Response<List<Entities.Members>>
+        if (users.Count == 0)
+        {
+            return new Operations.Response<List<Entities.Users>>
+            {
+                Success = false,
+                Data = null,
+                Error = "No users found"
+            };
+        }
+        return new Operations.Response<List<Entities.Users>>
         {
             Success = true,
             Data = users

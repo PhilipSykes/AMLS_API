@@ -92,38 +92,38 @@ namespace Common.Models
             public Dictionary<string, string> FormatSpecificDetails { get; init; } = new Dictionary<string, string>();
         }
 
-        public record Members
+        public record Users
         {
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
             public string ObjectID { get; init; } = string.Empty;
 
-            [BsonElement(DBFieldNames.Members.FirstName)]
+            [BsonElement(DBFieldNames.Users.FirstName)]
             public string FirstName { get; init; } = string.Empty;
 
-            [BsonElement(DBFieldNames.Members.LastName)]
+            [BsonElement(DBFieldNames.Users.LastName)]
             public string LastName { get; init; } = string.Empty;
 
-            [BsonElement(DBFieldNames.Members.DateOfBirth)]
+            [BsonElement(DBFieldNames.Users.DateOfBirth)]
             [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
             public DateTime DateOfBirth { get; init; } = DateTime.UtcNow;
 
-            [BsonElement(DBFieldNames.Members.Email)]
+            [BsonElement(DBFieldNames.Users.Email)]
             public string Email { get; init; } = string.Empty;
 
-            [BsonElement(DBFieldNames.Members.PhoneNumber)]
+            [BsonElement(DBFieldNames.Users.PhoneNumber)]
             public string PhoneNumber { get; init; } = string.Empty;
 
-            [BsonElement(DBFieldNames.Members.Settings)]
+            [BsonElement(DBFieldNames.Users.Settings)]
             public Dictionary<string, string> Settings { get; init; } = new Dictionary<string, string>();
 
-            [BsonElement(DBFieldNames.Members.Favourites)]
+            [BsonElement(DBFieldNames.Users.Favourites)]
             public string[] Favourites { get; init; } = [];
 
-            [BsonElement(DBFieldNames.Members.History)]
+            [BsonElement(DBFieldNames.Users.History)]
             public string[] History { get; init; } = [];
 
-            [BsonElement(DBFieldNames.Members.NearestBranch)]
+            [BsonElement(DBFieldNames.Users.NearestBranch)]
             public string NearestBranch { get; init; } = string.Empty;
         }
 
