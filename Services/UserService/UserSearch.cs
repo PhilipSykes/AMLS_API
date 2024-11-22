@@ -1,22 +1,23 @@
 using Common.Constants;
 using Common.Database;
 using Common.Models;
+using Common.Utils;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 
-namespace Services.SearchService;
+namespace Services.UserService;
 
-public interface IUserSearchService
+public interface IUserSearch
 {
     Task<Operations.Response<List<Entities.Users>>> SearchUsers((int, int) pagination, List<Filter> filters);
     Task<Operations.Response<List<Entities.Login>>> GetLoginCredentials(List<Filter> filters); 
 }
 
-public class UserSearchService : IUserSearchService
+public class UserSearch : IUserSearch
 {
     private readonly ISearchRepository _searchRepository;
 
-    public UserSearchService(ISearchRepository searchRepository)
+    public UserSearch(ISearchRepository searchRepository)
     {
         _searchRepository = searchRepository;
     }
@@ -25,18 +26,9 @@ public class UserSearchService : IUserSearchService
     {
         List<BsonDocument> bsonDocuments = await _searchRepository.Search(DocumentTypes.Login, filters);
         
-        List<Entities.Login> loginCredentials =  await _searchRepository.ConvertBsonToEntity<Entities.Login>(bsonDocuments);
+        List<Entities.Login> loginCredentials =  Utils.ConvertBsonToEntity<Entities.Login>(bsonDocuments);
         
         Console.WriteLine($"Search completed. Found {loginCredentials.Count} results");
-        if (loginCredentials.Count == 0)
-        {
-            return new Operations.Response<List<Entities.Login>>
-            {
-                Success = false,
-                Data = null,
-                Error = "User Credentials do not match any existing users."
-            };
-        }
         return new Operations.Response<List<Entities.Login>>
         {
             Success = true,
@@ -49,18 +41,9 @@ public class UserSearchService : IUserSearchService
         Console.WriteLine($"Performing user search with {filters.Count} filters");
         List<BsonDocument> bsonDocuments = await _searchRepository.Search(DocumentTypes.Users, pagination, filters);
         
-        List<Entities.Users> users =  await _searchRepository.ConvertBsonToEntity<Entities.Users>(bsonDocuments);
+        List<Entities.Users> users = Utils.ConvertBsonToEntity<Entities.Users>(bsonDocuments);
 
         Console.WriteLine($"Search completed. Found {users.Count} results");
-        if (users.Count == 0)
-        {
-            return new Operations.Response<List<Entities.Users>>
-            {
-                Success = false,
-                Data = null,
-                Error = "No users found"
-            };
-        }
         return new Operations.Response<List<Entities.Users>>
         {
             Success = true,

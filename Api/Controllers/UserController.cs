@@ -3,7 +3,7 @@ using Common.Constants;
 using Common.Models;
 using Common.Utils;
 using Microsoft.AspNetCore.Mvc;
-using Services.SearchService;
+using Services.UserService;
 
 namespace Api.Controllers;
 
@@ -12,12 +12,12 @@ namespace Api.Controllers;
 public class UserController : ControllerBase
 {
     private readonly Exchange _exchange;
-    private readonly IUserSearchService _userSearchService;
+    private readonly IUserSearch _userSearch;
     
-    public UserController(Exchange exchange, IUserSearchService userSearchService)
+    public UserController(Exchange exchange, IUserSearch userSearch)
     {
         _exchange = exchange;
-        _userSearchService = userSearchService;
+        _userSearch = userSearch;
     }
 
     [HttpPost("login")]
@@ -29,7 +29,7 @@ public class UserController : ControllerBase
         {
             new Filter(DBFieldNames.Login.Email, request.Data.Email, DbOperations.Equals)
         };
-        var response = await _userSearchService.GetLoginCredentials(emailFilter);
+        var response = await _userSearch.GetLoginCredentials(emailFilter);
     
         if (!response.Success || !response.Data.Any())
         {
@@ -52,7 +52,7 @@ public class UserController : ControllerBase
 
     public async Task HashAllPasswords()
     {
-        var response = await _userSearchService.GetLoginCredentials(null);
+        var response = await _userSearch.GetLoginCredentials(null);
  
         var passwordService = new PasswordService();
         var updatedLogins = response.Data.Select(login => new Entities.Login

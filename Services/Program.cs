@@ -4,7 +4,8 @@ using Common.Database;
 using Common.Database.Interfaces;
 using MongoDB.Bson;
 using Services.NotificationService;
-using Services.SearchService;
+using Services.MediaService;
+using Services.UserService;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -23,7 +24,8 @@ builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddScoped<IDatabaseConnection, DatabaseConnection>();
 builder.Services.AddScoped<IFilterBuilder<BsonDocument>, BsonFilterBuilder>();
 builder.Services.AddScoped<ISearchRepository, SearchRepository>();
-builder.Services.AddScoped<IMediaSearchService, MediaSearchService>();
+builder.Services.AddScoped<IMediaSearch, MediaSearch>();
+builder.Services.AddScoped<IUserSearch, UserSearch>();
 
 builder.Services.AddHostedService<NotificationMessageReceiver>();
 

@@ -22,12 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="NotificationService\Handlers\" />
-      <Folder Include="UserService\Handlers\" />
       <ProjectReference Include="..\Common\Common.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="UserService\" />
     </ItemGroup>
 </Project>

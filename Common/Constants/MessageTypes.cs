@@ -27,7 +27,7 @@ public static class MessageTypes
 
     public static class Subscription 
     { 
-      public const string CancelSubscription =           "cancel_subscription";
+      public const string CancelSubscription = "cancel_subscription";
        public const string Subscribe = "user_subscribe";
        public const string GetSubscriptions = "get_subscriptions";
       public const string UpdateSubscription = "update_subscription";
