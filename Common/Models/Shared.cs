@@ -1,8 +1,5 @@
-
-
 using Common.Constants;
-using MongoDB.Bson;
-using MongoDB.Bson.IO;
+
 
 namespace Common.Models
 {
@@ -12,14 +9,6 @@ namespace Common.Models
         public List<string> RecipientAddresses { get; init; } = new List<string>();
         public Dictionary<string, string> EmailBody { get; init; } = new Dictionary<string, string>();
     }
-
-    public class ReserveRequest
-    {
-        public string ObjectId { get; init; } = string.Empty;
-        public string UserId { get; init; } = string.Empty;
-        public EmailDetails EmailDetails { get; init; } = new EmailDetails();
-    }
-
     public class Filter
     {
         public string Key { get; set; }

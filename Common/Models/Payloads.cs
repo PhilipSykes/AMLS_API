@@ -8,7 +8,7 @@ public static class PayLoads
             public required string Password { get; init; }
         }
 
-        public record Reservation
+        public record Reserve
         {
             public required string MediaId { get; init; }
             public required string UserId { get; init; }

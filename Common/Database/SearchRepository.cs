@@ -1,10 +1,8 @@
-using Common.Constants;
 using Common.Models;
 using Common.Database.Interfaces;
 using Common.Exceptions;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 
 namespace Common.Database

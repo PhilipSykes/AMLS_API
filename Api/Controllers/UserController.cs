@@ -1,6 +1,7 @@
 using Api.MessageBroker;
 using Common.Constants;
 using Common.Models;
+using static Common.Models.Operations;
 using Common.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Services.UserService;
@@ -21,7 +22,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult> Login([FromBody] Operations.Request<PayLoads.Login> request)
+    public async Task<ActionResult> Login([FromBody] Request<PayLoads.Login> request)
     {
         Console.WriteLine($"Login request for user: {request.Data.Email}");
         
@@ -29,7 +30,7 @@ public class UserController : ControllerBase
         {
             new Filter(DBFieldNames.Login.Email, request.Data.Email, DbOperations.Equals)
         };
-        var response = await _userSearch.GetLoginCredentials(emailFilter);
+        Response<List<Entities.Login>> response = await _userSearch.GetLoginCredentials(emailFilter);
     
         if (!response.Success || !response.Data.Any())
         {

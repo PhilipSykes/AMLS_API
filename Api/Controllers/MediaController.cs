@@ -1,9 +1,12 @@
-using System.Text.Json;
 using Api.MessageBroker;
 using Common.Constants;
 using Common.Models;
+using static Common.Models.Operations;
+using static Common.Models.Entities;
+using static Common.Models.PayLoads;
 using Microsoft.AspNetCore.Mvc;
 using Services.MediaService;
+
 
 namespace Api.Controllers;
 
@@ -21,41 +24,41 @@ public class MediaController : ControllerBase
     }
     
     [HttpGet]
-    public async Task<ActionResult<Operations.Response<List<Entities.MediaInfo>>>> GetInitialMedia([FromQuery] int page, [FromQuery] int count)
+    public async Task<ActionResult<Response<List<MediaInfo>>>> GetInitialMedia([FromQuery] int page, [FromQuery] int count)
     {
         (int, int )pagination = ((page - 1) * count, count); 
         Console.WriteLine("Received GET request for initial media content");
         Console.WriteLine($"Received pagination settings: {pagination} page:{page} count:{count}");
 
-        Operations.Response<List<Entities.MediaInfo>> response = await _mediaSearch.SearchMedia(pagination,filters: null);
+        Response<List<MediaInfo>> response = await _mediaSearch.SearchMedia(pagination,filters: null);
    
         Console.WriteLine("Initial media fetch completed successfully");
         return Ok(response);
     }
     
     [HttpPost("search")]
-    public async Task<ActionResult<Operations.Response<List<Entities.MediaInfo>>>> Search([FromBody] List<Filter> filters, [FromQuery] int page, [FromQuery] int count)
+    public async Task<ActionResult<Response<List<MediaInfo>>>> Search([FromBody] List<Filter> filters, [FromQuery] int page, [FromQuery] int count)
     {
         // Todo - Check url contains the pagination data. Mostly not a problem unless someone calls directly
         (int, int )pagination = ((page - 1) * count, count); 
         Console.WriteLine($"Received POST media search request with {filters.Count} filters");
         Console.WriteLine($"Received pagination settings: {pagination} page:{page} count:{count}");
 
-        Operations.Response<List<Entities.MediaInfo>> response = await _mediaSearch.SearchMedia(pagination, filters);
+        Response<List<MediaInfo>> response = await _mediaSearch.SearchMedia(pagination, filters);
 
         Console.WriteLine("Media search completed successfully");
         return Ok(response);
     }
 
     [HttpPost("reserve")]
-    public async Task<ActionResult> Reserve([FromBody] ReserveRequest request)
+    public async Task<ActionResult> Reserve([FromBody] Request<Reserve> request)
     {
         if (request.EmailDetails.RecipientAddresses.Count == 0)
         {
             return BadRequest("Email recipients required");
         }
         
-        //TODO actual reservation operation
+        //TODO actual reservation operation: create reservation in reservations table, flag physicalmedia as reserved
 
         await _exchange.PublishNotification(
             MessageTypes.EmailNotifications.ReserveMedia, 
