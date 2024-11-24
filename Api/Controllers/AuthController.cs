@@ -1,9 +1,13 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Api.MessageBroker;
 using Common.Constants;
 using Common.Models;
 using static Common.Models.Operations;
 using Common.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Services.UserService;
 
 namespace Api.Controllers;
@@ -38,7 +42,8 @@ public class AuthController : ControllerBase
         }
 
         var passwordService = new PasswordService();
-        if (!passwordService.VerifyPassword(response.Data[0].PasswordHash, request.Data.Password))
+        //if (!passwordService.VerifyPassword(response.Data[0].PasswordHash, request.Data.Password))
+        if (response.Data[0].PasswordHash != request.Data.Password)
         {
             return Unauthorized(new { message = response.Error });
         }
@@ -46,11 +51,38 @@ public class AuthController : ControllerBase
         // await _exchange.PublishNotification(
         //     MessageTypes.EmailNotifications.Login, 
         //     request.EmailDetails);
-        // var cookieService = new CookieService();
-        // cookieService.SetUserCookie(HttpContext, response.Data[0].User.ToString());
-        return Ok(new { message = "Login successful",response.Data[0].User});
+        
+        var token = GenerateJwtToken(response.Data[0]);
+        Console.WriteLine($"token: {token}");
+        return Ok(new { message = "Login successful",response.Data[0].Username,token});
     }
 
+    private string GenerateJwtToken(Entities.Login user)
+    {
+        var claims = new List<Claim>
+        {
+            // Standard claims
+            new Claim(ClaimTypes.NameIdentifier, user.Username),  // User's unique ID
+            new Claim(ClaimTypes.Email, user.Email),                     // User's email
+            new Claim(ClaimTypes.Role, user.Role),            // User's role
+
+            // Custom claims
+            new Claim("permissions", "read,write,delete")               // Specific permissions
+        };
+        
+        string testSecretKey = "your_very_long_secret_key_min_16_chars";
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(testSecretKey));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            issuer: "your_issuer",
+            audience: "your_audience",
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(30),
+            signingCredentials: creds);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
     public async Task HashAllPasswords()
     {
         var response = await _userSearch.GetLoginCredentials(null);
@@ -59,7 +91,7 @@ public class AuthController : ControllerBase
         var updatedLogins = response.Data.Select(login => new Entities.Login
         {
             ObjectID = login.ObjectID,
-            User = login.User,
+            Username = login.Username,
             Email = login.Email,
             PasswordHash = passwordService.HashPassword(login.PasswordHash),
             Role = login.Role

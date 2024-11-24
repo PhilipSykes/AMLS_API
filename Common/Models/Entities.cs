@@ -13,7 +13,7 @@ namespace Common.Models
             public string ObjectID { get; init; } = string.Empty;
 
             [BsonElement(DBFieldNames.Login.User)]
-            public string User { get; init; } = string.Empty;
+            public string Username { get; init; } = string.Empty;
 
             [BsonElement(DBFieldNames.Login.Email)]
             public string Email { get; init; } = string.Empty;

@@ -37,11 +37,6 @@ builder.Services.AddLogging(logging =>
 
 var app = builder.Build();
 
-app.UseCookiePolicy(new CookiePolicyOptions
-{
-    MinimumSameSitePolicy = SameSiteMode.Strict
-});
-
 app.UseRouting();
 app.UseHttpsRedirection();
 app.MapControllers();
