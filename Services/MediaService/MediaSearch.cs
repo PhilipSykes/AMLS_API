@@ -31,6 +31,7 @@ namespace Services.MediaService
             List<MediaInfo> mediaInfoList = Utils.ConvertBsonToEntity<MediaInfo>(bsonDocuments);
 
             Console.WriteLine($"Search completed. Found {mediaInfoList.Count} results");
+            Console.WriteLine($"{mediaInfoList.First()}");
             return new Response<List<MediaInfo>>
             {
                 Success = true,

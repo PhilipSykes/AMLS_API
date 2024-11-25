@@ -1,7 +1,7 @@
 
 namespace Common.Constants
 {
-    public static class DBFieldNames
+    public static class DbFieldNames
     {
         // Common fields
         public const string Id = "_id";
@@ -43,7 +43,8 @@ namespace Common.Constants
             public const string PublishDate = "publishDate";
             public const string Type = "type";
             public const string Genres = "genres";
-            public const string FormatSpecificDetails = "formatSpecificDetails";
+            //public const string FormatSpecificDetails = "formatSpecificDetails";
+            public const string PhysicalCopies = "physicalCopies";
         }
 
         // Users fields
