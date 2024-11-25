@@ -97,6 +97,7 @@ namespace Common.Models
 
         public record PhysicalCopy
         {
+            [BsonId]
             [BsonElement("branch")]
             public ObjectId branch { get; init; } = ObjectId.Empty;
             
