@@ -92,14 +92,15 @@ namespace Common.Models
             //public Dictionary<string, string> FormatSpecificDetails { get; init; } = new Dictionary<string, string>();
 
             [BsonElement(DbFieldNames.MediaInfo.PhysicalCopies)]
-            public List<PhysicalCopy> PhysicalCopies { get; init; } = new();
+            public List<PhysicalCopy>? PhysicalCopies { get; init; } = new();
         }
 
         public record PhysicalCopy
         {
             
             [BsonElement("branch")]
-            public ObjectId Branch { get; init; } = ObjectId.Empty;
+            [BsonRepresentation(BsonType.ObjectId)]
+            public string Branch { get; init; } = string.Empty;
             
             [BsonElement("status")]
             public string Status { get; init; } = "Unknown";
