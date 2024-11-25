@@ -1,3 +1,4 @@
+using Common.Constants;
 using Common.Models;
 using Common.Database.Interfaces;
 using Common.Exceptions;
@@ -32,7 +33,13 @@ namespace Common.Database
             {
                 var collection = _database.GetCollection<BsonDocument>(documentType);
                 
-                return await collection.Find(_filterBuilder.BuildFilter(filters))
+                return await collection.Aggregate()
+                    .Match(_filterBuilder.BuildFilter(filters))
+                    .Lookup(DocumentTypes.PhysicalMedia, "_id", "info", "physicalCopies")
+                    .Project(@"{  
+                    'physicalCopies._id': 0, 
+                    'physicalCopies.info': 0 
+                    }")
                     .Skip(pagination.Item1)
                     .Limit(pagination.Item2)
                     .ToListAsync();
