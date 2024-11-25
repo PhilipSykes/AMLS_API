@@ -4,22 +4,9 @@
   },
   "Routes": [
     {
-      "UpstreamPathTemplate": "/api/auth/login",
+      "UpstreamPathTemplate": "/api/auth/{everything}",
       "UpstreamHttpMethod": [ "POST" ],
-      "DownstreamPathTemplate": "/auth/login",
-      "DownstreamScheme": "https",
-      "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ]
-    },
-    {
-      "UpstreamPathTemplate": "/api/auth/refresh",
-      "UpstreamHttpMethod": [ "POST" ],
-      "DownstreamPathTemplate": "/auth/refresh",
+      "DownstreamPathTemplate": "/auth/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
@@ -77,7 +64,7 @@
         "AuthenticationProviderKey": "Bearer"
       },
       "RouteClaimsRequirement": {
-        "role": "admin"
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role": "admin"
       }
     }
   ]

@@ -62,9 +62,9 @@ public class AuthController : ControllerBase
         var claims = new List<Claim>
         {
             // Standard claims
-            new Claim(ClaimTypes.NameIdentifier, user.Username),  // User's unique ID
-            new Claim(ClaimTypes.Email, user.Email),                     // User's email
-            new Claim(ClaimTypes.Role, user.Role),            // User's role
+            new Claim(ClaimTypes.NameIdentifier, user.Username),
+            new Claim(ClaimTypes.Email, user.Email),      
+            new Claim(ClaimTypes.Role, user.Role), 
 
             // Custom claims
             new Claim("permissions", "read,write,delete")               // Specific permissions
@@ -83,7 +83,7 @@ public class AuthController : ControllerBase
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    public async Task HashAllPasswords()
+    public async Task HashAllPasswords() //TEMP 
     {
         var response = await _userSearch.GetLoginCredentials(null);
  
