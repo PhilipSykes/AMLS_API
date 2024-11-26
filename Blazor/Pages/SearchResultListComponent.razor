@@ -29,7 +29,7 @@
 {
     [Parameter]
     public Entities.MediaInfo Media { get; set; } = new();
-    [Parameter]
+
     public bool IsAvailable { get; set; }
 
     private List<string> Pills;
@@ -37,4 +37,14 @@
     private string _genres => string.Join(" • ", Media.Genres.Take(3));
 
 
+    protected override void OnInitialized()
+    {
+        foreach (var copy in Media.PhysicalCopies)
+        {
+            if (copy.Status == "Available")
+            {
+                IsAvailable = true;
+            }
+        }
+    }
 }

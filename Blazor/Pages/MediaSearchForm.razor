@@ -8,7 +8,7 @@
     <div class="search-container">
         <input type="text" class="text-field" placeholder="Search by Title" @bind="_searchModel.MediaTitle"/>
         <div class="tag-section">
-            <input type="text" class="text-field glow" placeholder="Search by @_currentPlaceholderText" @bind="ActiveGenre" @oninput="OnInputGenreChange"/>
+            <input type="text" class="text-field glow" placeholder="Search by @_currentPlaceholderText" @bind="ActiveTagInput" @oninput="OnInputTagChange"/>
             
             @if (FilteredGenreList.Any())
             {
@@ -53,9 +53,11 @@
     [Parameter] public EventCallback<List<Filter>> OnSubmitCallback { get; set; }
 
     private MediaSearchModel _searchModel = new MediaSearchModel();
-    private List<Filter> _search = new List<Filter>();
+    private List<Filter> _searchFilters = new List<Filter>();
     
-    private string? ActiveGenre { get; set; }
+    
+    private string? ActiveTagInput { get; set; }
+    
     private List<string> FilteredGenreList { get; set; } = new List<string>();
     private TagLists _tagLists = new TagLists();
    
@@ -63,17 +65,19 @@
     public async Task OnSubmit()
     {
         FormatSearchFilters(_searchModel);
-        await OnSubmitCallback.InvokeAsync(_search);
+        await OnSubmitCallback.InvokeAsync(_searchFilters);
     }
 
-    private void OnInputGenreChange(ChangeEventArgs e)
+    private void OnInputTagChange(ChangeEventArgs e)
     {
         FilteredGenreList.Clear();
-        ActiveGenre = e.Value?.ToString() ?? string.Empty;
-        if (ActiveGenre != "")
+        
+        ActiveTagInput = e.Value?.ToString() ?? string.Empty;
+        
+        if (ActiveTagInput != "")
         {
             FilteredGenreList = _tagLists.GenreList
-                .Where(g => g.Contains(ActiveGenre, StringComparison.OrdinalIgnoreCase))
+                .Where(g => g.Contains(ActiveTagInput, StringComparison.OrdinalIgnoreCase))
                 //filter selected genres
                 .Where(g => !_searchModel.MediaGenres.Contains(g, StringComparer.OrdinalIgnoreCase))
                 .ToList();
@@ -99,14 +103,14 @@
     
     public void FormatSearchFilters(MediaSearchModel model)
     {
-        _search.Clear();
+        _searchFilters.Clear();
         
         Console.WriteLine("I am formatting filters");
         if (!string.IsNullOrEmpty(model.MediaTitle))
         {
             var titleFilter = new Filter("title",model.MediaTitle,DbOperations.Contains);
             Console.WriteLine("titleFilter:"+titleFilter);
-            _search.Add(titleFilter);
+            _searchFilters.Add(titleFilter);
         }
         
 
@@ -114,7 +118,7 @@
         {
             var genreFilter = new Filter("genres", genre, DbOperations.Contains);
             Console.WriteLine("genreFilter key:"+genreFilter.Key+"genre value:"+genreFilter.Value+"operation"+genreFilter.Operation);
-            _search.Add(genreFilter);
+            _searchFilters.Add(genreFilter);
         }
     }
 

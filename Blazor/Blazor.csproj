@@ -25,6 +25,12 @@
       <Content Update="Pages\RatingStar.razor">
         <DependentUpon>SearchResultListComponent.razor</DependentUpon>
       </Content>
+      <Content Update="Pages\MediaSearchForm.razor">
+        <DependentUpon>Home.razor</DependentUpon>
+      </Content>
+      <Content Update="Pages\SearchResultListComponent.razor">
+        <DependentUpon>Home.razor</DependentUpon>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
