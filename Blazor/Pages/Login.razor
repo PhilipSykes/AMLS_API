@@ -1,23 +1,41 @@
 @page "/Login"
 @inject HttpClient HttpClient
 @inject ISessionStorageService SessionStorage
-<h3>Login</h3>
 
-<div>
-    <div>
-        <h3>Login</h3>
-    </div>
-    <div class="container">
-        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+<div class="login-container">
+    <div class="login-card">
+        <h3 class="login-title">Sign In</h3>
+
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin" class="login-form">
             <DataAnnotationsValidator/>
-            <InputText @bind-Value="loginModel.Email" type="text" placeholder="e-mail"/>
-            <InputText @bind-Value="loginModel.Password" type="password" placeholder="password"/>
-            <a href="#">Forgot Password?</a>
-            <button type="submit">Log in</button>
+
+            <div class="form-field">
+                <InputText @bind-Value="loginModel.Email"
+                           type="email"
+                           placeholder="Email"
+                           class="glow"/>
+            </div>
+
+            <div class="form-field">
+                <InputText @bind-Value="loginModel.Password"
+                           type="password"
+                           placeholder="Password"
+                           class="glow"/>
+            </div>
+
+            <a href="#" class="forgot-password">Forgot Password?</a>
+
+            <button type="submit" class="login-button">
+                Sign In
+            </button>
 
             @if (!string.IsNullOrEmpty(error))
             {
             <div class="alert">@error</div>
+            }
+            @if (!string.IsNullOrEmpty(success))
+            {
+            <div class="success">@success</div>
             }
         </EditForm>
     </div>
@@ -25,10 +43,12 @@
 
 @code {
     private PayLoads.Login loginModel = new() { Email = "", Password = "" };
-    private string error;
+    private string error,success;
 
     private async Task HandleLogin()
     {
+        error = null;
+        success = null;
         var request = new Request<PayLoads.Login> { Data = loginModel };
 
         try
@@ -41,6 +61,7 @@
                 if (tokenResponse != null)
                 {
                     await SessionStorage.SetItemAsync("token", tokenResponse.Data.Token);
+                    success = "Successful login";
                 }
             }
 
