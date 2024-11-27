@@ -97,10 +97,11 @@ namespace Common.Models
 
         public record PhysicalCopy
         {
+            [BsonElement(DbFieldNames.PhysicalCopies.Branch)]
             [BsonRepresentation(BsonType.ObjectId)]
             public string Branch { get; init; } = string.Empty;
             
-            [BsonElement("status")]
+            [BsonElement(DbFieldNames.PhysicalCopies.Status)]
             public string Status { get; init; } = "Unknown";
         }
 
