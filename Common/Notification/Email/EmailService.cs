@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Mail;
-using Common.Models;
+using static Common.Models.Shared;
 using MongoDB.Bson;
 
 namespace Common.Notification.Email;

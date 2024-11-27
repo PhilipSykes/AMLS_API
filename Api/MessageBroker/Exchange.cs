@@ -2,7 +2,7 @@ using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
-using Common.Models;
+using static Common.Models.Shared;
 using Common;
 
 

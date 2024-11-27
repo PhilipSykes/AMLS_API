@@ -1,6 +1,6 @@
 using Api.MessageBroker;
 using Common.Constants;
-using Common.Models;
+using static Common.Models.Shared;
 using static Common.Models.Operations;
 using static Common.Models.Entities;
 using static Common.Models.PayLoads;

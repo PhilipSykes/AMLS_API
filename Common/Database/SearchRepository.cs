@@ -1,5 +1,5 @@
 using Common.Constants;
-using Common.Models;
+using static Common.Models.Shared;
 using Common.Database.Interfaces;
 using Common.Exceptions;
 using Microsoft.Extensions.Options;

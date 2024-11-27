@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
 using Common.Constants;
 using Common;
-using Common.Models;
+using static Common.Models.Shared;
 using Common.Notification.Email;
 
 namespace Services.NotificationService;

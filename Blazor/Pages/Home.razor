@@ -28,7 +28,7 @@
 
     private async Task GetMedia()
     {
-        var response = await HttpClient.GetFromJsonAsync<Operations.Response<List<Entities.MediaInfo>>>($"api/media/?page={_pagination.Item1}&count={_pagination.Item2}");
+        var response = await HttpClient.GetFromJsonAsync<Response<List<Entities.MediaInfo>>>($"api/media/?page={_pagination.Item1}&count={_pagination.Item2}");
         if (response?.Success == true && response.Data != null)
         {
             mediaResults = response.Data;
@@ -40,7 +40,7 @@
         var response = await HttpClient.PostAsJsonAsync($"api/media/search?page={_pagination.Item1}&count={_pagination.Item2}", filters);
         if (response.IsSuccessStatusCode)
         {
-            var searchResponse = await response.Content.ReadFromJsonAsync<Operations.Response<List<Entities.MediaInfo>>>();
+            var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.MediaInfo>>>();
             if (searchResponse != null)
             {
                 mediaResults = searchResponse.Data;

@@ -1,4 +1,4 @@
-using Common.Models;
+using static Common.Models.Shared;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Common.Constants;
