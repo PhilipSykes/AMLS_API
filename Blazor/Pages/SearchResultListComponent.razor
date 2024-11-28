@@ -37,14 +37,14 @@
     private string _genres => string.Join(" • ", Media.Genres.Take(3));
 
 
-    //protected override void OnInitialized()
-    //{
-    //    foreach (var copy in Media.PhysicalCopies)
-    //    {
-    //        if (copy.Status == "Available")
-    //        {
-    //            IsAvailable = true;
-    //        }
-    //    }
-    //}
+    protected override void OnInitialized()
+    {
+        foreach (var copy in Media.PhysicalCopies)
+        {
+            if (copy.Status == "Available")
+            {
+                IsAvailable = true;
+            }
+        }
+    }
 }
