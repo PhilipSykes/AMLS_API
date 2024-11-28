@@ -1,6 +1,6 @@
 using Common.Constants;
 using Common.Database;
-using Common.Models;
+using static Common.Models.Shared;
 using static Common.Models.Operations;
 using static Common.Models.Entities;
 using Common.Utils;
@@ -31,6 +31,7 @@ namespace Services.MediaService
             List<MediaInfo> mediaInfoList = Utils.ConvertBsonToEntity<MediaInfo>(bsonDocuments);
 
             Console.WriteLine($"Search completed. Found {mediaInfoList.Count} results");
+            Console.WriteLine($"{mediaInfoList.First().PhysicalCopies.First().Branch}");
             return new Response<List<MediaInfo>>
             {
                 Success = true,

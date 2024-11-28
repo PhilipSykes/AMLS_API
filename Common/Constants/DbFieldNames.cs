@@ -1,13 +1,12 @@
 
 namespace Common.Constants
 {
-    public static class DBFieldNames
+    public static class DbFieldNames
     {
         // Common fields
         public const string Id = "_id";
         public const string ObjectId = "objectId";
         
-        // Login fields
         public static class Login
         {
             public const string User = "user";
@@ -15,8 +14,7 @@ namespace Common.Constants
             public const string PasswordHash = "password";
             public const string Role = "role";
         }
-
-        // Branch & Address fields
+        
         public static class Branch
         {
             public const string Name = "name";
@@ -29,8 +27,7 @@ namespace Common.Constants
             public const string Street = "street";
             public const string Postcode = "postcode";
         }
-
-        // MediaInfo fields
+        
         public static class MediaInfo
         {
             public const string Title = "title";
@@ -43,10 +40,9 @@ namespace Common.Constants
             public const string PublishDate = "publishDate";
             public const string Type = "type";
             public const string Genres = "genres";
-            public const string FormatSpecificDetails = "formatSpecificDetails";
+            //public const string FormatSpecificDetails = "formatSpecificDetails";
+            public const string PhysicalCopies = "physicalCopies";
         }
-
-        // Users fields
         public static class Users
         {
             public const string FirstName = "firstName";
@@ -60,7 +56,12 @@ namespace Common.Constants
             public const string NearestBranch = "nearestBranch";
         }
 
-        // Reservations fields
+        public static class PhysicalCopies
+        {
+            public const string Branch = "branch";
+            public const string Status = "status";
+        }
+
         public static class Reservations
         {
             public const string Member = "member";

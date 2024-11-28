@@ -1,3 +1,5 @@
+using static Common.Models.Shared;
+
 namespace Common.Models;
 
 public static class Operations
@@ -14,7 +16,7 @@ public static class Operations
     {
         public T? Data { get; set; }
         public bool Success { get; set; }
-        public string? Error { get; set; }
+        public string? Message { get; set; }
     }
 
 }

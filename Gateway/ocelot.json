@@ -43,10 +43,7 @@
           "Host": "localhost",
           "Port": 5001
         }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer"
-      }
+      ]
     },
     {
       "UpstreamPathTemplate": "/api/admin/{everything}",

@@ -1,4 +1,4 @@
-using Common.Models;
+using static Common.Models.Shared;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Common.Constants;
@@ -11,7 +11,7 @@ public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
   
     public FilterDefinition<BsonDocument> BuildFilter(List<Filter> filterObjectsIn)
     {
-        try
+        try // Note from Will: This try catch is redundant, as operators are enforced by the enum. Unless someone were to remove operations from that enum for some reason anyway.
         {
             var builder = Builders<BsonDocument>.Filter;
 
