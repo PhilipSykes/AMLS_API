@@ -1,6 +1,7 @@
 @page "/Login"
 @inject HttpClient HttpClient
-@inject ISessionStorageService SessionStorage
+@inject NavigationManager NavigationManager
+@inject AuthStateService AuthState
 
 <div class="login-container">
     <div class="login-card">
@@ -57,14 +58,14 @@
 
             if (response.IsSuccessStatusCode)
             {
-                var tokenResponse = await response.Content.ReadFromJsonAsync<Response<AccessToken>>();
+                var tokenResponse = await response.Content.ReadFromJsonAsync<Response<LoginDetails>>();
                 if (tokenResponse != null)
                 {
-                    await SessionStorage.SetItemAsync("token", tokenResponse.Data.Token);
+                    await AuthState.Login(tokenResponse.Data.Token, tokenResponse.Data.Username);
                     success = "Successful login";
+                    NavigationManager.NavigateTo("/");
                 }
             }
-
             else
             {
                 error = "Invalid credentials";
