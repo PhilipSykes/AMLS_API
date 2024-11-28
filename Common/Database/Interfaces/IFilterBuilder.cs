@@ -1,4 +1,4 @@
-using Common.Models;
+using static Common.Models.Shared;
 using MongoDB.Driver;
 
 namespace Common.Database.Interfaces;

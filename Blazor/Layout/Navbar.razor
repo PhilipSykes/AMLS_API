@@ -1,0 +1,66 @@
+
+@namespace Blazor.Layout
+@inject ISessionStorageService SessionStorage
+@inject AuthStateService AuthState
+
+<nav class="navbar">
+    <div class="nav-content">
+        <div class="nav-left">
+            <a href="/" class="logo">AML</a>
+        </div>
+        <div class="nav-center">
+            (Nav)
+        </div>
+        <div class="nav-right">
+            @if (username != null)
+            {
+            <span class="username-display">
+                    Logged in as: @username
+                @if (!string.IsNullOrEmpty(userRole))
+                {
+                <small>(@userRole)</small>
+                }
+                </span>
+            }
+            <a href="/login" class="profile-icon">
+                <i class="fas fa-user-circle"></i>
+            </a>
+        </div>
+    </div>
+</nav>
+
+@code {
+    private string? username;
+    private string? userRole;
+    private ClaimsPrincipal? currentUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentUser = await AuthState.GetUser();
+        await UpdateUserInfo();
+        
+        AuthState.OnChange += OnAuthStateChanged;
+    }
+
+    private async Task UpdateUserInfo()
+    {
+        if (currentUser != null)
+        {
+            username = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            userRole = currentUser.FindFirst(ClaimTypes.Role)?.Value;
+        }
+        else
+        {
+            username = null;
+            userRole = null;
+        }
+    }
+
+    private async void OnAuthStateChanged()
+    {
+        currentUser = await AuthState.GetUser();
+        await UpdateUserInfo();
+        StateHasChanged();
+    }
+
+}

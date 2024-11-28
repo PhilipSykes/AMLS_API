@@ -13,7 +13,7 @@ namespace Common.Models
             public string ObjectID { get; init; } = string.Empty;
 
             [BsonElement(DbFieldNames.Login.User)]
-            public string User { get; init; } = string.Empty;
+            public string Username { get; init; } = string.Empty;
 
             [BsonElement(DbFieldNames.Login.Email)]
             public string Email { get; init; } = string.Empty;
@@ -88,23 +88,23 @@ namespace Common.Models
             [BsonElement(DbFieldNames.MediaInfo.Genres)]
             public string[] Genres { get; init; } = [];
 
-            //[BsonElement(DBFieldNames.MediaInfo.FormatSpecificDetails)]
+            //[BsonElement(DbFieldNames.MediaInfo.FormatSpecificDetails)]
             //public Dictionary<string, string> FormatSpecificDetails { get; init; } = new Dictionary<string, string>();
-
+            
             [BsonElement(DbFieldNames.MediaInfo.PhysicalCopies)]
             public List<PhysicalCopy>? PhysicalCopies { get; init; } = new();
         }
 
         public record PhysicalCopy
         {
-            
-            [BsonElement("branch")]
+            [BsonElement(DbFieldNames.PhysicalCopies.Branch)]
             [BsonRepresentation(BsonType.ObjectId)]
             public string Branch { get; init; } = string.Empty;
             
-            [BsonElement("status")]
+            [BsonElement(DbFieldNames.PhysicalCopies.Status)]
             public string Status { get; init; } = "Unknown";
         }
+
         public record Users
         {
             [BsonId]

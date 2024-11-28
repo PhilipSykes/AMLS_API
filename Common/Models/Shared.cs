@@ -3,23 +3,33 @@ using Common.Constants;
 
 namespace Common.Models
 {
-    public class EmailDetails
+    public static class Shared
     {
-        public string UserId { get; init; } = string.Empty;
-        public List<string> RecipientAddresses { get; init; } = new List<string>();
-        public Dictionary<string, string> EmailBody { get; init; } = new Dictionary<string, string>();
-    }
-    public class Filter
-    {
-        public string Key { get; set; }
-        public string Value { get; set; }
-        public DbOperations Operation { get; set; }
-
-        public Filter(string key, string value, DbOperations operation)
+        public record EmailDetails
         {
-            Key = key;
-            Value = value;
-            Operation = operation;
+            public string UserId { get; set; } = string.Empty;
+            public List<string> RecipientAddresses { get; set; } = new List<string>();
+            public Dictionary<string, string> EmailBody { get; set; } = new Dictionary<string, string>();
+        }
+
+        public record Filter
+        {
+            public string Key { get; set; }
+            public string Value { get; set; }
+            public DbOperations Operation { get; set; }
+
+            public Filter(string key, string value, DbOperations operation)
+            {
+                Key = key;
+                Value = value;
+                Operation = operation;
+            }
+        }
+        
+        public record LoginDetails
+        {
+            public string? Username { get; set; }
+            public string? Token { get; set; }
         }
     }
 }

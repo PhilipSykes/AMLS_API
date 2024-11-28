@@ -1,0 +1,79 @@
+@page "/Login"
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@inject AuthStateService AuthState
+
+<div class="login-container">
+    <div class="login-card">
+        <h3 class="login-title">Sign In</h3>
+
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin" class="login-form">
+            <DataAnnotationsValidator/>
+
+            <div class="form-field">
+                <InputText @bind-Value="loginModel.Email"
+                           type="email"
+                           placeholder="Email"
+                           class="glow"/>
+            </div>
+
+            <div class="form-field">
+                <InputText @bind-Value="loginModel.Password"
+                           type="password"
+                           placeholder="Password"
+                           class="glow"/>
+            </div>
+
+            <a href="#" class="forgot-password">Forgot Password?</a>
+
+            <button type="submit" class="login-button">
+                Sign In
+            </button>
+
+            @if (!string.IsNullOrEmpty(error))
+            {
+            <div class="alert">@error</div>
+            }
+            @if (!string.IsNullOrEmpty(success))
+            {
+            <div class="success">@success</div>
+            }
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private PayLoads.Login loginModel = new() { Email = "", Password = "" };
+    private string error,success;
+
+    private async Task HandleLogin()
+    {
+        error = null;
+        success = null;
+        var request = new Request<PayLoads.Login> { Data = loginModel };
+
+        try
+        {
+            var response = await HttpClient.PostAsJsonAsync("api/auth/login", request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var tokenResponse = await response.Content.ReadFromJsonAsync<Response<LoginDetails>>();
+                if (tokenResponse != null)
+                {
+                    await AuthState.Login(tokenResponse.Data.Token, tokenResponse.Data.Username);
+                    success = "Successful login";
+                    NavigationManager.NavigateTo("/");
+                }
+            }
+            else
+            {
+                error = "Invalid credentials";
+            }
+        }
+        catch
+        {
+            error = "Login failed";
+        }
+    }
+}
