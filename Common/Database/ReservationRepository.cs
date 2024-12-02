@@ -30,7 +30,7 @@ namespace Common.Database
 
         public async Task<Operations.Response<bool>> CreateReservation(Entities.Reservation reservation)
         {
-            //var reservations = _database.GetCollection<BsonDocument>("Reservations");
+            
             var physical = _database.GetCollection<BsonDocument>("PhysicalMedia");
             using (var session = _database.Client.StartSession())
             {
@@ -47,9 +47,9 @@ namespace Common.Database
                     var physicalStatusUpdate = physical.UpdateOne(
                         session, Builders<BsonDocument>.Filter.And(
                             Builders<BsonDocument>.Filter.Eq("info", new ObjectId("673f6d28e580ac7f9f4fa9b3")), // MediaInfo Id of the item being reserved
-                            //builder.Eq("branch", "(BranchID)"), TODO - Search specific branch
+                            //builder.Eq("branch", new ObjectID(BranchID)), TODO - Search specific branch
                             //Builders<BsonDocument>.Filter.Eq("status", "available"), // Status may be redundant now
-                            Builders<BsonDocument>.Filter.Not(
+                            Builders<BsonDocument>.Filter.Not(  // Checks for reservation collisions
                                 Builders<BsonDocument>.Filter.Or(
                                     Builders<BsonDocument>.Filter.Lte("reservations.startDate", reservation.EndDate),
                                     Builders<BsonDocument>.Filter.Gte("reservations.endDate", reservation.StartDate)))
