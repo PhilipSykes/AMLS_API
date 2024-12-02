@@ -4,7 +4,7 @@
 <PageTitle>Home</PageTitle>
 
 <div id="responsive-layout">
-    <MediaSearchForm OnSubmitCallback="MakeSearch" />
+    <MediaSearchForm OnSubmitCallback="MakeSearch"/>
     <div id="search-results">
         @foreach (var media in mediaResults)
         {
@@ -16,10 +16,10 @@
 
 @code {
     //TODO: do something to stop the glow fade-out on page load
-    
+
     private List<Entities.MediaInfo> mediaResults = new();
     private bool test = false;
-    (int, int) _pagination = (1, 20); // temp for testing
+    readonly (int, int) _pagination = (1, 20); // temp for testing
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,11 +46,14 @@
                 mediaResults = searchResponse.Data;
             }
         }
+
         StateHasChanged();
     }
+
     private async Task MakeSearch(List<Filter> filters)
     {
         mediaResults.Clear();
         await GetSearchResults(filters);
     }
+
 }

@@ -8,9 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure Ocelot
 builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+    .AddJsonFile("ocelot.json", false, true);
 
-string testSecretKey = "your_very_long_secret_key_min_16_chars";
+var testSecretKey = "your_very_long_secret_key_min_16_chars";
 // Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer("Bearer", options =>
@@ -24,7 +24,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = "your_issuer",
             ValidAudience = "your_audience",
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(testSecretKey))
-
         };
     });
 

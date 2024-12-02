@@ -2,14 +2,14 @@ namespace Common.Exceptions;
 
 public class SearchException : Exception
 {
-    public SearchErrorType ErrorType { get; }
-
-    public SearchException(SearchErrorType errorType) 
-        : base(Messages[errorType])
+    public enum SearchErrorType
     {
-        ErrorType = errorType;
+        Database,
+        Serialization,
+        Validation,
+        Unknown
     }
-    
+
     public static readonly Dictionary<SearchErrorType, string> Messages = new()
     {
         { SearchErrorType.Database, "Database operation failed" },
@@ -18,11 +18,11 @@ public class SearchException : Exception
         { SearchErrorType.Unknown, "An unexpected error occurred" }
     };
 
-    public enum SearchErrorType
+    public SearchException(SearchErrorType errorType)
+        : base(Messages[errorType])
     {
-        Database,
-        Serialization,
-        Validation,
-        Unknown
+        ErrorType = errorType;
     }
+
+    public SearchErrorType ErrorType { get; }
 }

@@ -1,49 +1,47 @@
-using Common.Database.Interfaces;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
-namespace Common.Database
+
+namespace Common.Database;
+
+public interface IDatabaseConnection
 {
-    public interface IDatabaseConnection
+    IMongoDatabase Database { get; }
+    Task<bool> HealthCheckAsync();
+}
+
+public class DatabaseConnection : IDatabaseConnection
+{
+    private readonly MongoClient _connection;
+
+    public DatabaseConnection(IOptions<MongoDBConfig> options)
     {
-        IMongoDatabase Database { get; }
-        Task<bool> HealthCheckAsync();
+        var config = options.Value;
+
+        if (string.IsNullOrEmpty(config?.ConnectionString))
+            throw new ArgumentException(
+                "MongoDB ConnectionString is null or empty. Check your configuration.");
+
+        Console.WriteLine($"Attempting to connect to MongoDB with connection string: " +
+                          $"{config.ConnectionString.Substring(0, 20)}... " +
+                          $"and database: {config.DatabaseName}");
+
+        _connection = new MongoClient(config.ConnectionString);
+        Database = _connection.GetDatabase(config.DatabaseName);
     }
-    public class DatabaseConnection : IDatabaseConnection
+
+    public IMongoDatabase Database { get; }
+
+    public async Task<bool> HealthCheckAsync()
     {
-        private readonly MongoClient _connection;
-        public IMongoDatabase Database { get; }
-
-        public DatabaseConnection(IOptions<MongoDBConfig> options)
+        try
         {
-            var config = options.Value;
-    
-            if (string.IsNullOrEmpty(config?.ConnectionString))
-            {
-                throw new ArgumentException(
-                    "MongoDB ConnectionString is null or empty. Check your configuration.");
-            }
-
-            Console.WriteLine($"Attempting to connect to MongoDB with connection string: " +
-                              $"{config.ConnectionString.Substring(0, 20)}... " +
-                              $"and database: {config.DatabaseName}");
-
-            _connection = new MongoClient(config.ConnectionString);
-            Database = _connection.GetDatabase(config.DatabaseName);
+            await Database.RunCommandAsync((Command<BsonDocument>)"{ping:1}");
+            return true;
         }
-
-        public async Task<bool> HealthCheckAsync()
+        catch (Exception)
         {
-            try
-            {
-                await Database.RunCommandAsync((Command<BsonDocument>)"{ping:1}");
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            return false;
         }
     }
 }
- 

@@ -5,7 +5,9 @@
   "Routes": [
     {
       "UpstreamPathTemplate": "/api/auth/{everything}",
-      "UpstreamHttpMethod": [ "POST" ],
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
       "DownstreamPathTemplate": "/auth/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
@@ -18,7 +20,10 @@
     },
     {
       "UpstreamPathTemplate": "/api/user/{everything}",
-      "UpstreamHttpMethod": [ "POST", "GET" ],
+      "UpstreamHttpMethod": [
+        "POST",
+        "GET"
+      ],
       "DownstreamPathTemplate": "/user/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
@@ -34,7 +39,10 @@
     },
     {
       "UpstreamPathTemplate": "/api/media/{everything}",
-      "UpstreamHttpMethod": [ "POST", "GET" ],
+      "UpstreamHttpMethod": [
+        "POST",
+        "GET"
+      ],
       "DownstreamPathTemplate": "/media/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
@@ -47,7 +55,12 @@
     },
     {
       "UpstreamPathTemplate": "/api/admin/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
       "DownstreamPathTemplate": "/admin/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,

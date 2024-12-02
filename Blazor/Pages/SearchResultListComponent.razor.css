@@ -1,8 +1,8 @@
-*{
+* {
     user-select: none;
 }
 
-h3{
+h3 {
     font-family: 'Serif-Title', serif;
     font-variation-settings: "opsz" 12;
     font-weight: 496;
@@ -10,11 +10,12 @@ h3{
     font-size: 24px;
     text-transform: capitalize;
 }
-#search-media-title{
+
+#search-media-title {
     margin: 0;
 }
 
-#search-card{
+#search-card {
     display: flex;
     flex-direction: column;
     gap: 7px;
@@ -31,26 +32,28 @@ h3{
     font-family: "Regular", sans-serif;
     font-size: 10px;
     font-weight: 600;
-    
+
     margin: 0;
     padding-inline: 7px;
     padding-block: 3px;
     border-radius: 100px;
-    
+
     background-color: #D6D3D1;
     color: #44403C;
     text-transform: uppercase;
 }
-.pill.available{
+
+.pill.available {
     background-color: #BBF7D0;
     color: #15803D;
 }
-.pill.unavailable{
+
+.pill.unavailable {
     background-color: #FECDD3;
     color: #BE123C;
 }
 
-#search-genres{
+#search-genres {
     display: flex;
     margin: 0;
     padding: 0;
@@ -61,7 +64,7 @@ h3{
     text-transform: capitalize;
 }
 
-#search-star-rating{
+#search-star-rating {
     display: flex;
     flex-direction: row;
     gap: 0;

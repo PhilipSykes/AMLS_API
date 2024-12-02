@@ -39,3 +39,11 @@
 .profile-icon:hover {
     background-color: #d5d5d5;
 }
+
+@media (max-width: 560px) {
+    .navbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+    }
+}

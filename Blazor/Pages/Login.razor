@@ -3,48 +3,71 @@
 @inject NavigationManager NavigationManager
 @inject AuthStateService AuthState
 
+<style>
+    .navbar {
+        display: none;
+    !important;
+    }
+</style>
+
 <div class="login-container">
-    <div class="login-card">
-        <h3 class="login-title">Sign In</h3>
+    <div class="login-text-container">
+        <h2 class="login-title">Sign in</h2>
+        <p class="login-context">Enter your username and password</p>
+    </div>
+    <div class="login-form-container">
 
-        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin" class="login-form">
-            <DataAnnotationsValidator/>
-
-            <div class="form-field">
-                <InputText @bind-Value="loginModel.Email"
+        <h3 class="mobile-title">Sign in</h3>
+        <EditForm Model="@loginModel" OnValidSubmit="HandleLogin" class="">
+            <div class="login-form">
+                <div class="form-field">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#a8a29e">
+                        <!--! Font Awesome Pro 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. -->
+                        <path
+                            d="M256 48C141.1 48 48 141.1 48 256s93.1 208 208 208c13.3 0 24 10.7 24 24s-10.7 24-24 24C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256l0 28c0 50.8-41.2 92-92 92c-31.1 0-58.7-15.5-75.3-39.2C322.7 360.9 291.1 376 256 376c-66.3 0-120-53.7-120-120s53.7-120 120-120c28.8 0 55.2 10.1 75.8 27c4.3-6.6 11.7-11 20.2-11c13.3 0 24 10.7 24 24l0 80 0 28c0 24.3 19.7 44 44 44s44-19.7 44-44l0-28c0-114.9-93.1-208-208-208zm72 208a72 72 0 1 0 -144 0 72 72 0 1 0 144 0z"/>
+                    </svg>
+                    <input @bind="loginModel.Email"
                            type="email"
-                           placeholder="Email"
-                           class="glow"/>
-            </div>
+                           placeholder="Email address"/>
+                </div>
 
-            <div class="form-field">
-                <InputText @bind-Value="loginModel.Password"
+                <div class="form-field">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="#a8a29e">
+                        <!--! Font Awesome Pro 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. -->
+                        <path
+                            d="M144 128l0 64 160 0 0-64c0-44.2-35.8-80-80-80s-80 35.8-80 80zM96 192l0-64C96 57.3 153.3 0 224 0s128 57.3 128 128l0 64 32 0c35.3 0 64 28.7 64 64l0 192c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 256c0-35.3 28.7-64 64-64l32 0zM48 256l0 192c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-192c0-8.8-7.2-16-16-16L64 240c-8.8 0-16 7.2-16 16z"/>
+                    </svg>
+                    <input @bind="loginModel.Password"
                            type="password"
-                           placeholder="Password"
-                           class="glow"/>
+                           placeholder="Password"/>
+                </div>
+
+                <div class="form-alert-container">
+                    @if (!string.IsNullOrEmpty(error))
+                    {
+                        <div class="alert">@error</div>
+                    }
+                    @if (!string.IsNullOrEmpty(success))
+                    {
+                        <div class="success">@success</div>
+                    }
+                </div>
+
+                <div class="form-action-container">
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+
+                    <button type="submit" class="login-button">
+                        Next
+                    </button>
+                </div>
             </div>
-
-            <a href="#" class="forgot-password">Forgot Password?</a>
-
-            <button type="submit" class="login-button">
-                Sign In
-            </button>
-
-            @if (!string.IsNullOrEmpty(error))
-            {
-            <div class="alert">@error</div>
-            }
-            @if (!string.IsNullOrEmpty(success))
-            {
-            <div class="success">@success</div>
-            }
         </EditForm>
     </div>
 </div>
 
 @code {
-    private PayLoads.Login loginModel = new() { Email = "", Password = "" };
-    private string error,success;
+    private readonly PayLoads.Login loginModel = new() { Email = "", Password = "" };
+    private string error, success;
 
     private async Task HandleLogin()
     {
@@ -76,4 +99,5 @@
             error = "Login failed";
         }
     }
+
 }

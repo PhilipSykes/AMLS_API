@@ -1,23 +1,25 @@
-using Microsoft.Extensions.Options;
-using Common.Constants;
 using Common;
-using static Common.Models.Shared;
+using Common.Constants;
 using Common.Notification.Email;
+using Microsoft.Extensions.Options;
+using static Common.Models.Shared;
 
 namespace Services.NotificationService;
+
 public class NotificationMessageReceiver : BaseMessageReceiver<EmailDetails>
 {
-    private readonly IEmailService _emailService;
     private static readonly string[] NotificationTypes =
     [
         MessageTypes.EmailNotifications.Login,
         MessageTypes.EmailNotifications.PasswordReset,
         MessageTypes.EmailNotifications.ProfileUpdate,
         MessageTypes.EmailNotifications.BorrowMedia,
-        MessageTypes.EmailNotifications.ReserveMedia,
+        MessageTypes.EmailNotifications.ReserveMedia
     ];
 
-    public NotificationMessageReceiver(IOptions<RabbitMQConfig> options, IEmailService emailService) 
+    private readonly IEmailService _emailService;
+
+    public NotificationMessageReceiver(IOptions<RabbitMQConfig> options, IEmailService emailService)
         : base(options, NotificationTypes)
     {
         _emailService = emailService;
@@ -42,8 +44,8 @@ public class NotificationMessageReceiver : BaseMessageReceiver<EmailDetails>
             case MessageTypes.EmailNotifications.ReserveMedia:
                 await _emailService.SendReserveEmailAsync(data);
                 break;
-            
         }
+
         await Task.CompletedTask;
     }
 }

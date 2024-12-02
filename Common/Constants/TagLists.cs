@@ -1,10 +1,8 @@
-using MongoDB.Driver;
-
 namespace Common.Constants;
 
 public class TagLists
 {
-    public List<string> GenreList { get; } = new List<string>
+    public List<string> GenreList { get; } = new()
     {
         "18th century",
         "19th century",
@@ -298,7 +296,7 @@ public class TagLists
         "zombies"
     };
 
-    public Dictionary<string, List<string>> PublisherDictionary { get; } = new Dictionary<string, List<string>>
+    public Dictionary<string, List<string>> PublisherDictionary { get; } = new()
     {
         { "Ace Books", new List<string> { "Ace", "Ace Book", "Ace Books" } },
         { "Addison Wesley Publishing Company", new List<string> { "Addison Wesley Publishing Company" } },

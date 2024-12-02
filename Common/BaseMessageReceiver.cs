@@ -1,9 +1,9 @@
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using Microsoft.Extensions.Options;
 
 namespace Common;
 
@@ -20,8 +20,8 @@ public abstract class BaseMessageReceiver<TMessage> : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var factory = new ConnectionFactory 
-        { 
+        var factory = new ConnectionFactory
+        {
             HostName = _config.HostName,
             Port = _config.Port,
             UserName = _config.UserName,
@@ -33,8 +33,8 @@ public abstract class BaseMessageReceiver<TMessage> : BackgroundService
 
         await channel.ExchangeDeclareAsync(_config.ExchangeName, ExchangeType.Direct);
         var queueName = (await channel.QueueDeclareAsync()).QueueName;
-        
-        foreach(var type in _messageTypes)
+
+        foreach (var type in _messageTypes)
         {
             await channel.QueueBindAsync(queueName, _config.ExchangeName, type);
             Console.WriteLine($"Bound to {type}");
@@ -46,7 +46,7 @@ public abstract class BaseMessageReceiver<TMessage> : BackgroundService
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             var messageType = ea.RoutingKey;
-            try 
+            try
             {
                 var typedMessage = JsonSerializer.Deserialize<TMessage>(message);
                 await HandleMessage(messageType, typedMessage);
@@ -68,5 +68,6 @@ public abstract class BaseMessageReceiver<TMessage> : BackgroundService
             Console.WriteLine("Service shutting down...");
         }
     }
+
     protected abstract Task HandleMessage(string messageType, TMessage message);
 }
