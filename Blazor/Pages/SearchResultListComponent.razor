@@ -1,4 +1,7 @@
-<div id="search-card">
+@inject IJSRuntime JS
+@inject NavigationManager Nav
+ 
+<div @onclick="UpdateRouteParamAndNavigate" id="search-card">
     <h3 id="search-media-title">@Media.Title</h3>
     <div id="search-pill-container">
         <div class="pill">@Media.Type</div>
@@ -47,5 +50,10 @@
                 IsAvailable = true;
             }
         }
+    }
+
+    private async Task UpdateRouteParamAndNavigate()
+    {
+        Nav.NavigateTo($"/media/{Media.ObjectID}");
     }
 }

@@ -1,0 +1,43 @@
+@page "/media/{MediaId}"
+@using MongoDB.Bson
+@inject HttpClient HttpClient
+
+
+<h3>@result.Title</h3>
+<h2>@result.Author</h2>
+
+<p>@result.Description</p>
+
+@foreach (var copy in result.PhysicalCopies)
+{
+    <div>
+        <h3>@result.PhysicalCopies</h3>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string MediaId { get; set; }
+
+    private List<Entities.MediaInfo> mediaResults = new();
+    private Entities.MediaInfo result = new();
+    private List<Filter> filters = new List<Filter>(); 
+
+    protected override async Task OnInitializedAsync()
+    {
+        filters.Add(new Filter("_id", MediaId,DbOperations.Equals));
+        
+        var response = await HttpClient.PostAsJsonAsync($"api/media/search?page={1}&count={1}", filters);
+        if (response.IsSuccessStatusCode)
+        {
+            var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.MediaInfo>>>();
+            if (searchResponse != null)
+            {
+                mediaResults = searchResponse.Data;
+                result = mediaResults[0];
+            }
+        }
+
+        StateHasChanged();
+    }
+}
