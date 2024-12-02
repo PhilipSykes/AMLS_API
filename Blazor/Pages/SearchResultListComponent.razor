@@ -1,6 +1,3 @@
-@using System.Reflection.Metadata
-@using MongoDB.Bson
-@using Wasm
 <div id="search-card">
     <h3 id="search-media-title">@Media.Title</h3>
     <div id="search-pill-container">
@@ -16,7 +13,7 @@
 
     </div>
     <div id="search-star-rating">
-        @for (int i = 1; i <= 5; i++)
+        @for (var i = 1; i <= 5; i++)
         {
             <RatingStar colorValue="@(i <= Rating)"></RatingStar>
         }
@@ -26,9 +23,11 @@
 
 
 @code
+
+
+
 {
-    [Parameter]
-    public Entities.MediaInfo Media { get; set; } = new();
+    [Parameter] public Entities.MediaInfo Media { get; set; } = new();
 
     public bool IsAvailable { get; set; }
 
@@ -36,12 +35,14 @@
     private int Rating => (int)Math.Round(Media.Rating);
     private string _genres => string.Join(" • ", Media.Genres.Take(3));
 
+    private string _preferedBranch = "6733491ba1ed2d02eef46a42";
+
 
     protected override void OnInitialized()
     {
         foreach (var copy in Media.PhysicalCopies)
         {
-            if (copy.Status == "Available")
+            if (copy.Status == "Available" && copy.Branch == _preferedBranch)
             {
                 IsAvailable = true;
             }

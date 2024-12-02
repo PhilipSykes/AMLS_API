@@ -7,41 +7,41 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
+        <PackageReference Include="Blazored.SessionStorage" Version="2.4.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.8"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.8" PrivateAssets="all"/>
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
-        <PackageReference Include="Wasm" Version="0.1.7" />
-        <PackageReference Include="Wasm.Sdk" Version="1.0.0" />
-        <PackageReference Include="Wasm.Sdk.Analyzer" Version="1.0.0" />
-        <PackageReference Include="Wasm.Sdk.DevServer" Version="1.0.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1"/>
+        <PackageReference Include="Wasm" Version="0.1.7"/>
+        <PackageReference Include="Wasm.Sdk" Version="1.0.0"/>
+        <PackageReference Include="Wasm.Sdk.Analyzer" Version="1.0.0"/>
+        <PackageReference Include="Wasm.Sdk.DevServer" Version="1.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css" />
-      <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css.map" />
+        <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css"/>
+        <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css.map"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Content Update="Pages\RatingStar.razor">
-        <DependentUpon>SearchResultListComponent.razor</DependentUpon>
-      </Content>
-      <Content Update="Pages\MediaSearchForm.razor">
-        <DependentUpon>Home.razor</DependentUpon>
-      </Content>
-      <Content Update="Pages\SearchResultListComponent.razor">
-        <DependentUpon>Home.razor</DependentUpon>
-      </Content>
+        <Content Update="Pages\RatingStar.razor">
+            <DependentUpon>SearchResultListComponent.razor</DependentUpon>
+        </Content>
+        <Content Update="Pages\MediaSearchForm.razor">
+            <DependentUpon>Home.razor</DependentUpon>
+        </Content>
+        <Content Update="Pages\SearchResultListComponent.razor">
+            <DependentUpon>Home.razor</DependentUpon>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Pages\MediaSearchModel.cs">
-        <DependentUpon>MediaSearchForm.razor</DependentUpon>
-      </Compile>
+        <Compile Update="Pages\MediaSearchModel.cs">
+            <DependentUpon>MediaSearchForm.razor</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Common\Common.csproj" />
+        <ProjectReference Include="..\Common\Common.csproj"/>
     </ItemGroup>
 
 </Project>

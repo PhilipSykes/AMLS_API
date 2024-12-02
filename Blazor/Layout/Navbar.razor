@@ -14,12 +14,12 @@
         <div class="nav-right">
             @if (username != null)
             {
-            <span class="username-display">
+                <span class="username-display">
                     Logged in as: @username
-                @if (!string.IsNullOrEmpty(userRole))
-                {
-                <small>(@userRole)</small>
-                }
+                    @if (!string.IsNullOrEmpty(userRole))
+                    {
+                        <small>(@userRole)</small>
+                    }
                 </span>
             }
             <a href="/login" class="profile-icon">
@@ -38,7 +38,7 @@
     {
         currentUser = await AuthState.GetUser();
         await UpdateUserInfo();
-        
+
         AuthState.OnChange += OnAuthStateChanged;
     }
 
