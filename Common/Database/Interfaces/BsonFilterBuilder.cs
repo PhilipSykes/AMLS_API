@@ -11,7 +11,7 @@ public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
   
     public FilterDefinition<BsonDocument> BuildFilter(List<Filter> filterObjectsIn)
     {
-        try // Note from Will: This try catch is redundant, as operators are enforced by the enum. Unless someone were to remove operations from that enum for some reason anyway.
+        try // Note from Will: This try catch is redundant, as operators are enforced by the enum. // Second note from Will: Keep for now, Add AND/OR to filters
         {
             var builder = Builders<BsonDocument>.Filter;
 

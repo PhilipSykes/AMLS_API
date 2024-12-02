@@ -1,10 +1,12 @@
 using Api.MessageBroker;
 using Common.Constants;
+using Common.Database;
 using Common.Models;
 using static Common.Models.Shared;
 using static Common.Models.Operations;
 using Common.Utils;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Driver;
 using Services.UserService;
 using Services.TokenAuthService;
 
@@ -86,6 +88,12 @@ public class AuthController : ControllerBase
             Role = login.Role
         }).ToList();
 
+        var client = new MongoClient("mongodb+srv://c1023778:X4M8yMPq6DNgrOck@cluster0.simvp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0");
+        var _database = client.GetDatabase("AdvancedMediaLibrary");
+        var _collection = _database.GetCollection<Entities.Login>("Login");
+        await _collection.InsertManyAsync(updatedLogins);
+        
+        
         //TODO write method needed UpdateLoginCredentials(updatedLogins);
     }
     
