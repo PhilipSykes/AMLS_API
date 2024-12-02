@@ -44,7 +44,7 @@ public class AuthController : ControllerBase
         }
 
         var passwordService = new PasswordService();
-            //if (!passwordService.VerifyPassword(response.Data[0].PasswordHash, request.Data.Password))
+            //if (!passwordService.VerifyPassword(result[0].PasswordHash, request.Data.Password))
             if (result[0].PasswordHash != request.Data.Password)
             {
                 return Unauthorized(new Response<LoginDetails>
@@ -66,7 +66,7 @@ public class AuthController : ControllerBase
                 Message = "Login successful",
                 Data = new LoginDetails()
                 {
-                    Username = result[0].Username,
+                    Username = result[0].UserId,
                     Token = token
                 }
             });
@@ -80,7 +80,7 @@ public class AuthController : ControllerBase
         var updatedLogins = response.Select(login => new Entities.Login
         {
             ObjectID = login.ObjectID,
-            Username = login.Username,
+            UserId = login.UserId,
             Email = login.Email,
             PasswordHash = passwordService.HashPassword(login.PasswordHash),
             Role = login.Role

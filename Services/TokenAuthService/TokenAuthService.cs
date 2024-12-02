@@ -13,7 +13,7 @@ public class TokenAuthService
         var claims = new List<Claim>
         {
             // Standard claims
-            new Claim(ClaimTypes.NameIdentifier, user.Username),
+            new Claim(ClaimTypes.NameIdentifier, user.UserId),
             new Claim(ClaimTypes.Email, user.Email),      
             new Claim(ClaimTypes.Role, user.Role), 
 

@@ -12,10 +12,10 @@
             (Nav)
         </div>
         <div class="nav-right">
-            @if (username != null)
+            @if (email != null)
             {
                 <span class="username-display">
-                    Logged in as: @username
+                    Logged in as: @email
                     @if (!string.IsNullOrEmpty(userRole))
                     {
                         <small>(@userRole)</small>
@@ -30,7 +30,7 @@
 </nav>
 
 @code {
-    private string? username;
+    private string? email;
     private string? userRole;
     private ClaimsPrincipal? currentUser;
 
@@ -46,12 +46,12 @@
     {
         if (currentUser != null)
         {
-            username = currentUser.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            email = currentUser.FindFirst(ClaimTypes.Email)?.Value;
             userRole = currentUser.FindFirst(ClaimTypes.Role)?.Value;
         }
         else
         {
-            username = null;
+            email = null;
             userRole = null;
         }
     }

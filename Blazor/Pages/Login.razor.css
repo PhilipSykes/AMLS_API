@@ -27,8 +27,10 @@
 }
 
 .login-title {
+    user-select: none;
     font-family: "Serif-Title", serif;
     font-weight: 700;
+    font-variation-settings: "opsz" 12;
     font-size: 54px;
     text-align: right;
 
@@ -39,6 +41,7 @@
 }
 
 .login-context {
+    user-select: none;
     font-family: "Regular", sans-serif;
     font-size: 17px;
     font-weight: 600;
@@ -100,6 +103,10 @@
     border-color: #a8a29e;
     transition: 0.3s ease-in-out;
 }
+.form-field:focus-within {
+    border-color: #a8a29e;
+    transition: 0.3s ease-in-out;
+}
 
 svg {
     height: 20px;
@@ -127,6 +134,7 @@ input {
 }
 input::placeholder {
     color: #a8a29e;
+    user-select: none;
 }
 
 .form-alert-container{
@@ -171,11 +179,12 @@ input::placeholder {
     color: #FAFAF9;
     border: none;
     outline: none;
-    
+    user-select: none;
 }
 .login-button:hover {
     background-color: #57534e;
     transition: 0.15s ease-in-out;
+    
 }
 .forgot-password {
     font-family: "Regular", sans-serif;
@@ -183,6 +192,7 @@ input::placeholder {
     font-weight: 650;
     text-decoration: none;
     color: #a8a29e;
+    user-select: none;
 }
 .forgot-password:hover {
     color: #78716c;
@@ -200,6 +210,8 @@ input::placeholder {
     font-family: "Serif-Title", serif;
     color: #1C1917;
     font-weight: 600;
+    font-variation-settings: "opsz" 12;
+    user-select: none;
 }
 @media (max-width: 720px) {
     .login-text-container{
