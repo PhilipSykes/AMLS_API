@@ -48,4 +48,3 @@ await exchange.InitializeConnection();
 
 
 app.Run();
-

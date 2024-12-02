@@ -1,41 +1,39 @@
 using Common.Constants;
 using Common.Database;
+using Common.Utils;
 using static Common.Models.Shared;
 using static Common.Models.Operations;
 using static Common.Models.Entities;
-using Common.Utils;
-using MongoDB.Bson;
 
-namespace Services.ReservationService
+namespace Services.ReservationService;
+
+public interface IReservationSearch
 {
-    public interface IReservationSearch
+    Task<Response<List<Reservations>>> SearchReservations((int, int) pagination, List<Filter> filters);
+}
+
+public class ReservationSearch : IReservationSearch
+{
+    private readonly ISearchRepository _searchRepository;
+
+    public ReservationSearch(ISearchRepository searchRepository)
     {
-        Task<Response<List<Reservations>>> SearchReservations((int, int) pagination, List<Filter> filters);
+        _searchRepository = searchRepository;
     }
 
-    public class ReservationSearch : IReservationSearch
+    public async Task<Response<List<Reservations>>> SearchReservations((int, int) pagination,
+        List<Filter> filters)
     {
-        private readonly ISearchRepository _searchRepository;
+        //Console.WriteLine($"Performing media search with {filters.Count} filters");
+        var bsonDocuments = await _searchRepository.Search(DocumentTypes.Reservations, pagination, filters);
 
-        public ReservationSearch(ISearchRepository searchRepository)
+        List<Reservations> reservationsList = Utils.ConvertBsonToEntity<Reservations>(bsonDocuments);
+
+        Console.WriteLine($"Search completed. Found {reservationsList.Count} results");
+        return new Response<List<Reservations>>
         {
-            _searchRepository = searchRepository;
-        }
-
-        public async Task<Response<List<Reservations>>> SearchReservations((int, int) pagination,
-            List<Filter> filters)
-        {
-            //Console.WriteLine($"Performing media search with {filters.Count} filters");
-            List<BsonDocument> bsonDocuments = await _searchRepository.Search(DocumentTypes.Reservations, pagination, filters);
-            
-            List<Reservations> reservationsList = Utils.ConvertBsonToEntity<Reservations>(bsonDocuments);
-
-            Console.WriteLine($"Search completed. Found {reservationsList.Count} results");
-            return new Response<List<Reservations>>
-            {
-                Success = true,
-                Data = reservationsList
-            };
-        }
+            Success = true,
+            Data = reservationsList
+        };
     }
 }

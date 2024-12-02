@@ -1,11 +1,14 @@
 # Search System Documentation
 
 ## Overview
-The search system provides a flexible way to query the media database using filters. It uses MongoDB as the underlying database and supports various filter operations.
+
+The search system provides a flexible way to query the media database using filters. It uses MongoDB as the underlying
+database and supports various filter operations.
 
 ## Core Components
 
 ### Filter
+
 Filter is a class for transporting filter settings from the UI to the database queries
 
 ```csharp
@@ -18,6 +21,7 @@ public class Filter(string key, object value, char operation)
 ```
 
 #### Fields
+
 - `Key`: The name of the field being queried (matches database field name)
 - `Value`: The value to filter by (accepts any object type)
 - `Operation`: The filter operation to perform, options:
@@ -28,12 +32,15 @@ public class Filter(string key, object value, char operation)
     - `'~'` - Contains (case-insensitive)
 
 #### Example
+
 Filter for media with rating greater than 4:
+
 ```csharp
 new Filter("rating", 4, '>');
 ```
 
 ### SearchResponse Class
+
 Represents the response from any search operation.
 
 ```csharp
@@ -46,13 +53,15 @@ public class SearchResponse
 ```
 
 #### Fields
+
 - `Results`: List of matching documents
 - `TotalCount`: Number of results found
 - `Error`: Error message if the search failed (null if successful)
 
 ### SearchRepository
 
-The SearchRepository provides database access for search operations. Configuration is handled through dependency injection using `MongoDBConfig`.
+The SearchRepository provides database access for search operations. Configuration is handled through dependency
+injection using `MongoDBConfig`.
 
 ```csharp
 // Registration in Program.cs
@@ -64,18 +73,22 @@ builder.Services.AddScoped<ISearchRepository, SearchRepository>();
 #### Methods
 
 ##### SearchMediaInfo
+
 ```csharp
 Task<SearchResponse> SearchMediaInfo(List<Filter> filters)
 ```
+
 - Searches the MediaInfo collection
 - Returns a SearchResponse containing results or error
 - Takes a list of Filter objects
 - Filters are combined with AND logic
 
 ##### SearchPhysicalMedia
+
 ```csharp
 Task<SearchResponse> SearchPhysicalMedia(List<Filter> filters)
 ```
+
 - Searches the PhysicalMedia collection
 - Returns a SearchResponse containing results or error
 - Takes a list of Filter objects
@@ -136,6 +149,7 @@ foreach (var doc in response.Results)
 ```
 
 ## Configuration
+
 The search system requires MongoDB connection details in appsettings.json:
 
 ```json
@@ -147,4 +161,5 @@ The search system requires MongoDB connection details in appsettings.json:
 }
 ```
 
-> **Note**: This documentation reflects the current implementation. Future updates may include support for array field searches and OR operations between filters.
+> **Note**: This documentation reflects the current implementation. Future updates may include support for array field
+> searches and OR operations between filters.

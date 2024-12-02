@@ -1,10 +1,8 @@
 using System.Net;
 using System.Net.Mail;
 using static Common.Models.Shared;
-using MongoDB.Bson;
 
 namespace Common.Notification.Email;
-
 
 public interface IEmailService
 {
@@ -13,10 +11,27 @@ public interface IEmailService
 
 public class EmailService : IEmailService
 {
-    private readonly string _smtpServer = "smtp.gmail.com";
+    private readonly string _appPassword = "dktpdtqizcxwjerg";
     private readonly int _port = 587;
     private readonly string _senderEmail = "hallam.amls@gmail.com";
-    private readonly string _appPassword = "dktpdtqizcxwjerg";
+    private readonly string _smtpServer = "smtp.gmail.com";
+
+    public async Task SendReserveEmailAsync(EmailDetails data)
+    {
+        var htmlBody =
+            "<!DOCTYPE html>\n<html>\n<head>\n    <style>\n        body { font-family: Arial, sans-serif; }\n    </style>\n</head>\n<body>\n\n<h1>Hello {UserName}!</h1>\n<h3>This is to confirm your booking of {Media}</h3>\n\n<p>You can pick up your item(s) at {Time} from {Location}</p>\n\n</body>\n</html>";
+
+        try
+        {
+            foreach (var item in data.EmailBody) htmlBody = htmlBody.Replace($"{{{item.Key}}}", item.Value);
+
+            await SendEmailAsync(data.RecipientAddresses, "Reserving subject line", htmlBody);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Error sending reserve email: {e.Message}");
+        }
+    }
 
     //TODO: Remove inline HTML for E-mail Content
 
@@ -27,11 +42,8 @@ public class EmailService : IEmailService
             using (var message = new MailMessage())
             {
                 message.From = new MailAddress(_senderEmail);
-                foreach (string recipient in recipients)
-                {
-                    message.To.Add(recipient);
-                }
-                
+                foreach (var recipient in recipients) message.To.Add(recipient);
+
                 message.Subject = subject;
                 message.IsBodyHtml = isBodyHtml;
                 message.Body = body;
@@ -51,25 +63,4 @@ public class EmailService : IEmailService
             throw new Exception($"Error sending email: {ex.Message}");
         }
     }
-
-    public async Task SendReserveEmailAsync(EmailDetails data)
-    {
-        string htmlBody = "<!DOCTYPE html>\n<html>\n<head>\n    <style>\n        body { font-family: Arial, sans-serif; }\n    </style>\n</head>\n<body>\n\n<h1>Hello {UserName}!</h1>\n<h3>This is to confirm your booking of {Media}</h3>\n\n<p>You can pick up your item(s) at {Time} from {Location}</p>\n\n</body>\n</html>";
-
-        try
-        {
-            foreach (var item in data.EmailBody)
-            {
-                htmlBody = htmlBody.Replace($"{{{item.Key}}}", item.Value);
-                
-            }
-            
-            await SendEmailAsync(data.RecipientAddresses, subject:"Reserving subject line" , htmlBody, true);
-        }
-        catch (Exception e)
-        {
-            throw new Exception($"Error sending reserve email: {e.Message}");
-        }
-    }
-    
 }
