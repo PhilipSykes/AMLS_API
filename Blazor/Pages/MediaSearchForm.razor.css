@@ -277,7 +277,7 @@
         align-items: center;
         padding: 10px 20px;
         position: fixed;
-        top: 0;
+        top: 64px;
         left: 0;
         z-index: 1000;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
@@ -311,6 +311,7 @@
     #sidebar {
         flex-wrap: wrap;
         padding: 15px;
+        top: 0;
     }
 
     #sidebar .text-field {

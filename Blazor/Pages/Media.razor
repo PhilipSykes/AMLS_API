@@ -3,45 +3,97 @@
 @inject NavigationManager Nav
 
 
+<div class="media-info-container">
+    <div class="media-title-author-container">
+        <h2 class="media-title">@_result.Title</h2>
+        <div class="rating">
+            @for (var i = 1; i <= 5; i++)
+            {
+                
+                <div style="width: 21px; height: 21px; display: flex; justify-content: center; align-items: center;">
+                    <svg class="star" width="17.5" height="16.63" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M4.09687 17.25L5.51875 11.1031L0.75 6.96875L7.05 6.42188L9.5 0.625L11.95 6.42188L18.25 6.96875L13.4812 11.1031L14.9031 17.25L9.5 13.9906L4.09687 17.25Z"
+                            fill="@GetColor(i, _result)"/>
+                    </svg>
+                </div>
+            }
+        </div>
+        
+        <div class="info-description">
+            
+            <div class="info">
+                    <h3 class="section-title">Info</h3>
+                    <div class="info-title">Author</div>
+                    <div class="info-content">
+                        @(_result.Author.Contains(',') ? _result.Author.Split(',')[0] : _result.Author)
+                    </div>
+                    <div class="info-title">Publisher</div>
+                    <div class="info-content">
+                        @_result.Publisher
+                    </div>
+                    <div class="info-title">Publish Date</div>
+                    <div class="info-content">
+                        @_result.PublishDate.ToLocalTime().ToString("dd/MM/yyyy")
+                    </div>
 
-<h2>@result.Title</h2>
-<h3>@result.Author</h3>
+                    <div class="info-title">ISBN</div>
+                    <div class="info-content">
+                        @_result.Isbn
+                    </div>
+            </div>
 
-<p>@result.Description</p>
-
-@foreach (var copy in result.PhysicalCopies)
-{
-    <div>
-        <h4>@copy.Branch</h4>
-        <p>@copy.Status</p>
+            <div class="description">
+                <h3 class="section-title">Desctription</h3>
+                <p>@_result.Description</p>
+            </div>
+        </div>
+        
     </div>
-}
+
+    @foreach (var copy in _result.PhysicalCopies)
+    {
+        <div>
+            <h4>@copy.Branch</h4>
+            <p>@copy.Status</p>
+        </div>
+    }
+
+</div>
 
 
 @code {
     [Parameter] public string MediaId { get; set; }
 
-    private List<Entities.MediaInfo> mediaResults = new();
-    private Entities.MediaInfo result = new();
-    private readonly List<Filter> filters = new();
+    private List<Entities.MediaInfo> _mediaResults = new();
+    private Entities.MediaInfo _result = new();
+    private readonly List<Filter> _filters = new();
 
 
     protected override async Task OnInitializedAsync()
     {
-        filters.Add(new Filter("_id", MediaId, DbOperations.Equals));
+        _filters.Add(new Filter("_id", MediaId, DbOperations.Equals));
 
-        var response = await HttpClient.PostAsJsonAsync($"api/media/search?page={1}&count={1}", filters);
+        var response = await HttpClient.PostAsJsonAsync($"api/media/search?page={1}&count={1}", _filters);
         if (response.IsSuccessStatusCode)
         {
             var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.MediaInfo>>>();
             if (searchResponse != null)
             {
-                mediaResults = searchResponse.Data;
-                result = mediaResults[0];
+                _mediaResults = searchResponse.Data;
+                _result = _mediaResults[0];
             }
         }
 
         StateHasChanged();
     }
 
+    static string GetColor(int i, Entities.MediaInfo result)
+    {
+        if (i <= result.Rating)
+        {
+            return "#44403C";
+        }
+        return "#D6D3D1";
+    }
 }
