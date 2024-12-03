@@ -1,5 +1,6 @@
 using Api.MessageBroker;
 using Common.Constants;
+using Microsoft.AspNetCore.Authorization;
 using static Common.Models.Shared;
 using static Common.Models.Operations;
 using static Common.Models.Entities;
@@ -50,6 +51,7 @@ public class MediaController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize(Policy = Policies.RequireMember)]
     [HttpPost("reserve")]
     public async Task<ActionResult> Reserve([FromBody] Request<Reserve> request)
     {

@@ -33,6 +33,44 @@
       }
     },
     {
+      "UpstreamPathTemplate": "/api/media/reserve/",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/media/reserve/",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5001
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "member_access": "true"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/media/borrow/",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/media/borrow/",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5001
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "member_access": "true"
+      }
+    },
+    {
       "UpstreamPathTemplate": "/api/media/{everything}",
       "UpstreamHttpMethod": [ "POST", "GET" ],
       "DownstreamPathTemplate": "/media/{everything}",
@@ -61,7 +99,7 @@
         "AuthenticationProviderKey": "Bearer"
       },
       "RouteClaimsRequirement": {
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role": "admin"
+        "admin_access": "true"
       }
     }
   ]

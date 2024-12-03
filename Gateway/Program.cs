@@ -1,8 +1,10 @@
 using System.Text;
+using Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
     .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
-string testSecretKey = "your_very_long_secret_key_min_16_chars";
+var jwtConfig = builder.Configuration.GetSection("JWTToken").Get<JWTTokenConfig>();
+
 // Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer("Bearer", options =>
@@ -21,9 +24,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = "your_issuer",
-            ValidAudience = "your_audience",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(testSecretKey))
+            ValidIssuer = jwtConfig.Issuer,
+            ValidAudience = jwtConfig.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecretKey))
 
         };
     });
@@ -46,7 +49,8 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.MapControllers();
-
+app.UseAuthentication();  
+app.UseAuthorization();
 app.UseCors("AllowBlazorClient");
 
 await app.UseOcelot();

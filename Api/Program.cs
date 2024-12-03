@@ -1,6 +1,10 @@
+using System.Text;
+using Api;
 using Api.MessageBroker;
 using Common;
 using Common.Database;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Services.MediaService;
 using Services.TokenAuthService;
 using Services.UserService;
@@ -19,7 +23,7 @@ builder.Services.AddSingleton<Exchange>();
 builder.Services.Configure<MongoDBConfig>(
     builder.Configuration.GetSection("MongoDB"));
 
-// Add JWTToken config
+//Add JWTToken config
 builder.Services.Configure<JWTTokenConfig>(
     builder.Configuration.GetSection("JWTToken"));
 
@@ -34,6 +38,27 @@ builder.Services.AddScoped<IMediaSearch, MediaSearch>();
 builder.Services.AddScoped<IUserSearch, UserSearch>();
 builder.Services.AddScoped<TokenAuthService>();
 
+var jwtConfig = builder.Configuration.GetSection("JWTToken").Get<JWTTokenConfig>();
+
+// Configure JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtConfig.Issuer,
+            ValidAudience = jwtConfig.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecretKey))
+
+        };
+    });
+
+Policies.ConfigurePolicies(builder.Services);
+
 builder.Services.AddLogging(logging =>
 {
     logging.AddConsole();
@@ -44,6 +69,7 @@ var app = builder.Build();
 
 app.UseRouting();
 app.UseHttpsRedirection();
+app.UseAuthorization();
 app.MapControllers();
 
 

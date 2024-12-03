@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Common;
+using Common.Constants;
 using Common.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -15,17 +16,8 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
     
     public string GenerateJwtToken(Entities.Login user)
     {
-        
-        var claims = new List<Claim>
-        {
-            // Standard claims
-            new Claim(ClaimTypes.NameIdentifier, user.Username),
-            new Claim(ClaimTypes.Email, user.Email),      
-            new Claim(ClaimTypes.Role, user.Role), 
 
-            // Custom claims
-            new Claim("permissions", "read,write,delete")               // Specific permissions
-        };
+        List<Claim> claims = AddClaims(user);
         
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.SecretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -34,7 +26,7 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
             issuer: _config.Issuer,
             audience: _config.Audience,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(30),
+            expires: DateTime.Now.AddMinutes(1),
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
@@ -57,6 +49,54 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
         {
             return false;
         }
+    }
+
+    public List<Claim> AddClaims(Entities.Login user)
+    {
+        
+        //TODO adjust switch case strings to constants / enums matching DB role names
+        List<Claim> claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Username),
+            new Claim(ClaimTypes.Email, user.Email),      
+            new Claim(ClaimTypes.Role, user.Role), 
+        };
+
+        switch (user.Role)
+        {
+            case "Member":
+                claims.Add(new Claim(PolicyClaims.MemberClaim, "true"));
+                claims.Add(new Claim(PolicyClaims.ReadMedia, "true"));
+                break;
+                
+            case "Librarian":
+                claims.Add(new Claim(PolicyClaims.LibrarianClaim, "true"));
+                claims.Add(new Claim(PolicyClaims.ReadMedia, "true"));
+                claims.Add(new Claim(PolicyClaims.EditMedia, "true"));
+                break;
+                
+            case "Manager":
+                claims.Add(new Claim(PolicyClaims.ManagerClaim, "true"));
+                claims.Add(new Claim(PolicyClaims.CreateMedia, "true"));
+                claims.Add(new Claim(PolicyClaims.EditMedia, "true"));
+                claims.Add(new Claim(PolicyClaims.DeleteMedia, "true"));
+                claims.Add(new Claim(PolicyClaims.ManageUsers, "true"));
+                claims.Add(new Claim(PolicyClaims.ViewStaffReports, "true"));
+                break;
+                
+            case "Accountant":
+                claims.Add(new Claim(PolicyClaims.AccountantClaim, "true"));
+                claims.Add(new Claim(PolicyClaims.ViewFinancialReports, "true"));
+                break;
+                
+            case "System admin": 
+                claims.Add(new Claim(PolicyClaims.AdminClaim, "true"));
+                claims.Add(new Claim(PolicyClaims.ManageUsers, "true"));
+                claims.Add(new Claim(PolicyClaims.ViewMetricsReports, "true"));
+                break;
+        }
+
+        return claims;
     }
     
 }
