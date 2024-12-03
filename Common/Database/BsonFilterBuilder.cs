@@ -6,16 +6,13 @@ using Common.Exceptions;
 
 namespace Common.Database.Interfaces;
 
-public interface IFilterBuilder<T>
-{
-    FilterDefinition<T> BuildFilter(List<Filter> filterObjectsIn);
-}
-
 public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
 {
   
     public FilterDefinition<BsonDocument> BuildFilter(List<Filter> filterObjectsIn)
     {
+        try // Note from Will: This try catch is redundant, as operators are enforced by the enum. // Second note from Will: Keep for now, Add AND/OR to filters
+        {
             var builder = Builders<BsonDocument>.Filter;
 
             if (filterObjectsIn is null) // Allows filterless queries
@@ -58,5 +55,10 @@ public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
             }
 
             return mongoFilters;
+        }
+        catch (Exception ex) when (ex is InvalidOperationException || ex is ArgumentException)
+        {
+            throw new SearchException(SearchException.SearchErrorType.Validation);
+        }
     }
 }

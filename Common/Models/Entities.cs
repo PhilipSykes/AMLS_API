@@ -140,11 +140,11 @@ namespace Common.Models
             public string NearestBranch { get; init; } = string.Empty;
         }
 
-        public record Reservations
+        public record Reservation
         {
-            [BsonId]
-            [BsonRepresentation(BsonType.ObjectId)]
-            public string ObjectID { get; init; } = string.Empty;
+            //[BsonId]     //Note from Will: Commented this out for writing reservations, might need to uncomment to read
+            //[BsonRepresentation(BsonType.ObjectId)]
+            //public string ObjectID { get; init; } = string.Empty;
 
             [BsonElement(DbFieldNames.Reservations.Member)]
             public string Member { get; init; } = string.Empty;
