@@ -23,7 +23,7 @@ builder.Services.AddScoped<IMediaSearch, MediaSearch>();
 builder.Services.AddScoped<IUserSearch, UserSearch>();
 
 //RabbitMQ receivers 
-builder.Services.AddHostedService<NotificationMessageReceiver>();
+builder.Services.AddHostedService<NotificationManager>();
 
 
 var host = builder.Build();

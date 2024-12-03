@@ -5,7 +5,7 @@ using static Common.Models.Shared;
 using Common.Notification.Email;
 
 namespace Services.NotificationService;
-public class NotificationMessageReceiver : BaseMessageReceiver<EmailDetails>
+public class NotificationManager : BaseMessageReceiver<EmailDetails>
 {
     private readonly IEmailService _emailService;
     private static readonly string[] NotificationTypes =
@@ -17,7 +17,7 @@ public class NotificationMessageReceiver : BaseMessageReceiver<EmailDetails>
         MessageTypes.EmailNotifications.ReserveMedia,
     ];
 
-    public NotificationMessageReceiver(IOptions<RabbitMQConfig> options, IEmailService emailService) 
+    public NotificationManager(IOptions<RabbitMQConfig> options, IEmailService emailService) 
         : base(options, NotificationTypes)
     {
         _emailService = emailService;

@@ -24,7 +24,7 @@ public class InventoryManager : IInventoryManager
     
     public async Task<Response<string>> EditExistingMedia(Request<MediaInfo> item)
     {
-        //TODO filter builder usage within to find item by ID 
+         
         return new Response<string>()
         {
             Success = true,
