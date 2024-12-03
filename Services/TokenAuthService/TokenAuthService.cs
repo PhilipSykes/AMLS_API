@@ -1,15 +1,21 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Common;
 using Common.Models;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Services.TokenAuthService;
 
-public class TokenAuthService
+
+public class TokenAuthService(IOptions<JWTTokenConfig> options)
 {
+    private readonly JWTTokenConfig _config = options.Value;
+    
     public string GenerateJwtToken(Entities.Login user)
     {
+        
         var claims = new List<Claim>
         {
             // Standard claims
@@ -21,13 +27,12 @@ public class TokenAuthService
             new Claim("permissions", "read,write,delete")               // Specific permissions
         };
         
-        string testSecretKey = "your_very_long_secret_key_min_16_chars";
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(testSecretKey));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.SecretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: "your_issuer",
-            audience: "your_audience",
+            issuer: _config.Issuer,
+            audience: _config.Audience,
             claims: claims,
             expires: DateTime.Now.AddMinutes(30),
             signingCredentials: creds);

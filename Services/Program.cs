@@ -13,11 +13,6 @@ var builder = Host.CreateApplicationBuilder(args);
 builder.Services.Configure<RabbitMQConfig>(
     builder.Configuration.GetSection("RabbitMQ"));
 
-
-// Add MongoDB config
-builder.Services.Configure<MongoDBConfig>(
-    builder.Configuration.GetSection("MongoDB"));
-
 // Register services
 builder.Services.AddSingleton<IEmailService, EmailService>();
 
@@ -27,6 +22,7 @@ builder.Services.AddScoped<ISearchRepository, SearchRepository>();
 builder.Services.AddScoped<IMediaSearch, MediaSearch>();
 builder.Services.AddScoped<IUserSearch, UserSearch>();
 
+//RabbitMQ receivers 
 builder.Services.AddHostedService<NotificationMessageReceiver>();
 
 

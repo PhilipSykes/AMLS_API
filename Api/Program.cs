@@ -2,6 +2,7 @@ using Api.MessageBroker;
 using Common;
 using Common.Database;
 using Services.MediaService;
+using Services.TokenAuthService;
 using Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,9 @@ builder.Services.AddSingleton<Exchange>();
 builder.Services.Configure<MongoDBConfig>(
     builder.Configuration.GetSection("MongoDB"));
 
+// Add JWTToken config
+builder.Services.Configure<JWTTokenConfig>(
+    builder.Configuration.GetSection("JWTToken"));
 
 builder.Services.AddHttpContextAccessor();
 
@@ -28,6 +32,7 @@ builder.Services.AddScoped<ISearchRepository, SearchRepository>();
 // Register Application Services
 builder.Services.AddScoped<IMediaSearch, MediaSearch>();
 builder.Services.AddScoped<IUserSearch, UserSearch>();
+builder.Services.AddScoped<TokenAuthService>();
 
 builder.Services.AddLogging(logging =>
 {

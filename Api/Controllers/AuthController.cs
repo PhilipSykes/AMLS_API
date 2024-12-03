@@ -16,11 +16,12 @@ public class AuthController : ControllerBase
 {
     private readonly Exchange _exchange;
     private readonly IUserSearch _userSearch;
-    
-    public AuthController(Exchange exchange, IUserSearch userSearch)
+    private readonly TokenAuthService _tokenAuthService;
+    public AuthController(Exchange exchange, IUserSearch userSearch,TokenAuthService tokenAuthService)
     {
         _exchange = exchange;
         _userSearch = userSearch;
+        _tokenAuthService = tokenAuthService;
     }
 
     [HttpPost("login")]
@@ -57,8 +58,7 @@ public class AuthController : ControllerBase
             // await _exchange.PublishNotification(
             //     MessageTypes.EmailNotifications.Login, 
             //     request.EmailDetails);
-            TokenAuthService auth = new TokenAuthService();
-            string token = auth.GenerateJwtToken(result[0]);
+            string token = _tokenAuthService.GenerateJwtToken(result[0]);
             Console.WriteLine($"token: {token}");
             return Ok(new Response<LoginDetails>
             {

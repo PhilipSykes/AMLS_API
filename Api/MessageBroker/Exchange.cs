@@ -27,14 +27,6 @@ public class Exchange(IOptions<RabbitMQConfig> options)
             await channel.ExchangeDeclareAsync(_config.ExchangeName, ExchangeType.Direct);
             Console.WriteLine("RabbitMQ connection initialized");
         }
-    
-        public async Task PublishWeatherRequest()
-        {
-            var channel = await _connection.CreateChannelAsync();
-            var body = Encoding.UTF8.GetBytes("weather.request");
-            await channel.BasicPublishAsync(_config.ExchangeName, "weather", body);
-            Console.WriteLine("Published weather request");
-        }
         
         public async Task PublishNotification(string type, EmailDetails emailDetails)
             {
