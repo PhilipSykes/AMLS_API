@@ -38,7 +38,8 @@ public class SearchRepository : ISearchRepository
                 .Lookup(DocumentTypes.PhysicalMedia, "_id", "info", "physicalCopies")
                 .Project(@"{  
                     'physicalCopies._id': 0, 
-                    'physicalCopies.info': 0 
+                    'physicalCopies.info': 0,
+                    'physicalCopies.reservations': 0
                     }")
                 .Skip(pagination.Item1)
                 .Limit(pagination.Item2)
