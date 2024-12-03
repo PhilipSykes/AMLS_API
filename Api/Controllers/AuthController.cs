@@ -5,7 +5,6 @@ using static Common.Models.Shared;
 using static Common.Models.Operations;
 using Common.Utils;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
 using Services.UserService;
 using Services.TokenAuthService;
 
