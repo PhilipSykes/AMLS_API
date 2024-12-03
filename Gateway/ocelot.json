@@ -12,67 +12,46 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ]
+        {"Host": "localhost", "Port": 5001}
+      ],
+      "LoadBalancerOptions": {"Type": "LeastConnection"}
     },
     {
       "UpstreamPathTemplate": "/api/user/{everything}",
-      "UpstreamHttpMethod": [
-        "POST",
-        "GET"
-      ],
+      "UpstreamHttpMethod": ["POST", "GET"],
       "DownstreamPathTemplate": "/user/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
+        {"Host": "localhost", "Port": 5001}
       ],
+      "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
     },
     {
       "UpstreamPathTemplate": "/api/media/{everything}",
-      "UpstreamHttpMethod": [
-        "POST",
-        "GET"
-      ],
+      "UpstreamHttpMethod": ["POST", "GET"],
       "DownstreamPathTemplate": "/media/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ]
+        {"Host": "localhost", "Port": 5001}
+      ],
+      "LoadBalancerOptions": {"Type": "LeastConnection"}
     },
     {
       "UpstreamPathTemplate": "/api/admin/{everything}",
-      "UpstreamHttpMethod": [
-        "GET",
-        "POST",
-        "PUT",
-        "DELETE"
-      ],
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/admin/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
+        {"Host": "localhost", "Port": 5001}
       ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer"
-      },
+      "LoadBalancerOptions": {"Type": "LeastConnection"},
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
       "RouteClaimsRequirement": {
         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role": "admin"
       }

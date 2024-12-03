@@ -42,8 +42,7 @@ public class AuthController : ControllerBase
             });
 
         var passwordService = new PasswordService();
-        //if (!passwordService.VerifyPassword(result[0].PasswordHash, request.Data.Password))
-        if (result[0].PasswordHash != request.Data.Password)
+        if (!passwordService.VerifyPassword(result[0].PasswordHash, request.Data.Password))
             return Unauthorized(new Response<LoginDetails>
             {
                 Success = false,
