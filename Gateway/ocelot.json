@@ -10,10 +10,7 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
+        {"Host": "localhost", "Port": 5001}
       ]
     },
     {
@@ -23,66 +20,64 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
+        {"Host": "localhost", "Port": 5001}
       ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer"
-      }
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"}
     },
     {
-      "UpstreamPathTemplate": "/api/media/reserve/",
-      "UpstreamHttpMethod": [ "POST" ],
-      "DownstreamPathTemplate": "/media/reserve/",
-      "DownstreamScheme": "https",
-      "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "RouteClaimsRequirement": {
-        "member_access": "true"
-      }
-    },
-    {
-      "UpstreamPathTemplate": "/api/media/borrow/",
-      "UpstreamHttpMethod": [ "POST" ],
-      "DownstreamPathTemplate": "/media/borrow/",
-      "DownstreamScheme": "https",
-      "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "RouteClaimsRequirement": {
-        "member_access": "true"
-      }
-    },
-    {
-      "UpstreamPathTemplate": "/api/media/{everything}",
+      "UpstreamPathTemplate": "/api/catalog/{everything}",
       "UpstreamHttpMethod": [ "POST", "GET" ],
-      "DownstreamPathTemplate": "/media/{everything}",
+      "DownstreamPathTemplate": "/catalog/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
+        {"Host": "localhost", "Port": 5001}
       ]
     },
+    {
+      "UpstreamPathTemplate": "/api/reservations/{everything}",
+      "UpstreamHttpMethod": [ "POST","DELETE" ],
+      "DownstreamPathTemplate": "/reservations/{everything}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "localhost", "Port": 5001}
+      ],
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
+      "RouteClaimsRequirement": {
+        "member_access": "true"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/loans/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT" ],
+      "DownstreamPathTemplate": "/loans/{everything}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "localhost", "Port": 5001}
+      ],
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
+      "RouteClaimsRequirement": {
+        "member_access": "true"
+      }
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/inventory/{everything}",
+      "UpstreamHttpMethod": [ "POST","GET","PUT","DELETE" ],
+      "DownstreamPathTemplate": "/inventory/{everything}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "localhost", "Port": 5001}
+      ],
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
+      "RouteClaimsRequirement": {
+        "staff_access": "true"
+      }
+    },
+    
     {
       "UpstreamPathTemplate": "/api/admin/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
@@ -90,14 +85,9 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
+        {"Host": "localhost", "Port": 5001}
       ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer"
-      },
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
       "RouteClaimsRequirement": {
         "admin_access": "true"
       }

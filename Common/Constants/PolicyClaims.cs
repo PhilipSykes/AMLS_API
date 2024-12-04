@@ -8,8 +8,8 @@ public static class PolicyClaims
     public const string AccountantClaim = "accountant_access";
     public const string MemberClaim = "member_access";
     public const string BranchAccess = "branch_access";
-    
-    public const string ReadMedia = "read_media";
+    public const string StaffAccess = "staff_access";
+    public const string ViewBranchMedia = "view_branch_media";
     public const string CreateMedia = "create_media";
     public const string EditMedia = "edit_media";
     public const string DeleteMedia = "delete_media";

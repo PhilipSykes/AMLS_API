@@ -66,17 +66,23 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
         {
             case "Member":
                 claims.Add(new Claim(PolicyClaims.MemberClaim, "true"));
-                claims.Add(new Claim(PolicyClaims.ReadMedia, "true"));
                 break;
                 
             case "Librarian":
                 claims.Add(new Claim(PolicyClaims.LibrarianClaim, "true"));
-                claims.Add(new Claim(PolicyClaims.ReadMedia, "true"));
+                claims.Add(new Claim(PolicyClaims.StaffAccess, "true"));
+                //claims.Add(new Claim(PolicyClaims.BranchAccess,user.Branch[0]));
                 claims.Add(new Claim(PolicyClaims.EditMedia, "true"));
                 break;
-                
+
             case "Manager":
                 claims.Add(new Claim(PolicyClaims.ManagerClaim, "true"));
+                claims.Add(new Claim(PolicyClaims.StaffAccess, "true"));
+                // foreach (branch in user.Branch)
+                // {
+                // claims.Add(new Claim(PolicyClaims.BranchAccess,branch);
+                // }
+                claims.Add(new Claim(PolicyClaims.ViewBranchMedia, "true"));
                 claims.Add(new Claim(PolicyClaims.CreateMedia, "true"));
                 claims.Add(new Claim(PolicyClaims.EditMedia, "true"));
                 claims.Add(new Claim(PolicyClaims.DeleteMedia, "true"));
