@@ -1,4 +1,5 @@
 using Common.Constants;
+using Common.Models;
 
 namespace Api;
 
@@ -14,7 +15,6 @@ public static class Policies
     public const string RequireCreateMedia = "RequireCreateMedia";
     public const string RequireDeleteMedia = "RequireDeleteMedia";
     public const string RequireViewBranchMedia = "RequireViewBranchMedia";
-    
     public static void ConfigurePolicies(IServiceCollection services)
     {
         services.AddAuthorization(options =>

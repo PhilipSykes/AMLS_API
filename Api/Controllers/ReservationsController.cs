@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers;
 
 [ApiController]
-[Route("api/reservations")]
+[Route("[controller]")]
 [Authorize(Policy = Policies.RequireMember)]
 public class ReservationsController : ControllerBase
 {

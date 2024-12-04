@@ -1,56 +1,79 @@
-@page "/"
+@page "/Inventory"
 @inject HttpClient HttpClient
+@inject AuthStateService AuthState
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Inventory</PageTitle>
 
 <div id="responsive-layout">
-    <MediaSearchForm OnSubmitCallback="MakeSearch" />
-    <div id="search-results">
-        @foreach (var media in mediaResults)
-        {
-        <SearchResultListComponent Media="@media"></SearchResultListComponent>
-        }
+        <InventorySearchForm OnSubmitCallback="MakeSearch"/>
+        <div class="results-container">
+            <table class="results-table">
+                <thead>
+                <tr>
+                    <th>ID</th> 
+                    <th>Title</th> 
+                    <th>Type</th> 
+                    <th>Status</th> 
+                    <th>Language</th> 
+                    <th>Branch</th> 
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var media in _inventoryResults)
+                {
+                    <InventoryResultListComponent Media="@media" OnViewDetailsCallback="HandleViewDetails" OnEditCallback="HandleEdit"/>
+                }
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 
 
-@code {
-//TODO: do something to stop the glow fade-out on page load
 
-private List<Entities.MediaInfo> mediaResults = new();
-private bool test = false;
-(int, int) _pagination = (1, 20); // temp for testing
+@code { 
+    private List<Entities.MediaInfo> _inventoryResults = new();
+    private (int, int) _pagination = (1, 20); 
+    private string? _jwtToken;
 
-protected override async Task OnInitializedAsync()
-{
-await GetMedia();
-}
+    protected override async Task OnInitializedAsync()
+    {
+        _jwtToken = await AuthState.GetBearerToken(); await GetInventory(_jwtToken);
+    }
 
-private async Task GetMedia()
-{
-var response = await HttpClient.GetFromJsonAsync<Response<List<Entities.MediaInfo>>>($"api/inventory/?page={_pagination.Item1}&count={_pagination.Item2}");
-if (response?.Success == true && response.Data != null)
-{
-mediaResults = response.Data;
-}
-}
+    private async Task GetInventory(string? jwtToken)
+    {
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwtToken); 
+        var response = await HttpClient.GetFromJsonAsync<Response<List<Entities.MediaInfo>>>($"api/inventory/?page={_pagination.Item1}&count={_pagination.Item2}");
+        if (response?.Success == true && response.Data != null)
+        {
+            _inventoryResults = response.Data;
+        }
+    }
 
-private async Task GetSearchResults(List<Filter> filters)
-{
-var response = await HttpClient.PostAsJsonAsync($"api/inventory/search?page={_pagination.Item1}&count={_pagination.Item2}", filters);
-if (response.IsSuccessStatusCode)
-{
-var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.MediaInfo>>>();
-if (searchResponse != null)
-{
-mediaResults = searchResponse.Data;
-}
-}
-StateHasChanged();
-}
-private async Task MakeSearch(List<Filter> filters)
-{
-mediaResults.Clear();
-await GetSearchResults(filters);
-}
+    private async Task GetSearchResults(List<Filter> filters)
+    {
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken); 
+        var response = await HttpClient.PostAsJsonAsync($"api/inventory/search?page={_pagination.Item1}&count={_pagination.Item2}", filters);
+        if (response.IsSuccessStatusCode)
+        {
+            var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.MediaInfo>>>();
+            if (searchResponse != null)
+            {
+                _inventoryResults = searchResponse.Data;
+            }
+        } 
+        StateHasChanged();
+    }
+
+    private async Task MakeSearch(List<Filter> filters)
+    {
+        _inventoryResults.Clear(); await GetSearchResults(filters);
+    } private async Task HandleViewDetails(Entities.MediaInfo item) { 
+        // Implement view details logic 
+    } 
+    private async Task HandleEdit(Entities.MediaInfo item) { 
+        // Implement edit logic 
+    } 
+
 }

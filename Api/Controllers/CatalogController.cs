@@ -8,7 +8,7 @@ using Services.MediaService;
 namespace Api.Controllers;
 
 [ApiController]
-[Route("api/catalog")]
+[Route("[controller]")]
 public class CatalogController : BaseMediaController
 {
     public CatalogController(Exchange exchange, IMediaSearch mediaSearch) 

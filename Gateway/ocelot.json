@@ -74,7 +74,7 @@
       ],
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
       "RouteClaimsRequirement": {
-        "staff_access": "true"
+        
       }
     },
     

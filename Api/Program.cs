@@ -36,6 +36,7 @@ builder.Services.AddScoped<ISearchRepository, SearchRepository>();
 // Register Application Services
 builder.Services.AddScoped<IMediaSearch, MediaSearch>();
 builder.Services.AddScoped<IUserSearch, UserSearch>();
+builder.Services.AddScoped<IInventoryManager, InventoryManager>();
 builder.Services.AddScoped<TokenAuthService>();
 
 var jwtConfig = builder.Configuration.GetSection("JWTToken").Get<JWTTokenConfig>();
