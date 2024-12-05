@@ -1,7 +1,8 @@
-*{
+* {
     user-select: none;
     font-family: "Regular", sans-serif;
 }
+
 #sidebar {
     width: 300px;
     margin-right: 40px;
@@ -13,12 +14,13 @@
     transition: all 0.3s ease;
 }
 
-.label-input-pair{
+.label-input-pair {
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
-.label-input-pair label{
+
+.label-input-pair label {
     font-weight: 700;
     font-size: 10px;
     text-transform: capitalize;
@@ -39,20 +41,22 @@
 }
 
 .tag-wrap {
-    white-space: nowrap;        
-    overflow: hidden;           
+    white-space: nowrap;
+    overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.tag-group-divider:not(:last-child){
+.tag-group-divider:not(:last-child) {
     padding-bottom: 10px;
     border-bottom: 1px solid #D6D3D1;
     margin-bottom: 5px;
 }
-.tag-hover{
+
+.tag-hover {
     transition: transform 0.3s ease;
 }
-.tag-hover:hover{
+
+.tag-hover:hover {
     transform: translateY(-2px);
 }
 
@@ -72,25 +76,31 @@
     align-items: center;
     text-transform: uppercase;
     max-width: 100px;
-    
+
     opacity: 0;
     filter: blur(10px);
 }
+
 .tag-suggestion.fade-in {
     animation: tag-fade-in 0.2s ease-out forwards;
 }
+
 .tag-suggestion.fade-in:nth-child(1) {
     animation-delay: 0s;
 }
+
 .tag-suggestion.fade-in:nth-child(2) {
     animation-delay: 0.05s;
 }
+
 .tag-suggestion.fade-in:nth-child(3) {
     animation-delay: 0.1s;
 }
+
 .tag-suggestion.fade-in:nth-child(4) {
     animation-delay: 0.15s;
 }
+
 .tag-suggestion.fade-in:nth-child(5) {
     animation-delay: 0.2s;
 }
@@ -116,7 +126,7 @@
 }
 
 
-.text-field{
+.text-field {
     margin: 0;
     padding-inline: 7px;
     padding-block: 3px;
@@ -129,40 +139,44 @@
     transition: border-color 0.3s ease;
     font-size: 12px;
 }
-.text-field:focus{
+
+.text-field:focus {
     outline: none;
 }
-.text-field::placeholder{
+
+.text-field::placeholder {
     color: #D6D3D1;
     transition: opacity 0.5s ease;
 }
 
-.search-container{
+.search-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-.close-btn{
+.close-btn {
     width: 10px;
     height: 10px;
     cursor: pointer;
 }
 
-.glow{
+.glow {
     transition: box-shadow 0.3s ease;
 }
-.glow:focus{
+
+.glow:focus {
     animation: fade-in 0.3s forwards, rotating-glow 5s infinite linear;
     animation-delay: 0s, 0.3s;
     transition: box-shadow 0.3s ease;
     border: 1px solid #FAFAF9;
 }
+
 .glow:not(:focus) {
     animation: fade-out 0.3s forwards;
 }
 
-.search-button{
+.search-button {
     margin: 0;
     padding-inline: 7px;
     padding-block: 3px;
@@ -177,16 +191,17 @@
     border: none;
     text-align: left;
 }
+
 .search-button span {
     display: inline-block;
 }
-.search-icon{
+
+.search-icon {
     height: 12px;
     width: 12px;
     margin-right: 7px;
     transform: translateY(2px);
 }
-
 
 
 @keyframes fade-in {
@@ -262,7 +277,7 @@
         align-items: center;
         padding: 10px 20px;
         position: fixed;
-        top: 0;
+        top: 64px;
         left: 0;
         z-index: 1000;
         box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
@@ -278,14 +293,16 @@
     #sidebar .tag-section {
         display: none;
     }
-    
+
     .search-button {
         width: fit-content;
     }
+
     .search-button span {
         display: none;
     }
-    .search-icon{
+
+    .search-icon {
         margin-right: 0;
     }
 }
@@ -294,6 +311,7 @@
     #sidebar {
         flex-wrap: wrap;
         padding: 15px;
+        top: 0;
     }
 
     #sidebar .text-field {

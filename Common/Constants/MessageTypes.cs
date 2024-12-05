@@ -1,6 +1,6 @@
 namespace Common.Constants;
 
-public static class MessageTypes 
+public static class MessageTypes
 {
     public static class User
     {
@@ -10,8 +10,8 @@ public static class MessageTypes
         public const string Signup = "user_signup";
         public const string GetProfile = "get_profile";
         public const string UpdateProfile = "update_profile";
-        public const string DeleteProfile = "delete_profile";     
-        public const string ProcessFine = "process_fine"; 
+        public const string DeleteProfile = "delete_profile";
+        public const string ProcessFine = "process_fine";
         public const string GetPurchases = "get_purchases";
         public const string GetHistory = "get_history";
     }
@@ -25,12 +25,12 @@ public static class MessageTypes
         public const string ProfileUpdate = "email_profile_update";
     }
 
-    public static class Subscription 
-    { 
-      public const string CancelSubscription = "cancel_subscription";
-       public const string Subscribe = "user_subscribe";
-       public const string GetSubscriptions = "get_subscriptions";
-      public const string UpdateSubscription = "update_subscription";
+    public static class Subscription
+    {
+        public const string CancelSubscription = "cancel_subscription";
+        public const string Subscribe = "user_subscribe";
+        public const string GetSubscriptions = "get_subscriptions";
+        public const string UpdateSubscription = "update_subscription";
     }
 
     public static class Media
@@ -49,7 +49,7 @@ public static class MessageTypes
         public const string Set = "set_favorite";
         public const string Get = "get_favorites";
     }
-    
+
     public static class Inventory
     {
         public const string GenerateManifest = "generate_manifest";

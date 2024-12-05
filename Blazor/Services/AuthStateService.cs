@@ -7,12 +7,13 @@ namespace Blazor.Services;
 public class AuthStateService
 {
     private readonly ISessionStorageService _sessionStorage;
-    public event Action? OnChange;
 
     public AuthStateService(ISessionStorageService sessionStorage)
     {
         _sessionStorage = sessionStorage;
     }
+
+    public event Action? OnChange;
 
     public async Task<ClaimsPrincipal?> GetUser()
     {
@@ -22,7 +23,7 @@ public class AuthStateService
 
         var handler = new JwtSecurityTokenHandler();
         var jwtToken = handler.ReadJwtToken(token);
-        
+
         return new ClaimsPrincipal(new ClaimsIdentity(jwtToken.Claims, "jwt"));
     }
 
@@ -46,5 +47,8 @@ public class AuthStateService
         NotifyStateChanged();
     }
 
-    private void NotifyStateChanged() => OnChange?.Invoke();
+    private void NotifyStateChanged()
+    {
+        OnChange?.Invoke();
+    }
 }

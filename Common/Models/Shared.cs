@@ -15,7 +15,7 @@ namespace Common.Models
         public record Filter
         {
             public string Key { get; set; }
-            public object Value { get; set; }
+            public string Value { get; set; }
             public DbOperations Operation { get; set; }
 
             public Filter(string key, string value, DbOperations operation)

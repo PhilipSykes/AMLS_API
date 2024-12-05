@@ -56,26 +56,18 @@ namespace Common.Constants
             public const string NearestBranch = "nearestBranch";
         }
 
-        public static class PhysicalCopies // From Will: Maybe redundant - Need to change way i get availability data, poke me if i forget
+        public static class PhysicalCopies
         {
             public const string Branch = "branch";
             public const string Status = "status";
         }
 
-        public static class Reservations // Probably redundant
+        public static class Reservations
         {
             public const string Member = "member";
             public const string Media = "media";
             public const string StartDate = "startDate";
             public const string EndDate = "endDate";
-        }
-
-        public static class PhysicalMedia
-        {
-            public const string MediaInfoRef = "info";
-            public const string BranchID = "branch";
-            public const string Status = "status";
-            public const string Reservations = "reservations";
         }
     }
 }
