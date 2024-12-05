@@ -13,7 +13,7 @@ namespace Common.Models
             public string ObjectID { get; init; } = string.Empty;
 
             [BsonElement(DbFieldNames.Login.User)]
-            public string Username { get; init; } = string.Empty;
+            public string UserID { get; init; } = string.Empty;
 
             [BsonElement(DbFieldNames.Login.Email)]
             public string Email { get; init; } = string.Empty;
@@ -23,6 +23,9 @@ namespace Common.Models
 
             [BsonElement(DbFieldNames.Login.Role)]
             public string Role { get; init; } = string.Empty;
+            
+            [BsonElement(DbFieldNames.Login.Branches)]
+            public string[] Branches { get; init; } = [];
         }
 
         public record Branch
@@ -40,11 +43,11 @@ namespace Common.Models
 
         public record Address
         {
-            [BsonElement(DbFieldNames.Address.FullAddress)]
-            public string FullAddress { get; init; } = string.Empty;
-
             [BsonElement(DbFieldNames.Address.Street)]
             public string Street { get; init; } = string.Empty;
+
+            [BsonElement(DbFieldNames.Address.Town)]
+            public string Town { get; init; } = string.Empty;
 
             [BsonElement(DbFieldNames.Address.Postcode)]
             public string Postcode { get; init; } = string.Empty;

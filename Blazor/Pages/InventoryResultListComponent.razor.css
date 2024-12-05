@@ -1,11 +1,58 @@
-.badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; }
-.type-badge { background: #e0e7ff; color: #4338ca; }
-.status-badge { padding: 0.25rem 0.75rem; }
-.status-badge.available { background: #dcfce7; color: #15803d; }
-.status-badge.unavailable { background: #fee2e2; color: #b91c1c; }
-.branch-badge { background: #f1f5f9; color: #475569; }
-.action-buttons { display: flex; gap: 0.5rem; }
-.action-btn { display: flex; align-items: center; justify-content: center; padding: 0.5rem; border: none; border-radius: 0.375rem; background: #f1f5f9; cursor: pointer; transition: all 0.2s; }
-.action-btn:hover { background: #e2e8f0; }
-.action-btn.edit:hover { background: #dbeafe; color: #2563eb; }
-.action-icon { width: 1.25rem; height: 1.25rem; }
+
+td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.badge { 
+    display: inline-block; 
+    padding: 0.25rem 0.75rem; 
+    border-radius: 9999px; 
+    font-size: 16px;
+    font-weight: 500; 
+}
+.type-badge { 
+    background: #e0e7ff; 
+    color: #4338ca; 
+}
+.status-badge { 
+    padding: 0.25rem 0.75rem; 
+}
+.status-badge.available { 
+    background: #dcfce7; 
+    color: #15803d; 
+}
+.status-badge.unavailable { 
+    background: #fee2e2; 
+    color: #b91c1c; 
+}
+.branch-badge { 
+    background: #f1f5f9; 
+    color: #475569; 
+}
+.action-buttons { 
+    display: flex; 
+    gap: 0.5rem; 
+}
+.action-btn { 
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem; 
+    border: none; 
+    border-radius: 0.375rem; 
+    background: #f1f5f9; 
+    cursor: pointer; 
+    transition: all 0.2s; 
+}
+.action-btn:hover { 
+    background: #e2e8f0; 
+}
+.action-btn.edit:hover { 
+    background: #dbeafe; 
+    color: #2563eb;
+}
+.action-icon { 
+    width: 1.25rem;
+    height: 1.25rem; 
+}

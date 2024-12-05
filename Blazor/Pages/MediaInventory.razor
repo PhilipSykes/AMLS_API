@@ -5,7 +5,7 @@
 <PageTitle>Inventory</PageTitle>
 
 <div id="responsive-layout">
-        <InventorySearchForm OnSubmitCallback="MakeSearch"/>
+        <InventorySearchForm BranchList="@inventoryData.BranchesList" OnSubmitCallback="MakeSearch"/>
         <div class="results-container">
             <table class="results-table">
                 <thead>
@@ -14,13 +14,12 @@
                     <th>Title</th> 
                     <th>Type</th> 
                     <th>Status</th> 
-                    <th>Language</th> 
                     <th>Branch</th> 
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var media in _inventoryResults)
+                @foreach (var media in inventoryData.MediaInfoList)
                 {
                     <InventoryResultListComponent Media="@media" OnViewDetailsCallback="HandleViewDetails" OnEditCallback="HandleEdit"/>
                 }
@@ -32,22 +31,27 @@
 
 
 @code { 
-    private List<Entities.MediaInfo> _inventoryResults = new();
+    private PayLoads.Inventory inventoryData = new() 
+    { 
+        MediaInfoList = new(), 
+        BranchesList = new() 
+    };
     private (int, int) _pagination = (1, 20); 
     private string? _jwtToken;
 
     protected override async Task OnInitializedAsync()
     {
-        _jwtToken = await AuthState.GetBearerToken(); await GetInventory(_jwtToken);
+        _jwtToken = await AuthState.GetBearerToken(); 
+        await GetInventory(_jwtToken);
     }
 
     private async Task GetInventory(string? jwtToken)
     {
         HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", jwtToken); 
-        var response = await HttpClient.GetFromJsonAsync<Response<List<Entities.MediaInfo>>>($"api/inventory/?page={_pagination.Item1}&count={_pagination.Item2}");
+        var response = await HttpClient.GetFromJsonAsync<Response<PayLoads.Inventory>>($"api/inventory/?page={_pagination.Item1}&count={_pagination.Item2}");
         if (response?.Success == true && response.Data != null)
         {
-            _inventoryResults = response.Data;
+            inventoryData = response.Data;
         }
     }
 
@@ -60,7 +64,7 @@
             var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.MediaInfo>>>();
             if (searchResponse != null)
             {
-                _inventoryResults = searchResponse.Data;
+                inventoryData.MediaInfoList = searchResponse.Data;
             }
         } 
         StateHasChanged();
@@ -68,8 +72,10 @@
 
     private async Task MakeSearch(List<Filter> filters)
     {
-        _inventoryResults.Clear(); await GetSearchResults(filters);
-    } private async Task HandleViewDetails(Entities.MediaInfo item) { 
+        inventoryData.MediaInfoList.Clear();
+        await GetSearchResults(filters);
+    } 
+    private async Task HandleViewDetails(Entities.MediaInfo item) { 
         // Implement view details logic 
     } 
     private async Task HandleEdit(Entities.MediaInfo item) { 

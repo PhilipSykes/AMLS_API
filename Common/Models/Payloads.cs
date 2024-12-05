@@ -13,4 +13,10 @@ public static class PayLoads
         public required string MediaId { get; init; }
         public required string UserId { get; init; }
     }
+
+    public record Inventory
+    {
+        public required List<Entities.MediaInfo> MediaInfoList { get; set; }
+        public required List<Entities.Branch> BranchesList { get; set; }
+    }
 }

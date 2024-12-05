@@ -1,5 +1,6 @@
 using Common.Constants;
 using Common.Database;
+using Common.Models;
 using Common.Utils;
 using static Common.Models.Shared;
 using static Common.Models.Operations;
@@ -9,8 +10,9 @@ namespace Services.UserService;
 
 public interface IUserSearch
 {
-    Task<Response<List<Users>>> SearchUsers((int, int) pagination, List<Filter> filters);
+    Task<List<Users>> SearchUsers((int, int) pagination, List<Filter> filters);
     Task<List<Login>> GetLoginCredentials(List<Filter> filters);
+    Task<List<Entities.Branch>> GetBranches(List<Filter> filters);
 }
 
 public class UserSearch : IUserSearch
@@ -27,23 +29,24 @@ public class UserSearch : IUserSearch
         var bsonDocuments = await _searchRepository.Search(DocumentTypes.Login, filters);
 
         List<Login> loginCredentials = Utils.ConvertBsonToEntity<Login>(bsonDocuments);
-
+        
         Console.WriteLine($"Search completed. Found {loginCredentials.Count} results");
         return loginCredentials;
     }
+    
+    public async Task<List<Branch>> GetBranches(List<Filter> filters)
+    {
+        var bsonDocuments = await _searchRepository.Search(DocumentTypes.Branches, filters);
 
-    public async Task<Response<List<Users>>> SearchUsers((int, int) pagination, List<Filter> filters)
+        List<Branch> BranchList = Utils.ConvertBsonToEntity<Branch>(bsonDocuments);
+        return BranchList;
+    }
+
+    public async Task<List<Users>> SearchUsers((int, int) pagination, List<Filter> filters)
     {
         Console.WriteLine($"Performing user search with {filters.Count} filters");
         var bsonDocuments = await _searchRepository.Search(DocumentTypes.Users, pagination, filters);
 
-        List<Users> users = Utils.ConvertBsonToEntity<Users>(bsonDocuments);
-
-        Console.WriteLine($"Search completed. Found {users.Count} results");
-        return new Response<List<Users>>
-        {
-            Success = true,
-            Data = users
-        };
+        return Utils.ConvertBsonToEntity<Users>(bsonDocuments);
     }
 }

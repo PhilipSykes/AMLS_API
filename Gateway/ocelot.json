@@ -48,9 +48,7 @@
         {"Host": "localhost", "Port": 5001}
       ],
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {
-        "member_access": "true"
-      }
+      "RouteClaimsRequirement": {"member_access": "true"}
     },
     {
       "UpstreamPathTemplate": "/api/loans/{everything}",
@@ -62,14 +60,11 @@
         {"Host": "localhost", "Port": 5001}
       ],
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {
-        "member_access": "true"
-      }
+      "RouteClaimsRequirement": {"member_access": "true"}
     },
-
     {
       "UpstreamPathTemplate": "/api/inventory/{everything}",
-      "UpstreamHttpMethod": [ "POST","GET","PUT","DELETE" ],
+      "UpstreamHttpMethod": ["POST", "GET", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/inventory/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
@@ -78,7 +73,10 @@
           "Host": "localhost",
           "Port": 5001
         }
-      ]
+      ],
+      "LoadBalancerOptions": {"Type": "LeastConnection"},
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
+      "RouteClaimsRequirement": {"staff_access": "true"}
     },
     {
       "UpstreamPathTemplate": "/api/admin/{everything}",
@@ -91,9 +89,7 @@
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role": "admin"
-      }
+      "RouteClaimsRequirement": {"admin_access": "true"}
     }
   ]
 }

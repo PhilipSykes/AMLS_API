@@ -1,5 +1,4 @@
-@using Wasm 
-@using MongoDB.Bson
+
 <tr> 
     <td>@Media.ObjectID</td> 
     <td>@Media.Title</td> 
@@ -13,8 +12,7 @@
              <span class="badge status-badge unavailable">Unavailable</span>
          } 
     </td> 
-    <td><span class="badge">@Media.Language</span></td> 
-    <td><span class="badge branch-badge">@Media.PhysicalCopies[0].Branch</span></td> 
+    <td><span class="badge branch-badge">@(Media.PhysicalCopies?.FirstOrDefault()?.Branch ?? "No Branch")</span></td> 
     <td>
         
         <div class="action-buttons">
@@ -54,13 +52,8 @@
     
     protected override void OnInitialized()
     {
-        foreach (var copy in Media.PhysicalCopies)
-        {
-            if (copy.Status == "Available")
-            {
-                IsAvailable = true;
-            }
-        }
+        IsAvailable = Media.PhysicalCopies?.Any(copy => copy.Status == "Available") ?? false;
     }
-
 }
+
+

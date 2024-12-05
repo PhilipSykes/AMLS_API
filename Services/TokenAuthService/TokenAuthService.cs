@@ -57,7 +57,7 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
         //TODO adjust switch case strings to constants / enums matching DB role names
         List<Claim> claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Username),
+            new Claim(ClaimTypes.NameIdentifier, user.UserID),
             new Claim(ClaimTypes.Email, user.Email),      
             new Claim(ClaimTypes.Role, user.Role), 
         };
@@ -68,20 +68,20 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
                 claims.Add(new Claim(PolicyClaims.MemberClaim, "true"));
                 break;
                 
-            case "Librarian":
+            case "BranchLibrarian":
                 claims.Add(new Claim(PolicyClaims.LibrarianClaim, "true"));
                 claims.Add(new Claim(PolicyClaims.StaffAccess, "true"));
-                //claims.Add(new Claim(PolicyClaims.BranchAccess,user.Branch[0]));
+                claims.Add(new Claim(PolicyClaims.BranchAccess,user.Branches[0]));
                 claims.Add(new Claim(PolicyClaims.EditMedia, "true"));
                 break;
 
-            case "Manager":
+            case "BranchManager":
                 claims.Add(new Claim(PolicyClaims.ManagerClaim, "true"));
                 claims.Add(new Claim(PolicyClaims.StaffAccess, "true"));
-                // foreach (branch in user.Branch)
-                // {
-                // claims.Add(new Claim(PolicyClaims.BranchAccess,branch);
-                // }
+                    foreach (string branch in user.Branches)
+                    {
+                    claims.Add(new Claim(PolicyClaims.BranchAccess,branch));
+                    }
                 claims.Add(new Claim(PolicyClaims.ViewBranchMedia, "true"));
                 claims.Add(new Claim(PolicyClaims.CreateMedia, "true"));
                 claims.Add(new Claim(PolicyClaims.EditMedia, "true"));
@@ -95,7 +95,7 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
                 claims.Add(new Claim(PolicyClaims.ViewFinancialReports, "true"));
                 break;
                 
-            case "System admin": 
+            case "SystemAdmin": 
                 claims.Add(new Claim(PolicyClaims.AdminClaim, "true"));
                 claims.Add(new Claim(PolicyClaims.ManageUsers, "true"));
                 claims.Add(new Claim(PolicyClaims.ViewMetricsReports, "true"));

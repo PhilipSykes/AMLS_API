@@ -28,7 +28,7 @@ namespace Common.Models
         
         public record LoginDetails
         {
-            public string? Username { get; set; }
+            public string? UserID { get; set; }
             public string? Token { get; set; }
         }
     }

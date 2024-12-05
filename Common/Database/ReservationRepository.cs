@@ -11,7 +11,7 @@ namespace Common.Database
 {
     public interface IReservationRepository
     {
-        public Task<Operations.Response<bool>> CreateReservation(Entities.Reservation reservation);
+        public Task<Operations.Response<bool>> CreateReservation(Entities.Reservations reservation);
         // TODO - Implement:
         //public Task<Operations.Response<bool>> ExtendReservation(?);
         //public Task<Operations.Response<bool>> CancelReservation(?);
@@ -28,7 +28,7 @@ namespace Common.Database
             _database = client.GetDatabase(config.DatabaseName);
         }
 
-        public async Task<Operations.Response<bool>> CreateReservation(Entities.Reservation reservation)
+        public async Task<Operations.Response<bool>> CreateReservation(Entities.Reservations reservation)
         {
             
             var physical = _database.GetCollection<BsonDocument>("PhysicalMedia");

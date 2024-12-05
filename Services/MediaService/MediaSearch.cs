@@ -9,7 +9,7 @@ namespace Services.MediaService;
 
 public interface IMediaSearch
 {
-    Task<Response<List<MediaInfo>>> SearchMedia((int, int) pagination, List<Filter> filters);
+    Task<List<MediaInfo>> SearchMedia((int, int) pagination, List<Filter> filters);
 }
 
 public class MediaSearch : IMediaSearch
@@ -21,19 +21,12 @@ public class MediaSearch : IMediaSearch
         _searchRepository = searchRepository;
     }
 
-    public async Task<Response<List<MediaInfo>>> SearchMedia((int, int) pagination,
+    public async Task<List<MediaInfo>> SearchMedia((int, int) pagination,
         List<Filter> filters)
     {
         //Console.WriteLine($"Performing media search with {filters.Count} filters");
         var bsonDocuments = await _searchRepository.Search(DocumentTypes.MediaInfo, pagination, filters);
 
-        List<MediaInfo> mediaInfoList = Utils.ConvertBsonToEntity<MediaInfo>(bsonDocuments);
-
-        Console.WriteLine($"Search completed. Found {mediaInfoList.Count} results");
-        return new Response<List<MediaInfo>>
-        {
-            Success = true,
-            Data = mediaInfoList
-        };
+        return Utils.ConvertBsonToEntity<MediaInfo>(bsonDocuments);
     }
 }

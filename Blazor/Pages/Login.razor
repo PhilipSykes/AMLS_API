@@ -84,7 +84,7 @@
                 var tokenResponse = await response.Content.ReadFromJsonAsync<Response<LoginDetails>>();
                 if (tokenResponse != null)
                 {
-                    await AuthState.Login(tokenResponse.Data.Token, tokenResponse.Data.Username);
+                    await AuthState.Login(tokenResponse.Data.Token, tokenResponse.Data.UserID);
                     success = "Successful login";
                     NavigationManager.NavigateTo("/");
                 }
