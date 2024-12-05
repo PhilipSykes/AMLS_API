@@ -27,6 +27,14 @@ public class AuthStateService
         return new ClaimsPrincipal(new ClaimsIdentity(jwtToken.Claims, "jwt"));
     }
 
+    public async Task<string> GetBearerToken()
+    {
+        var token = await _sessionStorage.GetItemAsync<string>("token");
+        if (string.IsNullOrEmpty(token))
+            return null;
+        return token;
+    }
+
     public async Task Login(string token, string username)
     {
         await _sessionStorage.SetItemAsync("token", token);
