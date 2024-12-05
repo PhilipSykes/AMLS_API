@@ -90,9 +90,7 @@
         {"Host": "localhost", "Port": 5001}
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
-      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
       "RouteClaimsRequirement": {
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role": "admin"
       }
     }
   ]

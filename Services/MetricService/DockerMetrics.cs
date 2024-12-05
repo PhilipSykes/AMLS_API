@@ -2,6 +2,8 @@ using System.Runtime.InteropServices;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+
 
 
 
@@ -11,28 +13,43 @@ public class DockerMetrics
 {
     public class ContainerStatsResponse
     {
+        [JsonPropertyName("cpu_stats")]
         public CpuStats CpuStats { get; set; }
+
+        [JsonPropertyName("precpu_stats")]
         public CpuStats PrecpuStats { get; set; }
+
+        [JsonPropertyName("memory_stats")]
         public MemoryStats MemoryStats { get; set; }
     }
 
     public class CpuStats
     {
+        [JsonPropertyName("cpu_usage")]
         public CpuUsage CpuUsage { get; set; }
-        public double SystemCpuUsage { get; set; }
-        public int OnlineCpus { get; set; }
+
+        [JsonPropertyName("system_cpu_usage")]
+        public double? SystemCpuUsage { get; set; }
+
+        [JsonPropertyName("online_cpus")]
+        public int? OnlineCpus { get; set; }
     }
 
     public class CpuUsage
     {
-        public double TotalUsage { get; set; }
+        [JsonPropertyName("total_usage")]
+        public double? TotalUsage { get; set; }
     }
-    
+
     public class MemoryStats
     {
-        public double Usage { get; set; }
-        public double Limit { get; set; }
+        [JsonPropertyName("usage")]
+        public double? Usage { get; set; }
+
+        [JsonPropertyName("limit")]
+        public double? Limit { get; set; }
     }
+
 
     public class Metrics
     {
@@ -83,9 +100,9 @@ public class DockerMetrics
         }
     }
     
-    public DockerMetrics(DockerClient dockerClient)
+    public DockerMetrics()
     {
-        _dockerClient = dockerClient;
+        _dockerClient = GetDockerClient();
     }
     
 
@@ -102,31 +119,58 @@ public class DockerMetrics
             
             using var reader = new StreamReader(response);
             var statsJson = await reader.ReadToEndAsync();
+            
+            Console.WriteLine($"Raw stats JSON for container {container.ID}: {statsJson}");
+            
             var stats = JsonSerializer.Deserialize<ContainerStatsResponse>(statsJson);
             
-            var cpuDelta = stats.CpuStats.CpuUsage.TotalUsage - stats.PrecpuStats.CpuUsage.TotalUsage;
-            var systemDelta = stats.CpuStats.SystemCpuUsage - stats.PrecpuStats.SystemCpuUsage;
-            var numberOfCpus = stats.CpuStats.OnlineCpus;
-            var cpuPercentage = (cpuDelta / systemDelta) * numberOfCpus * 100.0;
             
-            var memoryUsageMB = stats.MemoryStats.Usage / (1024 * 1024.0);
-            var memoryLimitMB = stats.MemoryStats.Limit / (1024 * 1024.0);
-            var memoryPercentage = (memoryUsageMB / memoryLimitMB) * 100;
+            if (stats == null)
+            {
+                throw new Exception("Stats deserialization failed or returned null.");
+            }
+
+            if (stats.CpuStats == null || stats.CpuStats.CpuUsage == null)
+            {
+                throw new Exception("CpuStats or CpuUsage is null. Check Docker API response.");
+            }
+
+            if (stats.PrecpuStats == null || stats.PrecpuStats.CpuUsage == null)
+            {
+                throw new Exception("PrecpuStats or CpuUsage is null. Check Docker API response.");
+            }
             
+            var cpuDelta = (stats.CpuStats.CpuUsage?.TotalUsage ?? 0) - (stats.PrecpuStats.CpuUsage?.TotalUsage ?? 0);
+            var systemDelta = (stats.CpuStats.SystemCpuUsage ?? 0) - (stats.PrecpuStats.SystemCpuUsage ?? 0);
+            var numberOfCpus = stats.CpuStats.OnlineCpus ?? 1; // Default to 1 CPU if null.
+
+            var cpuPercentage = (systemDelta > 0) 
+                ? (cpuDelta / systemDelta) * numberOfCpus * 100.0 
+                : 0; 
+
+            var memoryUsageMB = (stats.MemoryStats.Usage ?? 0) / (1024 * 1024.0);
+            var memoryLimitMB = (stats.MemoryStats.Limit ?? 0) / (1024 * 1024.0);
+            var memoryPercentage = (memoryLimitMB > 0) 
+                ? (memoryUsageMB / memoryLimitMB) * 100 
+                : 0;
+
             metrics.Add(new Metrics
             {
-                //CONTAINER
+                // CONTAINER
                 ContainerId = container.ID,
                 ContainerName = container.Names.FirstOrDefault()?.TrimStart('/'),
-                //CPU
+
+                // CPU
                 CpuUsage = cpuDelta,
                 DeltaCpuUsage = cpuDelta,
                 CpuPercentage = cpuPercentage,
-                //MEMORY
+
+                // MEMORY
                 MemoryUsage = memoryUsageMB,
                 MemoryPercentage = memoryPercentage,
                 MemoryLimit = memoryLimitMB,
-                //TIMESTAMP
+
+                // TIMESTAMP
                 Timestamp = DateTime.UtcNow
             });
         }

@@ -73,7 +73,7 @@
     {
         _filters.Add(new Filter("_id", MediaId, DbOperations.Equals));
 
-        var response = await HttpClient.PostAsJsonAsync($"api/media/search?page={1}&count={1}", _filters);
+        var response = await HttpClient.PostAsJsonAsync($"api/catalog/search?page={1}&count={1}", _filters);
         if (response.IsSuccessStatusCode)
         {
             var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.MediaInfo>>>();
