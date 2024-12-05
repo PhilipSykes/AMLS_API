@@ -26,22 +26,35 @@
         <Content Update="Pages\RatingStar.razor">
             <DependentUpon>SearchResultListComponent.razor</DependentUpon>
         </Content>
-        <Content Update="Pages\MediaSearchForm.razor">
-            <DependentUpon>Home.razor</DependentUpon>
-        </Content>
-        <Content Update="Pages\SearchResultListComponent.razor">
-            <DependentUpon>Home.razor</DependentUpon>
-        </Content>
+      <Content Update="Pages\MediaSearchForm.razor">
+        <DependentUpon>Home.razor</DependentUpon>
+      </Content>
+      <Content Update="Pages\SearchResultListComponent.razor">
+        <DependentUpon>Home.razor</DependentUpon>
+      </Content>
+      <Content Update="Pages\InventoryResultListComponent.razor">
+        <DependentUpon>MediaInventory.razor</DependentUpon>
+      </Content>
+      <Content Update="Pages\InventorySearchForm.razor">
+        <DependentUpon>MediaInventory.razor</DependentUpon>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Update="Pages\MediaSearchModel.cs">
-            <DependentUpon>MediaSearchForm.razor</DependentUpon>
-        </Compile>
+      <Compile Update="Pages\MediaSearchModel.cs">
+        <DependentUpon>MediaSearchForm.razor</DependentUpon>
+      </Compile>
+      <Compile Update="Pages\InventorySearchModel.cs">
+        <DependentUpon>InventorySearchForm.razor</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Common\Common.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Pages\RatingStar.razor" />
     </ItemGroup>
 
 </Project>
