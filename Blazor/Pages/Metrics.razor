@@ -1,6 +1,59 @@
 @page "/Metrics"
-<h3>Metrics</h3>
+@using System.Text.Json
+@inject HttpClient HttpClient
+
+<h3>Docker</h3>
+
+<p>Last Updated: @_lastUpdated</p>
+
+@if (_snapshot == null)
+{
+    <p>Loading metrics...</p>
+}
+else if (_snapshot.Count == 0)
+{
+    <p>No metrics available.</p>
+}
+else
+{
+    @foreach (var container in _snapshot)
+    {
+        var root = container.RootElement;
+
+        <div class="container">
+            <p><strong>Container ID:</strong> @root.GetProperty("containerId").GetString()</p>
+            <p><strong>Container Name:</strong> @root.GetProperty("containerName").GetString()</p>
+            <p><strong>CPU Usage:</strong> @root.GetProperty("cpuUsage").GetInt64()</p>
+            <p><strong>CPU Percentage:</strong> @root.GetProperty("cpuPercentage").GetDouble() %</p>
+            <p><strong>Memory Usage:</strong> @root.GetProperty("memoryUsage").GetDouble() MB</p>
+            <p><strong>Memory Limit:</strong> @root.GetProperty("memoryLimit").GetDouble() MB</p>
+            <p><strong>Timestamp:</strong> @root.GetProperty("timestamp").GetString()</p>
+        </div>
+    }
+}
 
 @code {
-    
+    private Timer _timer;
+    private DateTime _lastUpdated;
+    private List<JsonDocument>? _snapshot;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshMetrics();
+
+        _timer = new Timer(async _ => await RefreshMetrics(), null, 0, 5000);
+    }
+
+    private async Task RefreshMetrics()
+    {
+        _lastUpdated = DateTime.Now;
+        _snapshot = await HttpClient.GetFromJsonAsync<List<JsonDocument>>("https://localhost:7500/api/admin/metric");
+        
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
 }

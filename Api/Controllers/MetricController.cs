@@ -1,13 +1,6 @@
-using Api.MessageBroker;
-using Common.Constants;
-using Common.Models;
-using static Common.Models.Shared;
-using static Common.Models.Operations;
-using Common.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Services.MetricService;
-using Services.UserService;
-using Services.TokenAuthService;
+
 
 namespace Api.Controllers;
 
