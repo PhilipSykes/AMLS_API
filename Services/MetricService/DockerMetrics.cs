@@ -85,7 +85,7 @@ public class DockerMetrics
     
     public DockerMetrics(DockerClient dockerClient)
     {
-        _dockerClient = GetDockerClient();
+        _dockerClient = dockerClient;
     }
     
 
@@ -119,11 +119,11 @@ public class DockerMetrics
                 ContainerId = container.ID,
                 ContainerName = container.Names.FirstOrDefault()?.TrimStart('/'),
                 //CPU
-                CpuUsage = memoryUsageMB,
+                CpuUsage = cpuDelta,
                 DeltaCpuUsage = cpuDelta,
                 CpuPercentage = cpuPercentage,
                 //MEMORY
-                MemoryUsage = memoryLimitMB,
+                MemoryUsage = memoryUsageMB,
                 MemoryPercentage = memoryPercentage,
                 MemoryLimit = memoryLimitMB,
                 //TIMESTAMP
