@@ -71,6 +71,7 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
             case "BranchLibrarian":
                 claims.Add(new Claim(PolicyClaims.LibrarianClaim, "true"));
                 claims.Add(new Claim(PolicyClaims.StaffAccess, "true"));
+                claims.Add(new Claim(PolicyClaims.ViewBranchMedia, "true"));
                 claims.Add(new Claim(PolicyClaims.BranchAccess,user.Branches[0]));
                 claims.Add(new Claim(PolicyClaims.EditMedia, "true"));
                 break;

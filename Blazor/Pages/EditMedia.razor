@@ -72,12 +72,31 @@
             </div>
 
             <div class="form-actions">
+                <button type="button" class="btn btn-danger" @onclick="ShowDeleteConfirmation">Delete Media</button>
+                <div class="action-spacer"></div>
                 <button type="submit" class="btn btn-primary">Save Changes</button>
                 <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
             </div>
+
+            @if (showDeleteConfirmation)
+            {
+                <div class="modal-overlay">
+                    <div class="modal-content">
+                        <h3>Confirm Deletion</h3>
+                        <p>Are you sure you want to delete "@media.Title"? This action cannot be undone.</p>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" @onclick="CancelDelete">Cancel</button>
+                            <button class="btn btn-danger" @onclick="DeleteMedia">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            }
         </EditForm>
-    }
+        }
 </div>
+
+            
+
 
 @code {
     [Parameter] public string MediaId { get; set; }
@@ -148,5 +167,26 @@
     private void CancelEdit()
     {
         Nav.NavigateTo("/inventory");
+    }
+    
+    private bool showDeleteConfirmation = false;
+
+    private void ShowDeleteConfirmation()
+    {
+        showDeleteConfirmation = true;
+    }
+
+    private void CancelDelete()
+    {
+        showDeleteConfirmation = false;
+    }
+
+    private async Task DeleteMedia()
+    {
+        var response = await HttpClient.DeleteAsync($"api/inventory/{MediaId}/delete");
+        if (response.IsSuccessStatusCode)
+        {
+            Nav.NavigateTo("/inventory");
+        }
     }
 }
