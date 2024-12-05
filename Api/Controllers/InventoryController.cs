@@ -1,4 +1,3 @@
-using Api.MessageBroker;
 using Common.Constants;
 using Common.Models;
 using Microsoft.AspNetCore.Authorization;

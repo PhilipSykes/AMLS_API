@@ -5,9 +5,6 @@
 
 <div class="edit-container">
     <h2>Edit Media Details</h2>
-    
-    @if (media != null)
-    {
         <EditForm Model="@editModel" OnValidSubmit="@HandleSubmit" class="edit-form">
             <DataAnnotationsValidator />
 
@@ -92,7 +89,6 @@
                 </div>
             }
         </EditForm>
-        }
 </div>
 
             
@@ -131,7 +127,6 @@
             Language = media.Language,
             Description = media.Description,
             Isbn = media.Isbn,
-            Rating = media.Rating,
             PublishDate = media.PublishDate,
             Type = media.Type
         };
@@ -149,7 +144,6 @@
             Language = editModel.Language,
             Description = editModel.Description,
             Isbn = editModel.Isbn,
-            Rating = editModel.Rating,
             PublishDate = editModel.PublishDate,
             Type = editModel.Type,
             Genres = genresInput.Split(',', StringSplitOptions.RemoveEmptyEntries)

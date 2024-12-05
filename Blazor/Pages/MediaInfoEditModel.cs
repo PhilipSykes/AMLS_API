@@ -8,7 +8,6 @@ public class MediaInfoEditModel
     public string Description { get; set; } = string.Empty;
     public string Isbn { get; set; } = string.Empty;
     public string Author { get; set; } = string.Empty;
-    public double Rating { get; set; }
     public DateTime PublishDate { get; set; }
     public string Type { get; set; } = string.Empty;
 }

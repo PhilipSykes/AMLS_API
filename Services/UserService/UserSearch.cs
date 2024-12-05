@@ -1,9 +1,7 @@
 using Common.Constants;
 using Common.Database;
-using Common.Models;
 using Common.Utils;
 using static Common.Models.Shared;
-using static Common.Models.Operations;
 using static Common.Models.Entities;
 
 namespace Services.UserService;
@@ -12,7 +10,7 @@ public interface IUserSearch
 {
     Task<List<Users>> SearchUsers((int, int) pagination, List<Filter> filters);
     Task<List<Login>> GetLoginCredentials(List<Filter> filters);
-    Task<List<Entities.Branch>> GetBranches(List<Filter> filters);
+    Task<List<Branch>> GetBranches(List<Filter> filters);
 }
 
 public class UserSearch : IUserSearch
@@ -38,8 +36,8 @@ public class UserSearch : IUserSearch
     {
         var bsonDocuments = await _searchRepository.Search(DocumentTypes.Branches, filters);
 
-        List<Branch> BranchList = Utils.ConvertBsonToEntity<Branch>(bsonDocuments);
-        return BranchList;
+        List<Branch> branchList = Utils.ConvertBsonToEntity<Branch>(bsonDocuments);
+        return branchList;
     }
 
     public async Task<List<Users>> SearchUsers((int, int) pagination, List<Filter> filters)

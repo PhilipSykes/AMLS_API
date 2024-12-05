@@ -1,6 +1,5 @@
 using Common;
 using Common.Database;
-using Common.Database.Interfaces;
 using Common.Notification.Email;
 using MongoDB.Bson;
 using Services.MediaService;

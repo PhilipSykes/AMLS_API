@@ -51,10 +51,8 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
         }
     }
 
-    public List<Claim> AddClaims(Entities.Login user)
+    private List<Claim> AddClaims(Entities.Login user)
     {
-        
-        //TODO adjust switch case strings to constants / enums matching DB role names
         List<Claim> claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.UserID),

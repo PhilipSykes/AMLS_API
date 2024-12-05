@@ -1,6 +1,5 @@
 using Common.Constants;
 using static Common.Models.Shared;
-using Common.Database.Interfaces;
 using Common.Exceptions;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;

@@ -2,7 +2,6 @@ using Common.Constants;
 using Common.Database;
 using Common.Utils;
 using static Common.Models.Shared;
-using static Common.Models.Operations;
 using static Common.Models.Entities;
 
 namespace Services.MediaService;
