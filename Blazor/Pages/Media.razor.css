@@ -44,7 +44,7 @@
 .info-content{
     font-size: 10px;
     color: #44403C;
-    text-transform: uppercase;
+    text-transform: capitalize;
     margin-bottom: 5px;
 }
 
