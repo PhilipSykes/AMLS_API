@@ -87,6 +87,7 @@
                     await AuthState.Login(tokenResponse.Data.Token, tokenResponse.Data.UserID);
                     success = "Successful login";
                     NavigationManager.NavigateTo("/");
+                    StateHasChanged();
                 }
             }
             else

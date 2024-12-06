@@ -3,19 +3,23 @@
 @inject AuthenticationStateProvider AuthProvider
 
 <nav class="navbar">
-    <div class="nav-content">
+    <div id="desktop-nav">
         <div class="nav-left">
-            <a href="/" class="logo">AML</a>
+            <a href="/" class="home">AML</a>
         </div>
-        <div class="nav-center">
+        <div class="nav-right">
             @if (currentUser != null)
             {
                 @foreach (var link in GetAuthorizedLinks())
                 {
-                    <a href="@link.Href">@link.Text</a>
+                    <a class="button-primary" href="@link.Href">@link.Text</a>
+                    <a class="button-primary" @onclick="//AuthState.Logout">Log Out</a>
                 }
             }
         </div>
+    </div>
+    <div id="mobile-nab">
+        
     </div>
 </nav>
 
@@ -53,7 +57,7 @@
     
     private readonly NavLink[] _navLinks = new[]
     {
-        new NavLink("Login", "/login", Array.Empty<string>()),
+        new NavLink("Sign in", "/login", Array.Empty<string>()),
         new NavLink("Inventory", "/inventory", new[] { PolicyRoles.BranchManager, PolicyRoles.BranchLibrarian }),
         new NavLink("Staff Management", "/staff", new[] { PolicyRoles.BranchManager }),
         new NavLink("Branch Reports", "/reports", new[] { PolicyRoles.BranchManager }),

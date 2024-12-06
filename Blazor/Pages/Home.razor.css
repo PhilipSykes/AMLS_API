@@ -1,7 +1,7 @@
 #responsive-layout {
     display: flex;
     flex-direction: row;
-    height: 100vh;
+    height: 100%;
 }
 
 @media (max-width: 868px) {
@@ -16,4 +16,5 @@
     overflow: scroll;
     display: flex;
     flex-direction: column;
+    padding-top: 5px;
 }

@@ -62,9 +62,10 @@
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
       "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
     },
+
     {
       "UpstreamPathTemplate": "/api/inventory/{everything}",
-      "UpstreamHttpMethod": ["POST", "GET", "PUT", "DELETE"],
+      "UpstreamHttpMethod": [ "POST","GET","PUT","DELETE" ],
       "DownstreamPathTemplate": "/inventory/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
