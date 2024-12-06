@@ -25,7 +25,7 @@ public class InventoryController : ControllerBase
         _mediaSearch = mediaSearch;
     }
     
-    [Authorize(Policy = Policies.RequireViewBranchMedia)]
+    [Authorize(Policy = Policies.CanViewInventory)]
     [HttpGet]
     public async Task<ActionResult<Response<PayLoads.Inventory>>> Get([FromQuery] int page, [FromQuery] int count)
     {
@@ -60,7 +60,7 @@ public class InventoryController : ControllerBase
     }
     
     
-    [Authorize(Policy = Policies.RequireCreateMedia)]
+    [Authorize(Policy = Policies.CanCreateMedia)]
     [HttpPost("{branchId}/create")]
     public async Task<ActionResult<Response<string>>> Create(string branchId, [FromBody] Request<MediaInfo> item)
     {
@@ -71,7 +71,7 @@ public class InventoryController : ControllerBase
         return await _inventoryManager.CreateMedia(item);
     }
     
-    [Authorize(Policy = Policies.RequireEditMedia)]
+    [Authorize(Policy = Policies.CanEditMedia)]
     [HttpPut("{branchId}/edit")]
     public async Task<ActionResult<Response<string>>> Update(string branchId, [FromBody] Request<MediaInfo> item)
     {
@@ -82,7 +82,7 @@ public class InventoryController : ControllerBase
         return await _inventoryManager.EditExistingMedia(item);
     }
     
-    [Authorize(Policy = Policies.RequireDeleteMedia)]
+    [Authorize(Policy = Policies.CanDeleteMedia)]
     [HttpDelete("{branchId}/delete")]
     public async Task<ActionResult<Response<string>>> Delete(string branchId, [FromBody] Request<MediaInfo> item)
     {

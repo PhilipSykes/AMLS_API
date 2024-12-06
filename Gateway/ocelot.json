@@ -78,7 +78,10 @@
           "Host": "localhost",
           "Port": 5001
         }
-      ]
+      ],
+      "LoadBalancerOptions": {"Type": "LeastConnection"},
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
+      "RouteClaimsRequirement": {"view_branch_media": "true"}
     },
     {
       "UpstreamPathTemplate": "/api/admin/{everything}",

@@ -9,7 +9,7 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize(Policy = Policies.RequireMember)]
+[Authorize(Policy = Policies.CanReserveMedia)]
 public class ReservationsController : ControllerBase
 {
     private readonly Exchange _exchange;
