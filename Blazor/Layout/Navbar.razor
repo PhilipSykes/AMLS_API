@@ -4,28 +4,29 @@
 @inject AuthStateService AuthState
 
 <nav class="navbar">
-    <div class="nav-content">
-        <div class="nav-left">
-            <a href="/" class="logo">AML</a>
-        </div>
-        <div class="nav-center">
-            (Nav)
-        </div>
-        <div class="nav-right">
-            @if (email != null)
-            {
-                <span class="username-display">
-                    Logged in as: @email
-                    @if (!string.IsNullOrEmpty(userRole))
-                    {
-                        <small>(@userRole)</small>
-                    }
-                </span>
-            }
-            <a href="/login" class="profile-icon">
-                <i class="fas fa-user-circle"></i>
-            </a>
-        </div>
+    <div class="nav-left">
+        <a class="home">AML</a>
+    </div>
+    <div class="nav-right">
+        
+        @switch (userRole)
+        {
+            case "SystemAdmin":
+                <div>admin</div>
+                break;
+            case "BranchManager":
+                <div>admin</div>
+                break;
+            case "BranchLibrarian":
+                <div>admin</div>
+                break;
+            case "Member":
+                <div>admin</div>
+                break;
+            default:
+                <div>not signed in</div>
+                break;
+        }
     </div>
 </nav>
 
