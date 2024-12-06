@@ -1,7 +1,6 @@
-
 @namespace Blazor.Layout
 @inject ISessionStorageService SessionStorage
-@inject AuthStateService AuthState
+@inject AuthenticationStateProvider AuthProvider
 
 <nav class="navbar">
     <div class="nav-content">
@@ -9,58 +8,59 @@
             <a href="/" class="logo">AML</a>
         </div>
         <div class="nav-center">
-            (Nav)
-        </div>
-        <div class="nav-right">
-            @if (email != null)
+            @if (currentUser != null)
             {
-                <span class="username-display">
-                    Logged in as: @email
-                    @if (!string.IsNullOrEmpty(userRole))
-                    {
-                        <small>(@userRole)</small>
-                    }
-                </span>
+                @foreach (var link in GetAuthorizedLinks())
+                {
+                    <a href="@link.Href">@link.Text</a>
+                }
             }
-            <a href="/login" class="profile-icon">
-                <i class="fas fa-user-circle"></i>
-            </a>
         </div>
     </div>
 </nav>
 
 @code {
-    private string? email;
-    private string? userRole;
     private ClaimsPrincipal? currentUser;
-
+    
     protected override async Task OnInitializedAsync()
     {
-        currentUser = await AuthState.GetUser();
-        await UpdateUserInfo();
-
-        AuthState.OnChange += OnAuthStateChanged;
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        currentUser = authState.User;
+        AuthProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
     }
 
-    private async Task UpdateUserInfo()
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
     {
-        if (currentUser != null)
-        {
-            email = currentUser.FindFirst(ClaimTypes.Email)?.Value;
-            userRole = currentUser.FindFirst(ClaimTypes.Role)?.Value;
-        }
-        else
-        {
-            email = null;
-            userRole = null;
-        }
-    }
-
-    private async void OnAuthStateChanged()
-    {
-        currentUser = await AuthState.GetUser();
-        await UpdateUserInfo();
+        var authState = await task;
+        currentUser = authState.User;
         StateHasChanged();
     }
 
+    private IEnumerable<NavLink> GetAuthorizedLinks()
+    {
+        if (currentUser == null) yield break;
+
+        foreach (var link in _navLinks)
+        {
+            if (link.Roles.Length == 0 || link.Roles.Any(role => 
+                    currentUser.IsInRole(role)))
+            {
+                yield return link;
+            }
+        }
+    }
+    private record NavLink(string Text, string Href, string[] Roles);
+    
+    private readonly NavLink[] _navLinks = new[]
+    {
+        new NavLink("Login", "/login", Array.Empty<string>()),
+        new NavLink("Inventory", "/inventory", new[] { PolicyRoles.BranchManager, PolicyRoles.BranchLibrarian }),
+        new NavLink("Staff Management", "/staff", new[] { PolicyRoles.BranchManager }),
+        new NavLink("Branch Reports", "/reports", new[] { PolicyRoles.BranchManager }),
+        new NavLink("System Metrics", "/metrics", new[] { PolicyRoles.SystemAdmin }),
+        new NavLink("User Management", "/users", new[] { PolicyRoles.SystemAdmin }),
+        new NavLink("My Reservations", "/reservations", new[] { PolicyRoles.Member }),
+        new NavLink("My Loans", "/loans", new[] { PolicyRoles.Member }),
+        new NavLink("Logout", "/logout",new[] { PolicyRoles.Member,PolicyRoles.BranchManager,PolicyRoles.BranchLibrarian,PolicyRoles.SystemAdmin })
+    };
 }

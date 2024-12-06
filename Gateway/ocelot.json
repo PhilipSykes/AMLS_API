@@ -48,7 +48,7 @@
         {"Host": "localhost", "Port": 5001}
       ],
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"member_access": "true"}
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
     },
     {
       "UpstreamPathTemplate": "/api/loans/{everything}",
@@ -60,7 +60,7 @@
         {"Host": "localhost", "Port": 5001}
       ],
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"member_access": "true"}
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
     },
     {
       "UpstreamPathTemplate": "/api/inventory/{everything}",
@@ -76,7 +76,7 @@
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"view_branch_media": "true"}
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": ["BranchLibrarian", "BranchManager"]}
     },
     {
       "UpstreamPathTemplate": "/api/admin/{everything}",
@@ -89,7 +89,7 @@
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"admin_access": "true"}
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "SystemAdmin"}
     }
   ]
 }
