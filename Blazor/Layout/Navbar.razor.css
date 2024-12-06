@@ -11,12 +11,20 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding-inline: 40px;
+    padding-inline: 30px;
     padding-block: 10px;
     border-bottom: 1px solid #e7e5e4;
 }
 .nav-left {
     display: flex;
+}
+.home{
+    font-size: 24px;
+    font-family: "Serif-Title", serif;
+    color: #44403C;
+    text-decoration: none;
+    user-select: none;
+    cursor: pointer;
 }
 .nav-right {
     display: flex;
@@ -42,6 +50,7 @@
     outline: none;
     user-select: none;
     text-align: left;
+    text-decoration: none;
 }
 .button-primary:hover {
     background-color: #a8a29e;
