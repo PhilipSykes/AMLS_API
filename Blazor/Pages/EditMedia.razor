@@ -1,0 +1,186 @@
+@page "/editMedia/{MediaId}"
+@using Blazor.Models
+@inject HttpClient HttpClient
+@inject NavigationManager Nav
+
+<div class="edit-container">
+    <h2>Edit Media Details</h2>
+        <EditForm Model="@editModel" OnValidSubmit="@HandleSubmit" class="edit-form">
+            <DataAnnotationsValidator />
+
+            <div class="form-grid">
+                <div class="form-section">
+                    <h3>Basic Information</h3>
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <InputText id="title" @bind-Value="editModel.Title" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="author">Author</label>
+                        <InputText id="author" @bind-Value="editModel.Author" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="isbn">ISBN</label>
+                        <InputText id="isbn" @bind-Value="editModel.Isbn" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="type">Type</label>
+                        <InputSelect id="type" @bind-Value="editModel.Type" class="form-control">
+                            <option value="Book">Book</option>
+                            <option value="Magazine">Magazine</option>
+                            <option value="Journal">Journal</option>
+                        </InputSelect>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Publishing Details</h3>
+                    <div class="form-group">
+                        <label for="publisher">Publisher</label>
+                        <InputText id="publisher" @bind-Value="editModel.Publisher" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="language">Language</label>
+                        <InputText id="language" @bind-Value="editModel.Language" class="form-control" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="publishDate">Publish Date</label>
+                        <InputDate id="publishDate" @bind-Value="editModel.PublishDate" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-section full-width">
+                    <h3>Additional Details</h3>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <InputTextArea id="description" @bind-Value="editModel.Description" class="form-control" rows="4" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="genres">Genres (comma-separated)</label>
+                        <InputText id="genres" @bind-Value="genresInput" class="form-control" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-danger" @onclick="ShowDeleteConfirmation">Delete Media</button>
+                <div class="action-spacer"></div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+            </div>
+
+            @if (showDeleteConfirmation)
+            {
+                <div class="modal-overlay">
+                    <div class="modal-content">
+                        <h3>Confirm Deletion</h3>
+                        <p>Are you sure you want to delete "@media.Title"? This action cannot be undone.</p>
+                        <div class="modal-actions">
+                            <button class="btn btn-secondary" @onclick="CancelDelete">Cancel</button>
+                            <button class="btn btn-danger" @onclick="DeleteMedia">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </EditForm>
+</div>
+
+            
+
+
+@code {
+    [Parameter] public string MediaId { get; set; }
+    private Entities.MediaInfo media;
+    private MediaInfoEditModel editModel = new();
+    private readonly List<Filter> _filters = new();
+    private string genresInput = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+            _filters.Add(new Filter("_id", MediaId, DbOperations.Equals));
+
+            var response = await HttpClient.PostAsJsonAsync($"api/catalog/search?page={1}&count={1}", _filters);
+            if (response.IsSuccessStatusCode)
+            {
+                var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.MediaInfo>>>();
+                if (searchResponse != null)
+                {
+                media = searchResponse.Data[0];
+                InitializeEditModel();
+            }
+        }
+    }
+
+    private void InitializeEditModel()
+    {
+        editModel = new MediaInfoEditModel
+        {
+            Title = media.Title,
+            Author = media.Author,
+            Publisher = media.Publisher,
+            Language = media.Language,
+            Description = media.Description,
+            Isbn = media.Isbn,
+            PublishDate = media.PublishDate,
+            Type = media.Type
+        };
+        genresInput = string.Join(",", media.Genres);
+    }
+
+    private async Task HandleSubmit()
+    {
+        var updateModel = new Entities.MediaInfo
+        {
+            ObjectID = MediaId,
+            Title = editModel.Title,
+            Author = editModel.Author,
+            Publisher = editModel.Publisher,
+            Language = editModel.Language,
+            Description = editModel.Description,
+            Isbn = editModel.Isbn,
+            PublishDate = editModel.PublishDate,
+            Type = editModel.Type,
+            Genres = genresInput.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                              .Select(g => g.Trim())
+                              .ToArray()
+        };
+
+        var response = await HttpClient.PutAsJsonAsync($"api/media/{MediaId}", updateModel);
+        if (response.IsSuccessStatusCode)
+        {
+            Nav.NavigateTo("/inventory");
+        }
+    }
+
+    private void CancelEdit()
+    {
+        Nav.NavigateTo("/inventory");
+    }
+    
+    private bool showDeleteConfirmation = false;
+
+    private void ShowDeleteConfirmation()
+    {
+        showDeleteConfirmation = true;
+    }
+
+    private void CancelDelete()
+    {
+        showDeleteConfirmation = false;
+    }
+
+    private async Task DeleteMedia()
+    {
+        var response = await HttpClient.DeleteAsync($"api/inventory/{MediaId}/delete");
+        if (response.IsSuccessStatusCode)
+        {
+            Nav.NavigateTo("/inventory");
+        }
+    }
+}

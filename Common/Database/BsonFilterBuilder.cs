@@ -4,7 +4,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using static Common.Models.Shared;
 
-namespace Common.Database.Interfaces;
+namespace Common.Database;
 
 public interface IFilterBuilder<T>
 {

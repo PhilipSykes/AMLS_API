@@ -10,7 +10,7 @@ public class SearchException : Exception
         Unknown
     }
 
-    public static readonly Dictionary<SearchErrorType, string> Messages = new()
+    private static readonly Dictionary<SearchErrorType, string> Messages = new()
     {
         { SearchErrorType.Database, "Database operation failed" },
         { SearchErrorType.Serialization, "Failed to process search results" },

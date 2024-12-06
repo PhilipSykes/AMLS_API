@@ -47,6 +47,9 @@
       <Compile Update="Pages\InventorySearchModel.cs">
         <DependentUpon>InventorySearchForm.razor</DependentUpon>
       </Compile>
+      <Compile Update="Pages\MediaInfoEditModel.cs">
+        <DependentUpon>EditMedia.razor</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>

@@ -1,5 +1,4 @@
 using Common.Constants;
-using Common.Models;
 
 namespace Api;
 

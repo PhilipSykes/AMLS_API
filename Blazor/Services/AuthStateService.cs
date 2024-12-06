@@ -35,7 +35,7 @@ public class AuthStateService
         return token;
     }
 
-    public async Task Login(string token, string username)
+    public async Task Login(string token, string userID)
     {
         await _sessionStorage.SetItemAsync("token", token);
         NotifyStateChanged();

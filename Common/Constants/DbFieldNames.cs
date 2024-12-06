@@ -13,6 +13,7 @@ namespace Common.Constants
             public const string Email = "email";
             public const string PasswordHash = "password";
             public const string Role = "role";
+            public const string Branches = "branches";
         }
         
         public static class Branch
@@ -23,8 +24,8 @@ namespace Common.Constants
 
         public static class Address
         {
-            public const string FullAddress = "fullAddress";
-            public const string Street = "street";
+            public const string Street = "address";
+            public const string Town = "town";
             public const string Postcode = "postcode";
         }
         
@@ -54,6 +55,16 @@ namespace Common.Constants
             public const string Favourites = "favourites";
             public const string History = "history";
             public const string NearestBranch = "nearestBranch";
+        }
+        
+        public static class Staff
+        {
+            public const string FirstName = "firstName";
+            public const string LastName = "lastName";
+            public const string DateOfBirth = "dateOfBirth";
+            public const string Email = "email";
+            public const string PhoneNumber = "phoneNumber";
+            public const string Branches = "branches";
         }
 
         public static class PhysicalCopies

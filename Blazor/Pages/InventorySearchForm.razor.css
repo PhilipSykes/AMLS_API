@@ -1,6 +1,6 @@
 #sidebar {
     width: 300px;
-    margin-right: 40px;
+    
     display: flex;
     flex-direction: column;
     background-color: #f5f5f4;

@@ -41,7 +41,7 @@ namespace Services.ReservationService
 
         public async Task<bool> CreateReservation(Reservations reservation) // this is placed here temporarily so i can test it
         {
-            await _reservationRepository.CreateReservation(reservation);
+            //await _reservationRepository.CreateReservation(reservation);
             return true;
         }
     }
