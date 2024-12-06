@@ -4,49 +4,67 @@ namespace Api;
 
 public static class Policies
 {
-    public const string RequireAdmin = "RequireAdmin";
-    public const string RequireLibrarian = "RequireLibrarian";
-    public const string RequireManager = "RequireManager";
-    public const string RequireAccountant = "RequireAccountant";
-    public const string RequireMember = "RequireMember";
-    public const string RequireBranchAccess = "RequireBranchAccess";
-    public const string RequireEditMedia = "RequireEditMedia";
-    public const string RequireCreateMedia = "RequireCreateMedia";
-    public const string RequireDeleteMedia = "RequireDeleteMedia";
-    public const string RequireViewBranchMedia = "RequireViewBranchMedia";
+    //Member permissions
+    public const string CanReserveMedia = "CanReserveMedia";
+    public const string CanCancelMedia = "CanCancelMedia";
+    public const string CanBorrowMedia = "CanBorrowMedia";
+    public const string CanExtendReservation = "CanExtendReservation";
+    public const string CanReturnMedia = "CanReturnMedia";
+    
+    //Branch staff permissions
+    public const string HasBranchAccess = "HasBranchAccess";
+    public const string CanEditMedia = "CanEditMedia";
+    public const string CanCreateMedia = "CanCreateMedia";
+    public const string CanDeleteMedia = "CanDeleteMedia";
+    public const string CanViewInventory = "CanViewInventory";
+    
+    //SystemAdmin permissions 
+    public const string CanEditUserRoles = "RequireEditUsers";
+    public const string CanEditUserPermissions = "CanEditUserPermissions";
+    public const string CanViewMetricsReports = "CanViewMetricsReports";
+        
     public static void ConfigurePolicies(IServiceCollection services)
     {
         services.AddAuthorization(options =>
         {
-            options.AddPolicy(RequireAdmin, policy => 
-                policy.RequireClaim(PolicyClaims.AdminClaim));
-            
-            options.AddPolicy(RequireLibrarian, policy => 
-                policy.RequireClaim(PolicyClaims.LibrarianClaim));
-                
-            options.AddPolicy(RequireManager, policy => 
-                policy.RequireClaim(PolicyClaims.ManagerClaim));
-                
-            options.AddPolicy(RequireAccountant, policy => 
-                policy.RequireClaim(PolicyClaims.AccountantClaim));
-                
-            options.AddPolicy(RequireMember, policy => 
-                policy.RequireClaim(PolicyClaims.MemberClaim));
-            
-            options.AddPolicy(RequireBranchAccess, policy => 
+            //Member 
+            options.AddPolicy(CanReserveMedia, policy => 
+                policy.RequireRole(PolicyRoles.Member));
+            options.AddPolicy(CanCancelMedia, policy => 
+                policy.RequireRole(PolicyRoles.Member));
+            options.AddPolicy(CanReturnMedia, policy => 
+                policy.RequireRole(PolicyRoles.Member));
+            options.AddPolicy(CanBorrowMedia, policy =>
+                policy.RequireRole(PolicyRoles.Member));
+            options.AddPolicy(CanExtendReservation, policy => 
+                policy.RequireRole(PolicyRoles.Member));
+
+            //Branch staff
+            //Review branch access logic for require policy 
+            options.AddPolicy(HasBranchAccess, policy => 
                 policy.RequireClaim(PolicyClaims.BranchAccess));
             
-            options.AddPolicy(RequireEditMedia, policy => 
-                policy.RequireClaim(PolicyClaims.EditMedia));
+            options.AddPolicy(CanEditMedia, policy => 
+                policy.RequireRole(PolicyRoles.BranchLibrarian,PolicyRoles.BranchManager));
             
-            options.AddPolicy(RequireCreateMedia, policy => 
-                policy.RequireClaim(PolicyClaims.CreateMedia));
+            options.AddPolicy(CanCreateMedia, policy => 
+                policy.RequireRole(PolicyRoles.BranchLibrarian,PolicyRoles.BranchManager));
             
-            options.AddPolicy(RequireDeleteMedia, policy => 
-                policy.RequireClaim(PolicyClaims.DeleteMedia));
+            options.AddPolicy(CanDeleteMedia, policy => 
+                policy.RequireRole(PolicyRoles.BranchLibrarian,PolicyRoles.BranchManager));
             
-            options.AddPolicy(RequireViewBranchMedia, policy => 
-                policy.RequireClaim(PolicyClaims.ViewBranchMedia));
+            options.AddPolicy(CanViewInventory, policy => 
+                policy.RequireRole(PolicyRoles.BranchLibrarian,PolicyRoles.BranchManager));
+            
+            //System Admin
+            options.AddPolicy(CanEditUserRoles, policy => 
+                policy.RequireRole(PolicyRoles.SystemAdmin));
+            
+            options.AddPolicy(CanEditUserPermissions, policy => 
+                policy.RequireRole(PolicyRoles.SystemAdmin));
+            
+            options.AddPolicy(CanViewMetricsReports, policy => 
+                policy.RequireRole(PolicyRoles.SystemAdmin));
             
         });
     }

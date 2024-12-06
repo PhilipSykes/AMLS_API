@@ -76,7 +76,7 @@
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"staff_access": "true"}
+      "RouteClaimsRequirement": {"view_branch_media": "true"}
     },
     {
       "UpstreamPathTemplate": "/api/admin/{everything}",

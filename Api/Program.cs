@@ -57,7 +57,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
         };
     });
-
+builder.Services.AddAuthorization();
 Policies.ConfigurePolicies(builder.Services);
 
 builder.Services.AddLogging(logging =>
@@ -70,6 +70,7 @@ var app = builder.Build();
 
 app.UseRouting();
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
