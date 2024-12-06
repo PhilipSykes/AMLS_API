@@ -4,11 +4,12 @@ using Docker.DotNet.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-
-
-
 namespace Services.MetricService;
 
+
+/// <summary>
+/// A service for retrieving Docker container metrics such as CPU and memory usage.
+/// </summary>
 public class DockerMetrics
 {
     public class ContainerStatsResponse
@@ -71,6 +72,17 @@ public class DockerMetrics
     
     private readonly DockerClient _dockerClient;
 
+    /// <summary>
+    /// Retrieves the appropriate Docker API URI for the current operating system.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="string"/> representing the Docker API URI. 
+    /// - For Windows: <c>npipe://./pipe/docker_engine</c>.
+    /// - For Linux or macOS: <c>unix:///var/run/docker.sock</c>.
+    /// </returns>
+    /// <exception cref="PlatformNotSupportedException">
+    /// Thrown if the operating system is not Windows, Linux, or macOS.
+    /// </exception>
     private static string GetDockerApiUri()
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -86,6 +98,13 @@ public class DockerMetrics
         throw new PlatformNotSupportedException("This OS is not supported.");
     }
 
+    /// <summary>
+    /// Initializes and returns a Docker client configured to connect to the Docker daemon.
+    /// </summary>
+    /// <returns>A <see cref="DockerClient"/> instance for communicating with Docker.</returns>
+    /// <exception cref="Exception">
+    /// Thrown if the Docker daemon is not running or cannot be accessed due to missing permissions or configuration issues.
+    /// </exception>
     public static DockerClient GetDockerClient()
     {
         try
@@ -106,6 +125,15 @@ public class DockerMetrics
     }
     
 
+    /// <summary>
+    /// Retrieves metrics (CPU and memory usage) for all Docker containers.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="List{T}"/> of <see cref="Metrics"/> objects containing container statistics.
+    /// </returns>
+    /// <exception cref="Exception">
+    /// Thrown if the Docker API response is invalid or if deserialization fails.
+    /// </exception>
     public async Task<List<Metrics>> GetContainerMetrics()
     {
         var metrics = new List<Metrics>();

@@ -23,11 +23,10 @@ else
         <div class="container">
             <p><strong>Container ID:</strong> @root.GetProperty("containerId").GetString()</p>
             <p><strong>Container Name:</strong> @root.GetProperty("containerName").GetString()</p>
-            <p><strong>CPU Usage:</strong> @root.GetProperty("cpuUsage").GetInt64()</p>
-            <p><strong>CPU Percentage:</strong> @root.GetProperty("cpuPercentage").GetDouble() %</p>
-            <p><strong>Memory Usage:</strong> @root.GetProperty("memoryUsage").GetDouble() MB</p>
-            <p><strong>Memory Limit:</strong> @root.GetProperty("memoryLimit").GetDouble() MB</p>
-            <p><strong>Timestamp:</strong> @root.GetProperty("timestamp").GetString()</p>
+            <p><strong>CPU Usage:</strong> @Math.Round(root.GetProperty("cpuPercentage").GetDouble(), 2)%</p>
+            <p><strong>Memory Usage:</strong> @Math.Round(root.GetProperty("memoryUsage").GetDouble(), 0) MB</p>
+            <p><strong>Memory Limit:</strong> @Math.Round(root.GetProperty("memoryLimit").GetDouble(), 0) MB</p>
+            <p><strong>Memory Percentage:</strong> @Math.Round(root.GetProperty("memoryPercentage").GetDouble(), 2)%</p>
         </div>
     }
 }
