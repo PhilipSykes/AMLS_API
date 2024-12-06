@@ -40,10 +40,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await RefreshMetrics();
-
         _jwtToken = await AuthState.GetBearerToken();
-
+        await RefreshMetrics();
         _timer = new Timer(async _ => await RefreshMetrics(), null, 0, 5000);
     }
 
