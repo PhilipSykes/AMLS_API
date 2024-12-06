@@ -4,29 +4,35 @@
 @inject AuthStateService AuthState
 
 <nav class="navbar">
-    <div class="nav-left">
-        <a class="home">AML</a>
+    <div id="desktop-nav">
+        <div class="nav-left">
+            <a href="https://localhost:7001/" class="home">AML</a>
+        </div>
+        <div class="nav-right">
+
+            @switch (userRole)
+            {
+                case "SystemAdmin":
+                    <div>admin</div>
+                    break;
+                case "BranchManager":
+                    <div>branch manager</div>
+                    break;
+                case "BranchLibrarian":
+                    <div>branch librarian</div>
+                    break;
+                case "Member":
+                    <div>member</div>
+                    <a class="button-primary" @onclick="AuthState.Logout">Log Out</a>
+                    break;
+                default:
+                    <a class="button-primary" href="/login">Sign In</a>
+                    break;
+            }
+        </div>
     </div>
-    <div class="nav-right">
+    <div id="mobile-nab">
         
-        @switch (userRole)
-        {
-            case "SystemAdmin":
-                <div>admin</div>
-                break;
-            case "BranchManager":
-                <div>admin</div>
-                break;
-            case "BranchLibrarian":
-                <div>admin</div>
-                break;
-            case "Member":
-                <div>admin</div>
-                break;
-            default:
-                <div>not signed in</div>
-                break;
-        }
     </div>
 </nav>
 
