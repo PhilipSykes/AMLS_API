@@ -147,13 +147,13 @@ input::placeholder {
 }
 
 .alert {
-    color: #f43f5e;
+    color: #BE123C;
     background-color: #FECDD3;
 
     box-sizing: border-box;
 
     width: 100%;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     font-family: "Regular", sans-serif;
 

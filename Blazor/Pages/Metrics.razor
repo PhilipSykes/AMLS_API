@@ -1,0 +1,69 @@
+@page "/Metrics"
+@using System.Text.Json
+@inject HttpClient HttpClient
+@inject AuthStateService AuthState
+
+<div id="page">
+    
+    <h3>Docker</h3>
+    
+    @if (_snapshot == null)
+    {
+        <p>Loading metrics...</p>
+    }
+    else if (_snapshot.Count == 0)
+    {
+        <p>Cannot connect to Docker Daemon.</p>
+    }
+    else
+    {
+        <p class="last-update">Last Updated: @_lastUpdated.ToString("HH:mm:ss")</p>
+
+        <div class="container-container">
+            @foreach (var container in _snapshot)
+            {
+                var root = container.RootElement;
+
+                <div class="container-card">
+                    <p class="container-id">@root.GetProperty("containerId").GetString()</p>
+                    <p class="container-name"><strong>@root.GetProperty("containerName").GetString()</strong></p>
+                    <div class="cpu-mem">
+                        <p class="cpu-percent"><strong>CPU: </strong> @Math.Round(root.GetProperty("cpuPercentage").GetDouble(), 2)%</p>
+                        <p><strong>Memory Usage: </strong> @Math.Round(root.GetProperty("memoryUsage").GetDouble(), 0)MB/@Math.Round(root.GetProperty("memoryLimit").GetDouble() / 1024, 1)GB</p>
+                        <p><strong>Memory Percentage: </strong>@Math.Round(root.GetProperty("memoryPercentage").GetDouble(), 2)%</p>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+
+
+@code {
+    private Timer _timer;
+    private DateTime _lastUpdated;
+    private List<JsonDocument>? _snapshot;
+    private string _jwtToken;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _jwtToken = await AuthState.GetBearerToken();
+        await RefreshMetrics();
+        _timer = new Timer(async _ => await RefreshMetrics(), null, 0, 5000);
+    }
+
+    private async Task RefreshMetrics()
+    {
+        _lastUpdated = DateTime.Now;
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        _snapshot = await HttpClient.GetFromJsonAsync<List<JsonDocument>>("https://localhost:7500/api/admin/metric");
+        
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
+    }
+}

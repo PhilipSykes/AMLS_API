@@ -19,9 +19,14 @@ h3 {
     display: flex;
     flex-direction: column;
     gap: 7px;
-    padding: 20px;
+    margin-inline: 20px;
+    padding-block: 20px;
     cursor: pointer;
+
+    border-bottom: 1px solid #e7e5e4;
 }
+
+
 
 #search-pill-container {
     display: flex;
@@ -37,7 +42,7 @@ h3 {
     margin: 0;
     padding-inline: 7px;
     padding-block: 3px;
-    border-radius: 100px;
+    border-radius: 5px;
 
     background-color: #D6D3D1;
     color: #44403C;

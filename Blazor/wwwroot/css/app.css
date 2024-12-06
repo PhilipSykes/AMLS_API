@@ -72,16 +72,21 @@ code {
 }
 
 .validation-errors {
-    padding: 0;
-    padding-left: 3px;
-    margin-top: 7px;
+    background-color: #FECDD3;
+
+    box-sizing: border-box;
+
+    width: 100%;
+    padding-inline: 12px;
+    padding-block: 5px;
+    border-radius: 5px;
 }
 
 .validation-message {
+    color: #BE123C;
     font-family: "Regular", sans-serif;
-    color: #44403C;
-    font-weight: 700;
     font-size: 10px;
     text-transform: capitalize;
     list-style-type: none;
+    user-select: none;
 }
