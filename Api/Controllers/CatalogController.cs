@@ -7,6 +7,9 @@ using Services.MediaService;
 
 namespace Api.Controllers;
 
+/// <summary>
+/// Controller for managing catalog operations
+/// </summary>
 [ApiController]
 [Route("[controller]")]
 public class CatalogController : ControllerBase
@@ -14,12 +17,23 @@ public class CatalogController : ControllerBase
     private readonly Exchange _exchange;
     private readonly IMediaSearch _mediaSearch;
     
+    /// <summary>
+    /// Initializes a new instance of the CatalogController
+    /// </summary>
+    /// <param name="exchange">Message broker exchange</param>
+    /// <param name="mediaSearch">Service for searching media items</param>
     public CatalogController(Exchange exchange, IMediaSearch mediaSearch)
     {
         _exchange = exchange;
         _mediaSearch = mediaSearch;
     }
     
+    /// <summary>
+    /// Retrieves paginated media items
+    /// </summary>
+    /// <param name="page">Page number</param>
+    /// <param name="count">Items per page</param>
+    /// <returns>List of media items</returns>
     [HttpGet]
     public async Task<ActionResult<Response<List<MediaInfo>>>> GetMedia(int page, int count)
     {
@@ -37,6 +51,13 @@ public class CatalogController : ControllerBase
         };
     }
     
+    /// <summary>
+    /// Searches media items with specified filters and pagination
+    /// </summary>
+    /// <param name="filters">List of filters to apply</param>
+    /// <param name="page">Page number</param>
+    /// <param name="count">Items per page</param>
+    /// <returns>Filtered list of media items</returns>
     [HttpPost("search")]
     public async Task<ActionResult<Response<List<MediaInfo>>>> SearchMedia(List<Filter> filters, int page, int count)
     {

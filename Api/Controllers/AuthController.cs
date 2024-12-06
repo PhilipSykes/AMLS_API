@@ -10,6 +10,9 @@ using Services.TokenAuthService;
 
 namespace Api.Controllers;
 
+/// <summary>
+/// Controller for handling authentication operations
+/// </summary>
 [ApiController]
 [Route("[controller]")] 
 public class AuthController : ControllerBase
@@ -17,6 +20,13 @@ public class AuthController : ControllerBase
     private readonly Exchange _exchange;
     private readonly IUserSearch _userSearch;
     private readonly TokenAuthService _tokenAuthService;
+    
+    /// <summary>
+    /// Initializes a new instance of the AuthController
+    /// </summary>
+    /// <param name="exchange">Message broker exchange service</param>
+    /// <param name="userSearch">Service for user search operations</param>
+    /// <param name="tokenAuthService">Service for JWT token operations</param>
     public AuthController(Exchange exchange, IUserSearch userSearch,TokenAuthService tokenAuthService)
     {
         _exchange = exchange;
@@ -24,6 +34,11 @@ public class AuthController : ControllerBase
         _tokenAuthService = tokenAuthService;
     }
 
+    /// <summary>
+    /// Authenticates a user and returns a JWT token
+    /// </summary>
+    /// <param name="request">Login credentials containing email and password</param>
+    /// <returns>Response containing login details and JWT token if successful</returns>
     [HttpPost("login")]
     public async Task<ActionResult<Response<LoginDetails>>> Login([FromBody] Request<PayLoads.Login> request)
     {

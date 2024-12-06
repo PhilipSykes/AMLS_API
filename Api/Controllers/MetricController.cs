@@ -4,11 +4,17 @@ using Services.MetricService;
 
 namespace Api.Controllers;
 
+/// <summary>
+/// Controller for retrieving Docker container metrics
+/// </summary>
 [ApiController]
 [Route("admin/[controller]")] 
-
 public class MetricController : ControllerBase
 {
+    /// <summary>
+    /// Gets a snapshot of current Docker container metrics
+    /// </summary>
+    /// <returns>List of container metrics including CPU, memory, and container details</returns>
     [HttpGet]
     public async Task<List<DockerMetrics.Metrics>> GetSnapshot()
     { 

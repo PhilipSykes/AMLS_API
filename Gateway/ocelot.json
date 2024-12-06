@@ -93,8 +93,7 @@
         {"Host": "localhost", "Port": 5001}
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
-      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"admin_access": "true"}
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"}
     }
   ]
 }
