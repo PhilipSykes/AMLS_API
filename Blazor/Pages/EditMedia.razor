@@ -5,94 +5,96 @@
 
 <div class="edit-container">
     <h2>Edit Media Details</h2>
-        <EditForm Model="@editModel" OnValidSubmit="@HandleSubmit" class="edit-form">
-            <DataAnnotationsValidator />
+    <EditForm Model="@editModel" OnValidSubmit="@HandleSubmit" class="edit-form">
+        <DataAnnotationsValidator />
 
-            <div class="form-grid">
-                <div class="form-section">
-                    <h3>Basic Information</h3>
-                    <div class="form-group">
-                        <label for="title">Title</label>
-                        <InputText id="title" @bind-Value="editModel.Title" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="author">Author</label>
-                        <InputText id="author" @bind-Value="editModel.Author" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="isbn">ISBN</label>
-                        <InputText id="isbn" @bind-Value="editModel.Isbn" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="type">Type</label>
-                        <InputSelect id="type" @bind-Value="editModel.Type" class="form-control">
-                            <option value="Book">Book</option>
-                            <option value="Magazine">Magazine</option>
-                            <option value="Journal">Journal</option>
-                        </InputSelect>
-                    </div>
+        <div class="form-grid">
+            <div class="form-section">
+                <h3>Basic Information</h3>
+                <div class="input-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" @bind="editModel.Title" class="text-field" />
                 </div>
 
-                <div class="form-section">
-                    <h3>Publishing Details</h3>
-                    <div class="form-group">
-                        <label for="publisher">Publisher</label>
-                        <InputText id="publisher" @bind-Value="editModel.Publisher" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="language">Language</label>
-                        <InputText id="language" @bind-Value="editModel.Language" class="form-control" />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="publishDate">Publish Date</label>
-                        <InputDate id="publishDate" @bind-Value="editModel.PublishDate" class="form-control" />
-                    </div>
+                <div class="input-group">
+                    <label for="author">Author</label>
+                    <input type="text" id="author" @bind="editModel.Author" class="text-field" />
                 </div>
 
-                <div class="form-section full-width">
-                    <h3>Additional Details</h3>
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <InputTextArea id="description" @bind-Value="editModel.Description" class="form-control" rows="4" />
-                    </div>
+                <div class="input-group">
+                    <label for="isbn">ISBN</label>
+                    <input type="text" id="isbn" @bind="editModel.Isbn" class="text-field" />
+                </div>
 
-                    <div class="form-group">
-                        <label for="genres">Genres (comma-separated)</label>
-                        <InputText id="genres" @bind-Value="genresInput" class="form-control" />
-                    </div>
+                <div class="input-group">
+                    <label for="type">Type</label>
+                    <select id="type" @bind="editModel.Type" class="text-field">
+                        <option value="Book">Book</option>
+                        <option value="Magazine">Magazine</option>
+                        <option value="Journal">Journal</option>
+                    </select>
                 </div>
             </div>
 
-            <div class="form-actions">
-                <button type="button" class="btn btn-danger" @onclick="ShowDeleteConfirmation">Delete Media</button>
-                <div class="action-spacer"></div>
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-                <button type="button" class="btn btn-secondary" @onclick="CancelEdit">Cancel</button>
+            <div class="form-section">
+                <h3>Publishing Details</h3>
+                <div class="input-group">
+                    <label for="publisher">Publisher</label>
+                    <input type="text" id="publisher" @bind="editModel.Publisher" class="text-field" />
+                </div>
+
+                <div class="input-group">
+                    <label for="language">Language</label>
+                    <input type="text" id="language" @bind="editModel.Language" class="text-field" />
+                </div>
+
+                <div class="input-group">
+                    <label for="publishDate">Publish Date</label>
+                    <input type="date" id="publishDate" @bind="editModel.PublishDate" class="text-field" />
+                </div>
             </div>
 
-            @if (showDeleteConfirmation)
-            {
-                <div class="modal-overlay">
-                    <div class="modal-content">
-                        <h3>Confirm Deletion</h3>
-                        <p>Are you sure you want to delete "@media.Title"? This action cannot be undone.</p>
-                        <div class="modal-actions">
-                            <button class="btn btn-secondary" @onclick="CancelDelete">Cancel</button>
-                            <button class="btn btn-danger" @onclick="DeleteMedia">Delete</button>
-                        </div>
-                    </div>
+            <div class="form-section full-width">
+                <h3>Additional Details</h3>
+                <div class="input-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" @bind="editModel.Description" class="text-field" rows="4"></textarea>
                 </div>
-            }
-        </EditForm>
-</div>
 
-            
+                <div class="input-group">
+                    <label for="genres">Genres (comma-separated)</label>
+                    <input type="text" id="genres" @bind="genresInput" class="text-field" />
+                </div>
+                <div class="input-group">
+                    <label for="genres">Genres (comma-separated)</label>
+                    <input type="text" id="genres" @bind="genresInput" class="text-field" />
+                </div>
+            </div>
+        </div>
 
+        <div class="form-actions">
+            <button type="button" class="action-button danger-button" @onclick="ShowDeleteConfirmation">Delete Media</button>
+            <div class="action-spacer"></div>
+            <button type="submit" class="action-button primary-button">Save Changes</button>
+            <button type="button" class="action-button secondary-button" @onclick="CancelEdit">Cancel</button>
+        </div>
+        
+        @if (showDeleteConfirmation)
+        {
+            <div class="modal-overlay">
+                
+                <div class="modal-content">
+                    <h3>Confirm Deletion</h3>
+                    <p>Are you sure you want to delete "@media.Title"? This action cannot be undone.</p>
+                    <div class="modal-actions">
+                        <button class="action-button secondary-button" @onclick="CancelDelete">Cancel</button> 
+                        <button class="action-button danger-button" @onclick="DeleteMedia">Delete</button>
+                    </div> 
+                </div>
+            </div>
+        } 
+    </EditForm> 
+    </div>
 
 @code {
     [Parameter] public string MediaId { get; set; }

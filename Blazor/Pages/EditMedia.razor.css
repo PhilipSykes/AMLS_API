@@ -1,121 +1,131 @@
+* {
+    user-select: none;
+    font-family: "Regular", sans-serif;
+    box-sizing: border-box;
+}
+
 .edit-container {
-    padding: 2rem;
+    padding: 30px;
     max-width: 1200px;
     margin: 0 auto;
+    position: relative;
+    overflow-y: auto;
+}
+
+.edit-container h2 {
+    margin-bottom: 20px;
 }
 
 .edit-form {
-    background: white;
-    padding: 2rem;
-    border-radius: 0.5rem;
+    background-color: #FAFAF9;
+    padding: 30px;
+    border-radius: 5px;
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    flex: 1;
+    overflow-y: auto; 
+    display: flex;
+    flex-direction: column;
 }
 
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
+    gap: 20px;
+    flex: 1;
 }
 
 .form-section {
-    margin-bottom: 2rem;
+    margin-bottom: 20px;
 }
 
 .form-section h3 {
-    color: #1e293b;
-    font-size: 1.125rem;
+    color: #44403C;
+    font-size: 16px;
     font-weight: 600;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e7e5e4;
 }
 
 .full-width {
     grid-column: 1 / -1;
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
+.input-group {
+    margin-bottom: 15px;
 }
 
-.form-group label {
+.input-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    color: #475569;
+    margin-bottom: 8px;
+    color: #44403C;
     font-weight: 500;
+    font-size: 14px;
 }
 
-.form-control {
+.text-field {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 0.375rem;
-    font-size: 1rem;
-}
-
-.form-control:focus {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #f5f5f4;
+    border-radius: 5px;
+    border: 2px solid #e7e5e4;
     outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    padding: 7px 12px;
+    font-size: 14px;
+    color: #44403C;
+}
+
+.text-field:hover {
+    border-color: #d6d3d1;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.text-field:focus {
+    border-color: #44403C;
+    outline: none;
 }
 
 .form-actions {
     display: flex;
-    gap: 1rem;
+    gap: 10px;
     justify-content: flex-end;
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e2e8f0;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e7e5e4;
+    position: sticky;
+    bottom: 0;
+    background-color: #FAFAF9;
 }
 
-.btn {
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    font-weight: 500;
-    cursor: pointer;
+.action-button {
+    padding: 9px 14px;
+    font-size: 14px;
+    border-radius: 5px;
     border: none;
+    outline: none;
 }
 
-.btn-primary {
-    background-color: #2563eb;
-    color: white;
+.primary-button {
+    background-color: #44403C;
+    color: #FAFAF9;
 }
 
-.btn-secondary {
-    background-color: #f1f5f9;
-    color: #475569;
+.secondary-button {
+    background-color: #f5f5f4;
+    color: #44403C;
+    border: 2px solid #e7e5e4;
 }
 
-.btn:hover {
-    opacity: 0.9;
-}
-
-@media (max-width: 768px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .edit-container {
-        padding: 1rem;
-    }
-}
-
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e2e8f0;
+.danger-button {
+    background-color: #dc2626;
+    color: #FAFAF9;
 }
 
 .action-spacer {
     flex: 1;
-}
-
-.btn-danger {
-    background-color: #dc2626;
-    color: white;
 }
 
 .modal-overlay {
@@ -132,26 +142,38 @@
 }
 
 .modal-content {
-    background: white;
-    padding: 2rem;
-    border-radius: 0.5rem;
+    background-color: #FAFAF9;
+    padding: 30px;
+    border-radius: 5px;
     width: 90%;
     max-width: 500px;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
 }
 
 .modal-content h3 {
-    margin-bottom: 1rem;
-    color: #1e293b;
+    margin-bottom: 15px;
+    color: #44403C;
+    font-size: 16px;
 }
 
 .modal-content p {
-    margin-bottom: 1.5rem;
-    color: #475569;
+    margin-bottom: 15px;
+    color: #44403C;
+    font-size: 14px;
 }
 
 .modal-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .edit-container {
+        padding: 15px;
+    }
 }
