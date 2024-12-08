@@ -6,6 +6,12 @@
         <div class="search-container">
                 <input type="text" class="text-field" placeholder="Enter ID" @bind="_searchModel.Id"/>
                 <input type="text" class="text-field" placeholder="Enter title" @bind="_searchModel.MediaTitle"/>
+                <select class="text-field" @bind="_searchModel.MediaType">
+                    <option value="">Media Type</option>
+                    <option value="Book">Book</option>
+                    <option value="Film">Film</option>
+                    <option value="TV Series">TV Series</option>
+                </select>
                 <select class="text-field" @bind="_searchModel.Branch">
                     <option value="">All Branches</option>
                     @foreach (var branch in BranchList)
@@ -45,6 +51,11 @@
         if (!string.IsNullOrEmpty(model.MediaTitle))
         {
             _searchFilters.Add(new Filter("title", model.MediaTitle, DbOperations.Contains));
+        }
+        
+        if (!string.IsNullOrEmpty(model.MediaType))
+        {
+            _searchFilters.Add(new Filter("type", model.MediaType, DbOperations.Equals));
         }
 
         if (!string.IsNullOrEmpty(model.Branch))

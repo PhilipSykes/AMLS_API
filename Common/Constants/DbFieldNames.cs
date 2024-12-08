@@ -36,13 +36,20 @@ namespace Common.Constants
             public const string Language = "language";
             public const string Description = "description";
             public const string Isbn = "isbn";
-            public const string Author = "author";
+            public const string Author = "author";       
             public const string Rating = "rating";
             public const string PublishDate = "publishDate";
             public const string Type = "type";
             public const string Genres = "genres";
-            //public const string FormatSpecificDetails = "formatSpecificDetails";
             public const string PhysicalCopies = "physicalCopies";
+            
+            public const string Director = "director";   
+            public const string Studio = "studio";       
+            public const string Creator = "creator";    
+            public const string Network = "network";    
+            public const string Season = "season";     
+            public const string Episodes = "episodes";  
+            public const string EndDate = "endDate";    
         }
         public static class Users
         {

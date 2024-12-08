@@ -19,6 +19,11 @@ public class MediaSearchModel
 {
     public string? MediaTitle { get; set; }
     public List<string> MediaGenres { get; set; } = new();
-    public Dictionary<string, List<string>> MediaPublisher { get; set; } = new();
-    public Dictionary<string, List<string>> MediaAuthor { get; set; } = new();
+    public string? MediaType { get; set; }
+
+    public string? MediaCreator { get; set; }  
+    public string? MediaCompany { get; set; }  
+
+    public int? Season { get; set; }
+    public int? Episodes { get; set; }
 }
