@@ -24,4 +24,5 @@ public class InventorySearchModel
     public string? MediaTitle { get; set; }
     public string? Branch { get; set; }
     public string? Id { get; set; }
+    public string? MediaType { get; set; }
 }
