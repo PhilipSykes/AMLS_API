@@ -32,7 +32,7 @@
     align-items: center;
     justify-content: flex-end;
     
-    gap: 10px;
+    gap: 25px;
 }
 .button-primary {
     box-sizing: border-box;
@@ -40,7 +40,7 @@
     padding-inline: 14px;
     padding-block: 9px;
 
-    width: 100%;
+    width: fit-content;
     font-size: 14px;
 
     border-radius: 5px;
@@ -56,6 +56,20 @@
     background-color: var(--button-primary-hover-color);
     transition: 0.15s ease-in-out;
 
+}
+
+.button-secondary {
+    font-size: 14px;
+    font-weight: 650;
+    text-decoration: none;
+    color: var(--text-field-border-color);
+    user-select: none;
+    width: fit-content;
+}
+
+.button-secondary:hover {
+    color: var(--button-secondary-hover-color);
+    transition: 0.3s ease-in-out;
 }
 
 @media (max-width: 868px) {

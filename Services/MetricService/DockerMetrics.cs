@@ -70,7 +70,7 @@ public class DockerMetrics
         public DateTime Timestamp { get; set; }
     }
     
-    public DockerClient _dockerClient { get; }
+    public DockerClient DockerClient { get; }
 
     /// <summary>
     /// Retrieves the appropriate Docker API URI for the current operating system.
@@ -101,7 +101,7 @@ public class DockerMetrics
     /// <summary>
     /// Initializes and returns a Docker client configured to connect to the Docker daemon.
     /// </summary>
-    /// <returns>A <see cref="DockerClient"/> instance for communicating with Docker.</returns>
+    /// <returns>A <see cref="Docker.DotNet.DockerClient"/> instance for communicating with Docker.</returns>
     /// <exception cref="Exception">
     /// Thrown if the Docker daemon is not running or cannot be accessed due to missing permissions or configuration issues.
     /// </exception>
@@ -121,7 +121,7 @@ public class DockerMetrics
     
     public DockerMetrics()
     {
-        _dockerClient = GetDockerClient();
+        DockerClient = GetDockerClient();
     }
     
 
@@ -137,10 +137,10 @@ public class DockerMetrics
     public async Task<List<Metrics>> GetContainerMetrics()
     {
         var metrics = new List<Metrics>();
-        var containers = await _dockerClient.Containers.ListContainersAsync(new ContainersListParameters() { All = true });
+        var containers = await DockerClient.Containers.ListContainersAsync(new ContainersListParameters() { All = true });
         foreach (var container in containers)
         {
-            var response = await _dockerClient.Containers.GetContainerStatsAsync(
+            var response = await DockerClient.Containers.GetContainerStatsAsync(
                 container.ID,
                 new ContainerStatsParameters{Stream = false},
                 CancellationToken.None);

@@ -13,7 +13,7 @@
             <Authorized>
                 @foreach (var link in GetAuthorizedLinks(context.User))
                 {
-                    <a class="button-primary" href="@link.Href">@link.Text</a>
+                    <a class="button-secondary" href="@link.Href">@link.Text</a>
                 }
                 <a class="button-primary" @onclick="HandleLogout">Log out</a>
             </Authorized>

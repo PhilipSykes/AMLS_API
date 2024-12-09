@@ -29,7 +29,7 @@
                     <p class="container-name"><strong>@root.GetProperty("containerName").GetString()</strong></p>
                     <div class="cpu-mem">
                         <p class="cpu-percent"><strong>CPU: </strong> @Math.Round(root.GetProperty("cpuPercentage").GetDouble(), 2)%</p>
-                        <p><strong>Memory Usage: </strong> @Math.Round(root.GetProperty("memoryUsage").GetDouble(), 0)MB/@Math.Round(root.GetProperty("memoryLimit").GetDouble() / 1024, 1)GB</p>
+                        <p><strong>Memory Usage: </strong> @Math.Round(root.GetProperty("memoryUsage").GetDouble(), 0)MB/@Math.Round(root.GetProperty("memoryLimit").GetDouble() / 1000, 1)GB</p>
                         <p><strong>Memory Percentage: </strong>@Math.Round(root.GetProperty("memoryPercentage").GetDouble(), 2)%</p>
                     </div>
                 </div>
