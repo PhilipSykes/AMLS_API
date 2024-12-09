@@ -4,60 +4,66 @@
 
 
 <div class="media-info-container">
-    <div class="media-title-author-container">
-        <h2 class="media-title">@_result.Title</h2>
-        <div class="rating">
-            @for (var i = 1; i <= 5; i++)
-            {
-                
-                <div style="width: 21px; height: 21px; display: flex; justify-content: center; align-items: center;">
-                    <svg class="star" width="17.5" height="16.63" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M4.09687 17.25L5.51875 11.1031L0.75 6.96875L7.05 6.42188L9.5 0.625L11.95 6.42188L18.25 6.96875L13.4812 11.1031L14.9031 17.25L9.5 13.9906L4.09687 17.25Z"
-                            fill="@GetColor(i, _result)"/>
-                    </svg>
-                </div>
-            }
+    <div class="media-container">
+        <div class="media-title-rating">
+            <h2 class="media-title">@_result.Title</h2>
+            <div class="rating">
+                @for (var i = 1; i <= 5; i++)
+                {
+
+                    <div style="width: 21px; height: 21px; display: flex; justify-content: center; align-items: center;">
+                        <svg class="star" width="17.5" height="16.63" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M4.09687 17.25L5.51875 11.1031L0.75 6.96875L7.05 6.42188L9.5 0.625L11.95 6.42188L18.25 6.96875L13.4812 11.1031L14.9031 17.25L9.5 13.9906L4.09687 17.25Z"
+                                fill="@GetColor(i, _result)"/>
+                        </svg>
+                    </div>
+                }
+            </div>
         </div>
         
         <div class="info-description">
-            
-            <div class="info">
-                    <h3 class="section-title">Info</h3>
-                    <div class="info-title">Author</div>
-                    <div class="info-content">
-                        @(_result.Author.Contains(',') ? _result.Author.Split(',')[0] : _result.Author)
-                    </div>
-                    <div class="info-title">Publisher</div>
-                    <div class="info-content">
-                        @_result.Publisher
-                    </div>
-                    <div class="info-title">Publish Date</div>
-                    <div class="info-content">
-                        @_result.PublishDate.ToLocalTime().ToString("dd/MM/yyyy")
-                    </div>
-
-                    <div class="info-title">ISBN</div>
-                    <div class="info-content">
-                        @_result.Isbn
-                    </div>
-            </div>
-
             <div class="description">
                 <h3 class="section-title">Desctription</h3>
                 <p>@_result.Description</p>
             </div>
+            
+            <div class="info">
+                <h3 class="section-title">Info</h3>
+                <div class="info-fields">
+                    <div class="info-field">
+                        <div class="info-title">Author</div>
+                        <div class="info-content">
+                            @(_result.Author.Contains(',') ? _result.Author.Split(',')[0] : _result.Author)
+                        </div>
+                    </div>
+                    <div class="info-field">
+                        <div class="info-title">Publisher</div>
+                        <div class="info-content">
+                            @_result.Publisher
+                        </div>
+                    </div>
+                    <div class="info-field">
+                        <div class="info-title">Publish Date</div>
+                        <div class="info-content">
+                            @_result.PublishDate.ToLocalTime().ToString("dd/MM/yyyy")
+                        </div>
+                    </div>
+                    <div class="info-field">
+                        <div class="info-title">ISBN</div>
+                        <div class="info-content">
+                            @_result.Isbn
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            @foreach (var copy in _result.PhysicalCopies)
+            {
+                
+            }
         </div>
-        
     </div>
-    
-    @foreach (var copy in _result.PhysicalCopies)
-    {
-        <div>
-            <h4>@copy.Branch</h4>
-            <p>@copy.Status</p>
-        </div>
-    }
 </div>
 
 
