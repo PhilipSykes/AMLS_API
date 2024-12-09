@@ -184,12 +184,16 @@
     font-size: 14px;
 
     border-radius: 5px;
-    background-color: var(--text-color);
+    background-color: var(--secondary-text-color);
     color: var(--background-color);
     border: none;
     outline: none;
     user-select: none;
     text-align: left;
+}
+.search-button:hover {
+    background-color: var(--button-primary-hover-color);
+    transition: background-color 0.3s ease;
 }
 
 @keyframes tag-fade-in {
