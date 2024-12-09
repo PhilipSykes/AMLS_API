@@ -112,7 +112,7 @@ namespace Common.Models
         {
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
-            public string ObjectID { get; init; } = string.Empty;
+            public ObjectId Id { get; init; }
 
             [BsonElement(DbFieldNames.Users.FirstName)]
             public string FirstName { get; init; } = string.Empty;
@@ -137,31 +137,32 @@ namespace Common.Models
             public string[] Favourites { get; init; } = [];
 
             [BsonElement(DbFieldNames.Users.History)]
-            public string[] History { get; init; } = [];
+            public ObjectId[] History { get; init; } = [];
 
             [BsonElement(DbFieldNames.Users.NearestBranch)]
             public string NearestBranch { get; init; } = string.Empty;
         }
 
-    public record Reservations
+    public record Reservation
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string ObjectID { get; init; } = string.Empty;
+        public ObjectId ObjectID { get; init; }
 
-            [BsonElement(DbFieldNames.Reservations.Member)]
-            public string Member { get; init; } = string.Empty;
+        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement(DbFieldNames.Reservations.Member)]
+        public ObjectId Member { get; init; }
 
-            [BsonElement(DbFieldNames.Reservations.Media)]
-            public string Media { get; init; } = string.Empty;
+        [BsonElement(DbFieldNames.Reservations.Item)]
+        public string Item { get; init; } = string.Empty;
 
-            [BsonElement(DbFieldNames.Reservations.StartDate)]
-            [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-            public DateTime StartDate { get; init; } = DateTime.UtcNow;
+        [BsonElement(DbFieldNames.Reservations.StartDate)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        public DateTime StartDate { get; init; } = DateTime.UtcNow;
 
-            [BsonElement(DbFieldNames.Reservations.EndDate)]
-            [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-            public DateTime EndDate { get; init; } = DateTime.UtcNow;
+        [BsonElement(DbFieldNames.Reservations.EndDate)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        public DateTime EndDate { get; init; } = DateTime.UtcNow;
         }
     }
 }
