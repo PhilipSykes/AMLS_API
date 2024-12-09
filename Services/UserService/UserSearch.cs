@@ -43,8 +43,8 @@ public class UserSearch : IUserSearch
     public async Task<List<Users>> SearchUsers((int, int) pagination, List<Filter> filters)
     {
         Console.WriteLine($"Performing user search with {filters.Count} filters");
-        var bsonDocuments = await _searchRepository.Search(DocumentTypes.Users, pagination, filters);
+        var result = await _searchRepository.PaginatedSearch(DocumentTypes.Users, pagination, filters);
 
-        return Utils.ConvertBsonToEntity<Users>(bsonDocuments);
+        return Utils.ConvertBsonToEntity<Users>(result.Data);
     }
 }
