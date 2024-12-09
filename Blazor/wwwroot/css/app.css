@@ -1,7 +1,26 @@
 /*TODO: Move all colour references to global CSS variables*/
+*{
+    --background-color: #FAFAF9;
+    --text-color: #1C1917;
+    --secondary-text-color: #44403C;
+    --border-color: #E7E5E4;
+    
+    --pill-background-color: #D6D3D1;
+    --text-field-background-color: #F5F5F4;
+    --text-field-border-color: #a8a29e;
+    
+    --success-background-color: #BBF7D0;
+    --success-text-color: #15803D;
+    
+    --danger-background-color: #FECDD3;
+    --danger-text-color: #BE123C;
+    
+    --button-primary-hover-color: #57534e;
+    --button-secondary-hover-color: #78716c;
+}
 
 body {
-    background-color: #FAFAF9;
+    background-color: var(--background-color);
     margin: 0;
 }
 

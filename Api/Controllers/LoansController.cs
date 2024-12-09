@@ -2,5 +2,5 @@ namespace Api.Controllers;
 
 public class LoansController
 {
-    //TODO borrowing & returning would go in here
+    //TODO: borrowing & returning would go in here
 }

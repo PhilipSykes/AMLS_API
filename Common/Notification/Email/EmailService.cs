@@ -46,7 +46,7 @@ public class EmailService : IEmailService
         }
     }
 
-    //TODO: Remove inline HTML for E-mail Content
+    /*TODO: Remove inline HTML for E-mail Content*/
 
     /// <summary>
     /// Sends an email to multiple recipients using SMTP

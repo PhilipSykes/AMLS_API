@@ -6,7 +6,7 @@ h3 {
     font-family: 'Serif-Title', serif;
     font-variation-settings: "opsz" 12;
     font-weight: 496;
-    color: #1C1917;
+    color: var(--text-color);
     font-size: 24px;
     text-transform: capitalize;
 }
@@ -23,7 +23,7 @@ h3 {
     padding-block: 20px;
     cursor: pointer;
 
-    border-bottom: 1px solid #e7e5e4;
+    border-bottom: 1px solid var(--border-color);
 }
 
 
@@ -44,26 +44,26 @@ h3 {
     padding-block: 3px;
     border-radius: 5px;
 
-    background-color: #D6D3D1;
-    color: #44403C;
+    background-color: var(--pill-background-color);
+    color: var(--secondary-text-color);
     text-transform: uppercase;
 }
 
 .pill.available {
-    background-color: #BBF7D0;
-    color: #15803D;
+    background-color: var(--success-background-color);
+    color: var(--success-text-color);
 }
 
 .pill.unavailable {
-    background-color: #FECDD3;
-    color: #BE123C;
+    background-color: var(--danger-background-color);
+    color: var(--danger-text-color);
 }
 
 #search-genres {
     display: flex;
     margin: 0;
     padding: 0;
-    color: #44403C;
+    color: var(--secondary-text-color);
     font-weight: 400;
     font-family: "Regular", sans-serif;
     font-size: 11px;
