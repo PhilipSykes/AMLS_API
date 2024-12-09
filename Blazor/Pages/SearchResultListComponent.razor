@@ -19,20 +19,6 @@
         <div class="pill unavailable">Not Available Near You</div>
         }
     </div>
-    <div id="search-media-details">
-        @switch (Media.Type?.ToLower())
-        {
-        case "book":
-        <p>By @Media.Author • @Media.Publisher</p>
-        break;
-        case "film":
-        <p>Directed by @Media.Director • @Media.Studio</p>
-        break;
-        case "tv series":
-        <p>Created by @Media.Creator • @Media.Network</p>
-        break;
-        }
-    </div>
     <div id="search-star-rating">
         @for (var i = 1; i <= 5; i++)
         {

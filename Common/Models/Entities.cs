@@ -81,9 +81,9 @@ namespace Common.Models
         [BsonRepresentation(BsonType.Double)]
         public double Rating { get; init; } = 0.0;
 
-        [BsonElement(DbFieldNames.MediaInfo.PublishDate)]
+        [BsonElement(DbFieldNames.MediaInfo.ReleaseDate)]
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-        public DateTime PublishDate { get; init; } = DateTime.UtcNow;
+        public DateTime ReleaseDate { get; init; } = DateTime.UtcNow;
 
         [BsonElement(DbFieldNames.MediaInfo.Type)]
         public string Type { get; init; } = string.Empty;
