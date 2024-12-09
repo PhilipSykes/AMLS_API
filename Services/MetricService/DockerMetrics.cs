@@ -70,7 +70,7 @@ public class DockerMetrics
         public DateTime Timestamp { get; set; }
     }
     
-    private readonly DockerClient _dockerClient;
+    public DockerClient _dockerClient { get; }
 
     /// <summary>
     /// Retrieves the appropriate Docker API URI for the current operating system.
@@ -170,7 +170,7 @@ public class DockerMetrics
             
             var cpuDelta = (stats.CpuStats.CpuUsage?.TotalUsage ?? 0) - (stats.PrecpuStats.CpuUsage?.TotalUsage ?? 0);
             var systemDelta = (stats.CpuStats.SystemCpuUsage ?? 0) - (stats.PrecpuStats.SystemCpuUsage ?? 0);
-            var numberOfCpus = stats.CpuStats.OnlineCpus ?? 1; // Default to 1 CPU if null.
+            var numberOfCpus = stats.CpuStats.OnlineCpus ?? 1; 
 
             var cpuPercentage = (systemDelta > 0) 
                 ? (cpuDelta / systemDelta) * numberOfCpus * 100.0 

@@ -11,7 +11,7 @@
 }
 
 #search-results {
-    height: 100vh;
+    height: calc(100vh - 58px);
     width: 100%;
     overflow: scroll;
     display: flex;

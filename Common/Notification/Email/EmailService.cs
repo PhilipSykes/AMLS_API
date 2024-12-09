@@ -4,11 +4,18 @@ using static Common.Models.Shared;
 
 namespace Common.Notification.Email;
 
+/// <summary>
+/// Interface for email notification services
+/// </summary>
 public interface IEmailService
 {
     Task SendReserveEmailAsync(EmailDetails data);
 }
 
+
+/// <summary>
+/// Service for sending emails using SMTP
+/// </summary>
 public class EmailService : IEmailService
 {
     private readonly string _appPassword = "dktpdtqizcxwjerg";
@@ -16,6 +23,12 @@ public class EmailService : IEmailService
     private readonly string _senderEmail = "hallam.amls@gmail.com";
     private readonly string _smtpServer = "smtp.gmail.com";
 
+    /// <summary>
+    /// Sends a reservation confirmation email using a template
+    /// </summary>
+    /// <param name="data">Email details containing recipient addresses and template parameters</param>
+    /// <returns>A task representing the asynchronous email operation</returns>
+    /// <exception cref="Exception">Thrown when email sending fails</exception>
     public async Task SendReserveEmailAsync(EmailDetails data)
     {
         var htmlBody =
@@ -33,8 +46,17 @@ public class EmailService : IEmailService
         }
     }
 
-    //TODO: Remove inline HTML for E-mail Content
+    /*TODO: Remove inline HTML for E-mail Content*/
 
+    /// <summary>
+    /// Sends an email to multiple recipients using SMTP
+    /// </summary>
+    /// <param name="recipients">List of recipient email addresses</param>
+    /// <param name="subject">Email subject line</param>
+    /// <param name="body">Email content body</param>
+    /// <param name="isBodyHtml">Indicates if the body contains HTML content</param>
+    /// <returns>A task representing the asynchronous email operation</returns>
+    /// <exception cref="Exception">Thrown when email sending fails</exception>
     private async Task SendEmailAsync(List<string> recipients, string subject, string body, bool isBodyHtml = true)
     {
         try
