@@ -1,4 +1,5 @@
 @page "/media/{MediaId}"
+@using MongoDB.Bson
 @inject HttpClient HttpClient
 @inject NavigationManager Nav
 
@@ -44,20 +45,16 @@
             </div>
 
             <div class="description">
-                <h3 class="section-title">Desctription</h3>
+                <h3 class="section-title">Description</h3>
                 <p>@_result.Description</p>
             </div>
         </div>
         
     </div>
     
-    @foreach (var copy in _result.PhysicalCopies)
-    {
-        <div>
-            <h4>@copy.Branch</h4>
-            <p>@copy.Status</p>
-        </div>
-    }
+    <button onclick="@TestCreateReservation"> Click Me For Create</button>
+    <button onclick="@TestCancelReservation"> Click Me For Cancel</button>
+    <button onclick="@TestExtendReservation"> Click Me For Extend</button>
 </div>
 
 
@@ -95,5 +92,43 @@
             return "#44403C";
         }
         return "#D6D3D1";
+    }
+
+    public async Task<HttpResponseMessage> TestCreateReservation()
+    {
+        Entities.Reservation reservation = new Entities.Reservation
+        {
+            Id = ObjectId.GenerateNewId().ToString(),
+            StartDate = DateTime.UtcNow,
+            EndDate = DateTime.UtcNow.AddDays(1),
+            Item = "673f6d28e580ac7f9f4fa9b3",
+            Member = "67236480b4d08aab049740aa"
+
+        };
+        var response = await HttpClient.PostAsJsonAsync("api/reservations/create", reservation);
+        Console.WriteLine(await response.Content.ReadAsStringAsync());
+        
+        return response;
+    } 
+    public async Task<HttpResponseMessage> TestCancelReservation()
+    {
+        string reservationId = "67586896360a7f5735c67352";
+        var response = await HttpClient.PostAsJsonAsync("api/reservations/cancel", reservationId);
+        Console.WriteLine(await response.Content.ReadAsStringAsync());
+        
+        return response;
+    }
+
+    public async Task<HttpResponseMessage> TestExtendReservation()
+    {
+       var request = new PayLoads.ReservationExtension
+        {
+            ReservationId = "67586896360a7f5735c67352",
+            NewEndDate = DateTime.Now.AddDays(7)
+        };
+        var response = await HttpClient.PostAsJsonAsync("api/reservations/extend", request);
+        Console.WriteLine(await response.Content.ReadAsStringAsync());
+        
+        return response;
     }
 }

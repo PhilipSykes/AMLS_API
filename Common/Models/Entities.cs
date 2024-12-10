@@ -90,9 +90,6 @@ namespace Common.Models
 
             [BsonElement(DbFieldNames.MediaInfo.Genres)]
             public string[] Genres { get; init; } = [];
-
-            //[BsonElement(DbFieldNames.MediaInfo.FormatSpecificDetails)]
-            //public Dictionary<string, string> FormatSpecificDetails { get; init; } = new Dictionary<string, string>();
             
             [BsonElement(DbFieldNames.MediaInfo.PhysicalCopies)]
             public List<PhysicalCopy>? PhysicalCopies { get; init; } = new();
@@ -112,7 +109,7 @@ namespace Common.Models
         {
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
-            public ObjectId Id { get; init; }
+            public string Id { get; init; }
 
             [BsonElement(DbFieldNames.Users.FirstName)]
             public string FirstName { get; init; } = string.Empty;
@@ -137,7 +134,7 @@ namespace Common.Models
             public string[] Favourites { get; init; } = [];
 
             [BsonElement(DbFieldNames.Users.History)]
-            public ObjectId[] History { get; init; } = [];
+            public string[] History { get; init; } = [];
 
             [BsonElement(DbFieldNames.Users.NearestBranch)]
             public string NearestBranch { get; init; } = string.Empty;
@@ -147,14 +144,15 @@ namespace Common.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public ObjectId ObjectID { get; init; }
+        public string Id { get; init; }
 
         [BsonRepresentation(BsonType.ObjectId)]
         [BsonElement(DbFieldNames.Reservations.Member)]
-        public ObjectId Member { get; init; }
+        public string Member { get; init; }
 
+        [BsonRepresentation(BsonType.ObjectId)]
         [BsonElement(DbFieldNames.Reservations.Item)]
-        public string Item { get; init; } = string.Empty;
+        public string Item { get; init; }
 
         [BsonElement(DbFieldNames.Reservations.StartDate)]
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
@@ -162,7 +160,7 @@ namespace Common.Models
 
         [BsonElement(DbFieldNames.Reservations.EndDate)]
         [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-        public DateTime EndDate { get; init; } = DateTime.UtcNow;
+        public DateTime EndDate { get; init; }
         }
     }
 }

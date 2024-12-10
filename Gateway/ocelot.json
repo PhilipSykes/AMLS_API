@@ -48,9 +48,7 @@
         {"Host": "localhost", "Port": 5001}
       ],
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {
-        "member_access": "true"
-      }
+      "RouteClaimsRequirement": {"member_access": "true"}
     },
     {
       "UpstreamPathTemplate": "/api/loans/{everything}",

@@ -38,11 +38,6 @@ namespace Services.ReservationService
                 Data = reservationsList
             };
         }
-
-        public async Task<bool> CreateReservation(Reservation reservation) // this is placed here temporarily so i can test it
-        {
-            //await _reservationRepository.CreateReservation(reservation);
-            return true;
-        }
+        
     }
 }

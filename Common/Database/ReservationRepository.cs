@@ -5,19 +5,19 @@ using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using static Common.Models.Entities;
+using static Common.Models.Operations;
 
 namespace Common.Database
 {
     public interface IReservationRepository
     {
-        public Task<Operations.Response<bool>> CreateReservation(Reservation reservation);
-        // TODO - Implement:
-        //public Task<bool> ExtendReservation(?); // Create new reservation, Use the check availability(), if true, extend?
-        //Or maybe mod CheckAvaiability to include a smaller func?
-        public Task<bool> CancelReservation(ObjectId reservationId, ObjectId userId);
+        public Task<Response<bool>> CreateReservation(Reservation reservation);
+        public Task<Response<bool>> ExtendReservation(string reservationId, DateTime newEndDate);
+        public Task<Response<bool>> CancelReservation(string reservationId);
         
     }
 
+    
     public class ReservationRepository : IReservationRepository
     {
         private readonly IMongoDatabase _database;
@@ -33,49 +33,119 @@ namespace Common.Database
             _users = _database.GetCollection<Users>("Users");
         }
 
-        public async Task<Operations.Response<bool>> CreateReservation(Reservation reservation)
+        /// <summary>
+        /// Creates a new reservation
+        /// </summary>
+        /// <param name="reservation">Reservation id of the reservation to extend</param>
+        /// <returns>Response with a Success and Status code, as well as error message if applicable</returns>
+        public async Task<Response<bool>> CreateReservation(Reservation reservation)
         {
-
-            try
+            
+            using (var session = await _database.Client.StartSessionAsync())
             {
-                using (var session = _database.Client.StartSession())
+                try
                 {
                     // Transaction settings
                     var transactionOptions = new TransactionOptions(
                         readConcern: ReadConcern.Majority,   // Means search the majority of nodes, to get the most recent data, essential to prevent conflicts
                         writeConcern: WriteConcern.WMajority);  // Write ops must be acknowledged by most nodes
 
-                    if (await CheckAvailability(reservation))
+                    session.StartTransaction(transactionOptions);
+                    
+                    if (await CheckAvailability(reservation.Item, reservation.StartDate, reservation.EndDate) == false)
                     {
-                        await _reservations.InsertOneAsync(session, reservation);
-
-                        var filters = Builders<Users>.Filter;
-                        var update = Builders<Users>.Update;
-                        // Add reference to member history
-                        await _users.FindOneAndUpdateAsync(
-                            filters.Eq(u => u.Id, reservation.Member), 
-                            update.Push(u => u.History, reservation.ObjectID));
+                        await session.AbortTransactionAsync();
+                        
+                        return new Response<bool>
+                        {
+                            Success = false,
+                            Message = "Reservation conflicts with others",
+                            StatusCode = QueryResultCode.Conflict
+                        };
                     }
                     
-                    session.CommitTransaction();
+                    await _reservations.InsertOneAsync(session, reservation);
+
+                    // Add reference to member history
+                    await _users.UpdateOneAsync(u => u.Id == reservation.Member, 
+                        Builders<Users>.Update.Push(u => u.History, reservation.Id));
+                    //What if user not found?
+                    
+                    await session.CommitTransactionAsync();
+                    
                 
+                }  catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    await session.AbortTransactionAsync();
+                    
+                    return new Response<bool>
+                    {
+                        Success = false,
+                        Message = ex.Message,
+                        StatusCode = QueryResultCode.InternalServerError
+                    };
                 }
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
             
-
-            return new Operations.Response<bool> // Note from Will: It may be better to use an enum here.
+            return new Response<bool>
             {
                 Success = true,
                 StatusCode = QueryResultCode.Created
             };
         }
 
+        /// <summary>
+        /// Extends an existing reservation
+        /// </summary>
+        /// <param name="reservationId">Reservation id of the reservation to extend</param>
+        /// <param name="newEndDate">The new, requested end date</param>
+        /// <returns>Response with a Success and Status code, as well as error message if applicable</returns>
+        public async Task<Response<bool>> ExtendReservation(string reservationId, DateTime newEndDate)
+        {
+            try
+            {
+                var originalReservation = await _reservations.Find(o => o.Id == reservationId).FirstOrDefaultAsync();
+                if (originalReservation == null) throw new InvalidOperationException("Reservation could not be extended, because it wasn't found");
+            
+            
+                if (await CheckAvailability(originalReservation.Item, originalReservation.StartDate, newEndDate, reservationId) == false)
+                {
+                    return new Response<bool>
+                    {
+                        Success = false,
+                        Message = "Reservation conflicts with others",
+                        StatusCode = QueryResultCode.Conflict
+                    };
+                }
+            
+                await _reservations.UpdateOneAsync(r => r.Id == reservationId,
+                    Builders<Reservation>.Update.Set(r => r.EndDate, newEndDate)
+                );
 
-        public async Task<bool> CancelReservation(ObjectId reservationId, ObjectId userId)
+                return new Response<bool>
+                {
+                    Success = true,
+                    StatusCode = QueryResultCode.NoContent
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response<bool>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    StatusCode = QueryResultCode.InternalServerError
+                };
+            }
+        }
+        
+        /// <summary>
+        /// Deletes a reservation
+        /// </summary>
+        /// <param name="reservationId">Reservation id of reservation being cancelled</param>
+        /// <returns>Response with a Success and Status code, as well as error message if applicable</returns>
+        public async Task<Response<bool>> CancelReservation(string reservationId)
         {
 
             try
@@ -83,37 +153,58 @@ namespace Common.Database
                 using (var session = await _database.Client.StartSessionAsync())
                 {
                     // Delete the reservation from the reservations collection
-                    var result = await _reservations.DeleteOneAsync(session, 
-                        Builders<Reservation>.Filter.Eq(u => u.ObjectID, reservationId));
+                    var result = await _reservations.FindOneAndDeleteAsync(session, u => u.Id == reservationId);
                     // Delete the reference to it in the user's history
-                    await _users.FindOneAndUpdateAsync(session, 
-                        Builders<Users>.Filter.Eq(u => u.Id, userId),
+                    await _users.FindOneAndUpdateAsync(session, u => u.Id == result.Member,
                         Builders<Users>.Update.Pull(DbFieldNames.Users.History, reservationId));
                 
-                    await session.CommitTransactionAsync();
+                    if (result is null)
+                    {
+                        await session.AbortTransactionAsync();
+                        return new Response<bool>
+                        {
+                            Success = false,
+                            Message = "Couldn't find the reservation to cancel",
+                            StatusCode = QueryResultCode.NotFound
+                        };
+                    }
                     
-                    return result.DeletedCount == 1;
+                    await session.CommitTransactionAsync();
 
+                    return new Response<bool>
+                    {
+                        Success = true,
+                        StatusCode = QueryResultCode.NoContent
+                    };
                 }
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new Response<bool>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    StatusCode = QueryResultCode.InternalServerError
+                };
             }
         }
 
-        private async Task<bool> CheckAvailability(Reservation reservation)
+        /// <summary>
+        /// Checks if the given item is available in the given time range
+        /// </summary>
+        /// <param name="item">Physical id of item being tested</param>
+        /// <param name="startDate">Reservation's start date and time</param>
+        /// <param name="endDate">Reservation's end date and time</param>
+        /// <param name="excludeReservationId">(Optional) Reservation id for avoiding finding conflicts with itself</param>
+        /// <returns>True if the reservation is possible, False if it would collide with another reservation</returns>
+        private async Task<bool> CheckAvailability(string item, DateTime startDate, DateTime endDate, string? excludeReservationId = null)
         {
             var filters = Builders<Reservation>.Filter;
-            
-            // This filter means: find overlapping reservations for the current item
-            var filter = filters.And(
-                filters.Eq(r => r.Item, reservation.Item),
-                filters.And(
-                    filters.Gte(r => r.EndDate, reservation.StartDate),
-                    filters.Lte(r => r.StartDate, reservation.EndDate)));
-            
-            var result = await _reservations.CountDocumentsAsync(filter);
+            //Todo - What if item not found?
+            // Find overlapping reservations for the current item
+            var result = await _reservations.CountDocumentsAsync(
+                r => r.Item == item && r.Id != excludeReservationId &&
+                (r.EndDate >= startDate && r.StartDate <= endDate));
             
             return result == 0;
         }

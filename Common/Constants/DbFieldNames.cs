@@ -38,10 +38,9 @@ namespace Common.Constants
             public const string Isbn = "isbn";
             public const string Author = "author";
             public const string Rating = "rating";
-            public const string PublishDate = "publishDate";
+            public const string PublishDate = "releaseDate";
             public const string Type = "type";
             public const string Genres = "genres";
-            //public const string FormatSpecificDetails = "formatSpecificDetails";
             public const string PhysicalCopies = "physicalCopies";
         }
         public static class Users

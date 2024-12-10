@@ -6,6 +6,7 @@ using Common.Database;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Services.MediaService;
+using Services.ReservationService;
 using Services.TokenAuthService;
 using Services.UserService;
 
@@ -32,9 +33,11 @@ builder.Services.AddHttpContextAccessor();
 // Register Database Services
 builder.Services.AddScoped<IDatabaseConnection, DatabaseConnection>();
 builder.Services.AddScoped<ISearchRepository, SearchRepository>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
 // Register Application Services
 builder.Services.AddScoped<IMediaSearch, MediaSearch>();
+builder.Services.AddScoped<IReservationCreator, ReservationCreator>();
 builder.Services.AddScoped<IUserSearch, UserSearch>();
 builder.Services.AddScoped<IInventoryManager, InventoryManager>();
 builder.Services.AddScoped<TokenAuthService>();
