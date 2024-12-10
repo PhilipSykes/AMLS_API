@@ -16,9 +16,9 @@ namespace Common.Models
         {
             public string Key { get; set; }
             public string Value { get; set; }
-            public DbOperations Operation { get; set; }
+            public FilterTypes Operation { get; set; }
 
-            public Filter(string key, string value, DbOperations operation)
+            public Filter(string key, string value, FilterTypes operation)
             {
                 Key = key;
                 Value = value;
