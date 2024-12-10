@@ -3,9 +3,12 @@ using Api;
 using Api.MessageBroker;
 using Common;
 using Common.Database;
+using Common.Notification.Email;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
 using Services.MediaService;
+using Services.NotificationService;
 using Services.TokenAuthService;
 using Services.UserService;
 
@@ -29,9 +32,15 @@ builder.Services.Configure<JWTTokenConfig>(
 
 builder.Services.AddHttpContextAccessor();
 
+
+builder.Services.AddSingleton<IEmailService, EmailService>();
+//RabbitMQ receivers 
+builder.Services.AddHostedService<NotificationManager>();
+
 // Register Database Services
 builder.Services.AddScoped<IDatabaseConnection, DatabaseConnection>();
 builder.Services.AddScoped<ISearchRepository, SearchRepository>();
+builder.Services.AddScoped<IFilterBuilder<BsonDocument>, BsonFilterBuilder>();
 
 // Register Application Services
 builder.Services.AddScoped<IMediaSearch, MediaSearch>();

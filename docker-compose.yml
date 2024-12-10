@@ -1,16 +1,136 @@
-﻿services:
+﻿version: '3.8'
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Gateway/Dockerfile
+    ports:
+      - "7500:443"
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - auth-service
+      - public-media-service
+      - staff-media-service
+      - admin-service
+    volumes:
+      - ./Common/certificates:/common/certificates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/common/certificates/local-dev-certificate.p12
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: Api/Dockerfile.auth
+    networks:
+      - backend
+    depends_on:
+      - rabbitmq
+      - notification-service
+    volumes:
+      - ./Common/certificates:/common/certificates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443
+      - RabbitMQ__HostName=rabbitmq
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
+
+  public-media-service:
+    build:
+      context: .
+      dockerfile: Api/Dockerfile.public-media
+    networks:
+      - backend
+    depends_on:
+      - rabbitmq
+      - notification-service
+    volumes:
+      - ./Common/certificates:/common/certificates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443
+      - RabbitMQ__HostName=rabbitmq
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
+
+  staff-media-service:
+    build:
+      context: .
+      dockerfile: Api/Dockerfile.staff-media
+    networks:
+      - backend
+    depends_on:
+      - rabbitmq
+      - notification-service
+    volumes:
+      - ./Common/certificates:/common/certificates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443
+      - RabbitMQ__HostName=rabbitmq
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
+
+  admin-service:
+    build:
+      context: .
+      dockerfile: Api/Dockerfile.admin
+    networks:
+      - backend
+    depends_on:
+      - rabbitmq
+      - notification-service
+    volumes:
+      - ./Common/certificates:/common/certificates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443
+      - RabbitMQ__HostName=rabbitmq
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: Api/Dockerfile.notification
+    networks:
+      - backend
+    depends_on:
+      - rabbitmq
+    volumes:
+      - ./Common/certificates:/common/certificates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMQ__HostName=rabbitmq
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
+
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq
     ports:
-      - "5672:5672"   # RabbitMQ default port
-      - "15672:15672" # Management UI port
-    environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
       - rabbitmq_log:/var/log/rabbitmq
+    networks:
+      - backend
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+    internal: true
 
 volumes:
   rabbitmq_data:

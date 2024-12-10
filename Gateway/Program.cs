@@ -46,12 +46,12 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+app.UseCors("AllowBlazorClient");
 app.UseHttpsRedirection();
-
 app.MapControllers();
 app.UseAuthentication();  
 app.UseAuthorization();
-app.UseCors("AllowBlazorClient");
+
 
 await app.UseOcelot();
 
