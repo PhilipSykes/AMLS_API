@@ -24,8 +24,8 @@ public class MediaSearch : IMediaSearch
         List<Filter> filters)
     {
         //Console.WriteLine($"Performing media search with {filters.Count} filters");
-        var result = await _searchRepository.PaginatedSearch(DocumentTypes.MediaInfo, pagination, filters);
+        var bsonDocuments = await _searchRepository.Search(DocumentTypes.MediaInfo, pagination, filters);
 
-        return Utils.ConvertBsonToEntity<MediaInfo>(result.Data);
+        return Utils.ConvertBsonToEntity<MediaInfo>(bsonDocuments);
     }
 }

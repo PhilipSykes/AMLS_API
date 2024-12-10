@@ -10,7 +10,7 @@ namespace Services.ReservationService
 {
     public interface IReservationSearch
     {
-        Task<Response<List<Reservation>>> SearchReservations((int, int) pagination, List<Filter> filters);
+        Task<Response<List<Reservations>>> SearchReservations((int, int) pagination, List<Filter> filters);
     }
 
     public class ReservationSearch : IReservationSearch
@@ -23,21 +23,26 @@ namespace Services.ReservationService
             _searchRepository = searchRepository;
         }
 
-        public async Task<Response<List<Reservation>>> SearchReservations((int, int) pagination,
+        public async Task<Response<List<Reservations>>> SearchReservations((int, int) pagination,
             List<Filter> filters)
         {
             //Console.WriteLine($"Performing media search with {filters.Count} filters");
-            var result = await _searchRepository.PaginatedSearch(DocumentTypes.Reservations, pagination, filters);
+            List<BsonDocument> bsonDocuments = await _searchRepository.Search(DocumentTypes.Reservations, pagination, filters);
             
-            List<Reservation> reservationsList = Utils.ConvertBsonToEntity<Reservation>(result.Data);
+            List<Reservations> reservationsList = Utils.ConvertBsonToEntity<Reservations>(bsonDocuments);
 
             Console.WriteLine($"Search completed. Found {reservationsList.Count} results");
-            return new PaginatedResponse<List<Reservation>>
+            return new Response<List<Reservations>>
             {
                 Success = true,
                 Data = reservationsList
             };
         }
-        
+
+        public async Task<bool> CreateReservation(Reservations reservation) // this is placed here temporarily so i can test it
+        {
+            //await _reservationRepository.CreateReservation(reservation);
+            return true;
+        }
     }
 }

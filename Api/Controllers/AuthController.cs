@@ -46,7 +46,7 @@ public class AuthController : ControllerBase
 
         var emailFilter = new List<Filter>
         {
-            new Filter(DbFieldNames.Login.Email, request.Data.Email, FilterTypes.Equals)
+            new Filter(DbFieldNames.Login.Email, request.Data.Email, DbOperations.Equals)
         };
         List<Entities.Login> result = await _userSearch.GetLoginCredentials(emailFilter);
 

@@ -1,7 +1,6 @@
 using Common.Constants;
 using static Common.Models.Shared;
 using Common.Exceptions;
-using Common.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -10,7 +9,7 @@ namespace Common.Database
 {
     public interface ISearchRepository
     {
-        Task<Operations.PaginatedResponse<List<BsonDocument>>> PaginatedSearch(string documentType, (int, int)pagination, List<Filter> filters = null);
+        Task<List<BsonDocument>> Search(string documentType, (int, int)pagination, List<Filter> filters = null);
         Task<List<BsonDocument>> Search(string documentType, List<Filter> filters = null);
     }
 
@@ -27,16 +26,14 @@ namespace Common.Database
             _filterBuilder = new BsonFilterBuilder();
         }
 
-        public async Task<Operations.PaginatedResponse<List<BsonDocument>>> PaginatedSearch(string documentType, (int, int) pagination, List<Filter> filters)
+        public async Task<List<BsonDocument>> Search(string documentType, (int, int) pagination, List<Filter> filters)
         {
             try
             {
                 var collection = _database.GetCollection<BsonDocument>(documentType);
-                var filterDefinition = _filterBuilder.BuildFilter(filters);
-
-                var matches = collection.CountDocumentsAsync(filterDefinition);
-                var result = collection.Aggregate()
-                    .Match(filterDefinition)
+                
+                return await collection.Aggregate()
+                    .Match(_filterBuilder.BuildFilter(filters))
                     .Lookup(DocumentTypes.PhysicalMedia, "_id", "info", "physicalCopies")
                     .Project(@"{  
                     'physicalCopies._id': 0, 
@@ -45,30 +42,13 @@ namespace Common.Database
                     .Skip(pagination.Item1)
                     .Limit(pagination.Item2)
                     .ToListAsync();
-
-                await Task.WhenAll(result, matches);
-                return new Operations.PaginatedResponse<List<BsonDocument>>
-                {
-                    Data = result.Result,
-                    Success = true,
-                    MatchCount = matches.Result,
-                    StatusCode = QueryResultCode.Ok
-                };
             }
-            catch (MongoException ex)
+            catch (MongoException) 
             {
-                //throw new SearchException(SearchException.SearchErrorType.Database);
-
-                return new Operations.PaginatedResponse<List<BsonDocument>>
-                {
-                    Success = false,
-                    Message = ex.Message,//TODO - Write a function that maps errors to response codes
-                    StatusCode = QueryResultCode.InternalServerError
-                };
+                throw new SearchException(SearchException.SearchErrorType.Database);
             }
         }
 
-        
         public async Task<List<BsonDocument>> Search(string documentType, List<Filter> filters = null)
         {
             try

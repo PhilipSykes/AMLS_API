@@ -19,10 +19,4 @@ public static class PayLoads
         public required List<Entities.MediaInfo> MediaInfoList { get; set; }
         public required List<Entities.Branch> BranchesList { get; set; }
     }
-
-    public record ReservationExtension
-    {
-        public required string ReservationId { get; init; }
-        public required DateTime NewEndDate { get; init; }
-    }
 }

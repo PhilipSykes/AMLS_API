@@ -149,8 +149,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-
-        _filters.Add(new Filter("_id", MediaId, FilterTypes.Equals));
+        _filters.Add(new Filter("_id", MediaId, DbOperations.Equals));
 
         var response = await HttpClient.PostAsJsonAsync($"api/catalog/search?page={1}&count={1}", _filters);
         if (response.IsSuccessStatusCode)

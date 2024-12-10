@@ -133,7 +133,7 @@ namespace Common.Models
         {
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
-            public string Id { get; init; }
+            public string ObjectID { get; init; } = string.Empty;
 
             [BsonElement(DbFieldNames.Users.FirstName)]
             public string FirstName { get; init; } = string.Empty;
@@ -164,27 +164,25 @@ namespace Common.Models
             public string NearestBranch { get; init; } = string.Empty;
         }
 
-    public record Reservation
+    public record Reservations
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; init; }
+        public string ObjectID { get; init; } = string.Empty;
 
-        [BsonRepresentation(BsonType.ObjectId)]
-        [BsonElement(DbFieldNames.Reservations.Member)]
-        public string Member { get; init; }
+            [BsonElement(DbFieldNames.Reservations.Member)]
+            public string Member { get; init; } = string.Empty;
 
-        [BsonRepresentation(BsonType.ObjectId)]
-        [BsonElement(DbFieldNames.Reservations.Item)]
-        public string Item { get; init; }
+            [BsonElement(DbFieldNames.Reservations.Media)]
+            public string Media { get; init; } = string.Empty;
 
-        [BsonElement(DbFieldNames.Reservations.StartDate)]
-        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-        public DateTime StartDate { get; init; } = DateTime.UtcNow;
+            [BsonElement(DbFieldNames.Reservations.StartDate)]
+            [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+            public DateTime StartDate { get; init; } = DateTime.UtcNow;
 
-        [BsonElement(DbFieldNames.Reservations.EndDate)]
-        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-        public DateTime EndDate { get; init; }
+            [BsonElement(DbFieldNames.Reservations.EndDate)]
+            [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+            public DateTime EndDate { get; init; } = DateTime.UtcNow;
         }
     }
 }
