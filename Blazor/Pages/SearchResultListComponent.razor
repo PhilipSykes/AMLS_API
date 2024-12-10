@@ -5,29 +5,31 @@
     <h3 id="search-media-title">@Media.Title</h3>
     <div id="search-pill-container">
         <div class="pill">@Media.Type</div>
+        @if (Media.Type == "TV Series")
+        {
+        <div class="pill">Season @Media.Season</div>
+        <div class="pill">@Media.Episodes Episodes</div>
+        }
         @if (IsAvailable)
         {
-            <div class="pill available">Available Near You</div>
+        <div class="pill available">Available Near You</div>
         }
         else
         {
-            <div class="pill unavailable">Not Available Near You</div>
+        <div class="pill unavailable">Not Available Near You</div>
         }
-
     </div>
     <div id="search-star-rating">
         @for (var i = 1; i <= 5; i++)
         {
-            <RatingStar colorValue="@(i <= Rating)"></RatingStar>
+        <RatingStar colorValue="@(i <= Rating)"></RatingStar>
         }
     </div>
     <p id="search-genres">@_genres</p>
     <div class="line"></div>
 </div>
 
-
-@code
-{
+@code {
     [Parameter] public Entities.MediaInfo Media { get; set; } = new();
 
     public bool IsAvailable { get; set; }
@@ -38,10 +40,9 @@
 
     private string _preferedBranch = "6733491ba1ed2d02eef46a42";
 
-
     protected override void OnInitialized()
     {
-        foreach (var copy in Media.PhysicalCopies)
+        foreach (var copy in Media.PhysicalCopies) 
         {
             if (copy.Status == "Available" && copy.Branch == _preferedBranch)
             {

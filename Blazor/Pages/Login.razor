@@ -1,7 +1,7 @@
 @page "/Login"
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
-@inject AuthStateService AuthState
+@inject IAuthService AuthState
 
 <style>
     .navbar {
@@ -73,6 +73,7 @@
     {
         error = null;
         success = null;
+        loginModel.Email = loginModel.Email?.ToLowerInvariant();
         var request = new Request<PayLoads.Login> { Data = loginModel };
 
         try
@@ -82,12 +83,13 @@
             if (response.IsSuccessStatusCode)
             {
                 var tokenResponse = await response.Content.ReadFromJsonAsync<Response<LoginDetails>>();
+                
                 if (tokenResponse != null)
                 {
-                    await AuthState.Login(tokenResponse.Data.Token, tokenResponse.Data.UserID);
+                    await AuthState.Login(tokenResponse.Data.Token);
                     success = "Successful login";
-                    NavigationManager.NavigateTo("/");
                     StateHasChanged();
+                    NavigationManager.NavigateTo("/");
                 }
             }
             else

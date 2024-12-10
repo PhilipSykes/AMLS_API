@@ -54,46 +54,70 @@ namespace Common.Models
         }
 
         public record MediaInfo
-        {
-            [BsonId]
-            [BsonRepresentation(BsonType.ObjectId)]
-            public string ObjectID { get; init; } = string.Empty;
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string ObjectID { get; init; } = string.Empty;
 
-            [BsonElement(DbFieldNames.MediaInfo.Title)]
-            public string Title { get; init; } = string.Empty;
+        [BsonElement(DbFieldNames.MediaInfo.Title)]
+        public string Title { get; init; } = string.Empty;
 
-            [BsonElement(DbFieldNames.MediaInfo.Publisher)]
-            public string Publisher { get; init; } = string.Empty;
+        [BsonElement(DbFieldNames.MediaInfo.Publisher)]
+        public string Publisher { get; init; } = string.Empty;  // Used for books
 
-            [BsonElement(DbFieldNames.MediaInfo.Language)]
-            public string Language { get; init; } = string.Empty;
+        [BsonElement(DbFieldNames.MediaInfo.Language)]
+        public string Language { get; init; } = string.Empty;
 
-            [BsonElement(DbFieldNames.MediaInfo.Description)]
-            public string Description { get; init; } = string.Empty;
-            
-            [BsonElement(DbFieldNames.MediaInfo.Isbn)]
-            public string Isbn { get; init; } = string.Empty;
-            
-            [BsonElement(DbFieldNames.MediaInfo.Author)]
-            public string Author { get; init; } = string.Empty;
+        [BsonElement(DbFieldNames.MediaInfo.Description)]
+        public string Description { get; init; } = string.Empty;
+        
+        [BsonElement(DbFieldNames.MediaInfo.Isbn)]
+        public string Isbn { get; init; } = string.Empty;
+        
+        [BsonElement(DbFieldNames.MediaInfo.Author)]
+        public string Author { get; init; } = string.Empty;  
 
-            [BsonElement(DbFieldNames.MediaInfo.Rating)]
-            [BsonRepresentation(BsonType.Double)]
-            public double Rating { get; init; } = 0.0;
+        [BsonElement(DbFieldNames.MediaInfo.Rating)]
+        [BsonRepresentation(BsonType.Double)]
+        public double Rating { get; init; } = 0.0;
 
-            [BsonElement(DbFieldNames.MediaInfo.PublishDate)]
-            [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-            public DateTime PublishDate { get; init; } = DateTime.UtcNow;
+        [BsonElement(DbFieldNames.MediaInfo.ReleaseDate)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        public DateTime ReleaseDate { get; init; } = DateTime.UtcNow;
 
-            [BsonElement(DbFieldNames.MediaInfo.Type)]
-            public string Type { get; init; } = string.Empty;
+        [BsonElement(DbFieldNames.MediaInfo.Type)]
+        public string Type { get; init; } = string.Empty;
 
-            [BsonElement(DbFieldNames.MediaInfo.Genres)]
-            public string[] Genres { get; init; } = [];
-            
-            [BsonElement(DbFieldNames.MediaInfo.PhysicalCopies)]
-            public List<PhysicalCopy>? PhysicalCopies { get; init; } = new();
-        }
+        [BsonElement(DbFieldNames.MediaInfo.Genres)]
+        public string[] Genres { get; init; } = [];
+
+        [BsonElement(DbFieldNames.MediaInfo.PhysicalCopies)]
+        public List<PhysicalCopy>? PhysicalCopies { get; init; } = new();
+
+        [BsonElement(DbFieldNames.MediaInfo.Director)]
+        public string Director { get; init; } = string.Empty;
+
+        [BsonElement(DbFieldNames.MediaInfo.Studio)]
+        public string Studio { get; init; } = string.Empty;
+        
+        [BsonElement(DbFieldNames.MediaInfo.Creator)]
+        public string Creator { get; init; } = string.Empty;
+
+        [BsonElement(DbFieldNames.MediaInfo.Network)]
+        public string Network { get; init; } = string.Empty;
+
+        [BsonElement(DbFieldNames.MediaInfo.Season)]
+        [BsonRepresentation(BsonType.Int32)]
+        public int Season { get; init; } = 0;
+
+        [BsonElement(DbFieldNames.MediaInfo.Episodes)]
+        [BsonRepresentation(BsonType.Int32)]
+        public int Episodes { get; init; } = 0;
+
+        [BsonElement(DbFieldNames.MediaInfo.EndDate)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+        public DateTime? EndDate { get; init; } = null;
+    }
 
         public record PhysicalCopy
         {
