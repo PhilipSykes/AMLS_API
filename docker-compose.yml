@@ -1,5 +1,4 @@
-﻿version: '3.8'
-
+﻿
 services:
   gateway:
     build:
@@ -12,9 +11,10 @@ services:
       - backend
     depends_on:
       - auth-service
-      - public-media-service
-      - staff-media-service
-      - admin-service
+      - reservation-service
+      - media-service
+      - metric-service
+      - user-service
     volumes:
       - ./Common/certificates:/common/certificates
     environment:
@@ -26,12 +26,14 @@ services:
   auth-service:
     build:
       context: .
-      dockerfile: Api/Dockerfile.auth
+      dockerfile: AuthService/Dockerfile
     networks:
       - backend
     depends_on:
-      - rabbitmq
-      - notification-service
+      rabbitmq:
+        condition: service_healthy
+      notification-service:
+        condition: service_started
     volumes:
       - ./Common/certificates:/common/certificates
     environment:
@@ -41,15 +43,36 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
       - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
 
-  public-media-service:
+  media-service:
     build:
       context: .
-      dockerfile: Api/Dockerfile.public-media
+      dockerfile: MediaService/Dockerfile
     networks:
       - backend
     depends_on:
-      - rabbitmq
-      - notification-service
+      rabbitmq:
+        condition: service_healthy
+      notification-service:
+        condition: service_started
+    volumes:
+      - ./Common/certificates:/common/certificates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443
+      - RabbitMQ__HostName=rabbitmq
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
+  reservation-service:
+    build:
+      context: .
+      dockerfile: ReservationService/Dockerfile
+    networks:
+      - backend
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      notification-service:
+        condition: service_started
     volumes:
       - ./Common/certificates:/common/certificates
     environment:
@@ -59,15 +82,17 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
       - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
 
-  staff-media-service:
+  user-service:
     build:
       context: .
-      dockerfile: Api/Dockerfile.staff-media
+      dockerfile: UserService/Dockerfile
     networks:
       - backend
     depends_on:
-      - rabbitmq
-      - notification-service
+      rabbitmq:
+        condition: service_healthy
+      notification-service:
+        condition: service_started
     volumes:
       - ./Common/certificates:/common/certificates
     environment:
@@ -76,16 +101,18 @@ services:
       - RabbitMQ__HostName=rabbitmq
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
       - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
-
-  admin-service:
+    
+  metric-service:
     build:
       context: .
-      dockerfile: Api/Dockerfile.admin
+      dockerfile: MetricService/Dockerfile
     networks:
       - backend
     depends_on:
-      - rabbitmq
-      - notification-service
+      rabbitmq:
+        condition: service_healthy
+      notification-service:
+        condition: service_started
     volumes:
       - ./Common/certificates:/common/certificates
     environment:
@@ -98,11 +125,12 @@ services:
   notification-service:
     build:
       context: .
-      dockerfile: Api/Dockerfile.notification
+      dockerfile: NotificationService/Dockerfile
     networks:
       - backend
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     volumes:
       - ./Common/certificates:/common/certificates
     environment:
@@ -113,6 +141,12 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_port_connectivity" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     ports:
       - "5672:5672"
       - "15672:15672"

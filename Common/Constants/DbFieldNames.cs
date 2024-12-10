@@ -1,4 +1,3 @@
-
 namespace Common.Constants
 {
     public static class DbFieldNames
@@ -83,7 +82,7 @@ namespace Common.Constants
         public static class Reservations
         {
             public const string Member = "member";
-            public const string Media = "media";
+            public const string Item = "item";
             public const string StartDate = "startDate";
             public const string EndDate = "endDate";
         }

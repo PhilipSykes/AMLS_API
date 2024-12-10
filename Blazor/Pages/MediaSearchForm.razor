@@ -4,9 +4,9 @@
 
         <DataAnnotationsValidator/>
         <div class="search-container">
-            <input type="text" class="text-field" placeholder="Search by Title" @bind="_searchModel.MediaTitle"/>
+            <input type="text" class="text-field" placeholder="PaginatedSearch by Title" @bind="_searchModel.MediaTitle"/>
             <div class="tag-section">
-                <input type="text" class="text-field glow" placeholder="Search by @_currentPlaceholderText"
+                <input type="text" class="text-field glow" placeholder="PaginatedSearch by @_currentPlaceholderText"
                        @bind="ActiveTagInput" @oninput="OnInputTagChange"/>
 
                 @if (FilteredGenreList.Any())
@@ -46,7 +46,7 @@
                 }
             </div>
             <button type="submit" class="search-button">
-                <span>Search</span></button>
+                <span>PaginatedSearch</span></button>
         </div>
         <ValidationSummary/>
     </EditForm>
@@ -127,7 +127,7 @@
 
         if (!string.IsNullOrEmpty(model.MediaTitle))
         {
-            var titleFilter = new Filter("title", model.MediaTitle.ToLower(), DbOperations.Contains);
+            var titleFilter = new Filter("title", model.MediaTitle.ToLower(), DbEnums.Contains);
             Console.WriteLine("titleFilter:" + titleFilter);
             _searchFilters.Add(titleFilter);
         }
@@ -135,7 +135,7 @@
 
         foreach (var genre in model.MediaGenres)
         {
-            var genreFilter = new Filter("genres", genre, DbOperations.Contains);
+            var genreFilter = new Filter("genres", genre, DbEnums.Contains);
             Console.WriteLine("genreFilter key:" + genreFilter.Key + "genre value:" + genreFilter.Value + "operation" + genreFilter.Operation);
             _searchFilters.Add(genreFilter);
         }

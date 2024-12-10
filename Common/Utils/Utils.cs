@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization;
 
 namespace Common.Utils;
 
-public static class Utils
+public static class BsonDTOMapper
 {
     public static List<T> ConvertBsonToEntity<T>(List<BsonDocument> bsonDocuments)
     {
