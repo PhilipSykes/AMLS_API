@@ -127,7 +127,7 @@
 
         if (!string.IsNullOrEmpty(model.MediaTitle))
         {
-            var titleFilter = new Filter("title", model.MediaTitle.ToLower(), FilterTypes.Contains);
+            var titleFilter = new Filter("title", model.MediaTitle.ToLower(), DbOperations.Contains);
             Console.WriteLine("titleFilter:" + titleFilter);
             _searchFilters.Add(titleFilter);
         }
@@ -135,7 +135,7 @@
 
         foreach (var genre in model.MediaGenres)
         {
-            var genreFilter = new Filter("genres", genre, FilterTypes.Contains);
+            var genreFilter = new Filter("genres", genre, DbOperations.Contains);
             Console.WriteLine("genreFilter key:" + genreFilter.Key + "genre value:" + genreFilter.Value + "operation" + genreFilter.Operation);
             _searchFilters.Add(genreFilter);
         }

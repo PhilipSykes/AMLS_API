@@ -45,12 +45,12 @@
         _searchFilters.Clear();
         if (!string.IsNullOrEmpty(model.Id))
         {
-            _searchFilters.Add(new Filter("_id", model.Id, FilterTypes.Equals));
+            _searchFilters.Add(new Filter("_id", model.Id, DbOperations.Equals));
         }
 
         if (!string.IsNullOrEmpty(model.MediaTitle))
         {
-            _searchFilters.Add(new Filter("title", model.MediaTitle, FilterTypes.Contains));
+            _searchFilters.Add(new Filter("title", model.MediaTitle, DbOperations.Contains));
         }
         
         if (!string.IsNullOrEmpty(model.MediaType))
@@ -60,7 +60,7 @@
 
         if (!string.IsNullOrEmpty(model.Branch))
         {
-            _searchFilters.Add(new Filter("branch", model.Branch, FilterTypes.Equals));
+            _searchFilters.Add(new Filter("branch", model.Branch, DbOperations.Equals));
         } 
     }
 
