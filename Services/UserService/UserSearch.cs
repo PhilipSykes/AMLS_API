@@ -22,6 +22,11 @@ public class UserSearch : IUserSearch
         _searchRepository = searchRepository;
     }
 
+    /// <summary>
+    /// Returns a list of logins with the given email (Hopefully one or zero)
+    /// </summary>
+    /// <param name="filters"></param>
+    /// <returns>A list of matching login documents</returns>
     public async Task<List<Login>> GetLoginCredentials(List<Filter> filters)
     {
         var bsonDocuments = await _searchRepository.Search(DocumentTypes.Login, filters);
