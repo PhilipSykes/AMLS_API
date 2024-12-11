@@ -10,13 +10,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0C9F69FE-6C8D-40DD-8F70-0CA68D519BD6}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
+		.dockerignore = .dockerignore
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService", "AuthService\AuthService.csproj", "{5B8B586A-CDE4-488F-8ED0-51C077822DD4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaService", "MediaService\MediaService.csproj", "{478CCEC5-7C52-419E-89C5-D26B9E5D4C57}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBroker", "MessageBroker\MessageBroker.csproj", "{07288D2D-74C2-498F-BB2A-90BD7B34A81A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReservationService", "ReservationService\ReservationService.csproj", "{CEE2C64F-6C63-4F1B-97FA-9F2C2D713BC3}"
 EndProject
@@ -52,10 +51,6 @@ Global
 		{478CCEC5-7C52-419E-89C5-D26B9E5D4C57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{478CCEC5-7C52-419E-89C5-D26B9E5D4C57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{478CCEC5-7C52-419E-89C5-D26B9E5D4C57}.Release|Any CPU.Build.0 = Release|Any CPU
-		{07288D2D-74C2-498F-BB2A-90BD7B34A81A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{07288D2D-74C2-498F-BB2A-90BD7B34A81A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{07288D2D-74C2-498F-BB2A-90BD7B34A81A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{07288D2D-74C2-498F-BB2A-90BD7B34A81A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CEE2C64F-6C63-4F1B-97FA-9F2C2D713BC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CEE2C64F-6C63-4F1B-97FA-9F2C2D713BC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEE2C64F-6C63-4F1B-97FA-9F2C2D713BC3}.Release|Any CPU.ActiveCfg = Release|Any CPU

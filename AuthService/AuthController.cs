@@ -1,4 +1,4 @@
-using MessageBroker;
+using Common.MessageBroker;
 using Common.Constants;
 using Common.Models;
 using static Common.Models.Shared;

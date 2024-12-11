@@ -16,12 +16,10 @@ services:
       - metric-service
       - user-service
     volumes:
-      - ./Common/certificates:/common/certificates
+      - ./Common/certificates:/app/certificates
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/common/certificates/local-dev-certificate.p12
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
 
   auth-service:
     build:
@@ -35,13 +33,11 @@ services:
       notification-service:
         condition: service_started
     volumes:
-      - ./Common/certificates:/common/certificates
+      - ./Common/certificates:/app/certificates
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443
       - RabbitMQ__HostName=rabbitmq
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
 
   media-service:
     build:
@@ -55,13 +51,11 @@ services:
       notification-service:
         condition: service_started
     volumes:
-      - ./Common/certificates:/common/certificates
+      - ./Common/certificates:/app/certificates
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443
       - RabbitMQ__HostName=rabbitmq
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
   reservation-service:
     build:
       context: .
@@ -74,13 +68,11 @@ services:
       notification-service:
         condition: service_started
     volumes:
-      - ./Common/certificates:/common/certificates
+      - ./Common/certificates:/app/certificates
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443
       - RabbitMQ__HostName=rabbitmq
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
 
   user-service:
     build:
@@ -94,13 +86,11 @@ services:
       notification-service:
         condition: service_started
     volumes:
-      - ./Common/certificates:/common/certificates
+      - ./Common/certificates:/app/certificates
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443
       - RabbitMQ__HostName=rabbitmq
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
     
   metric-service:
     build:
@@ -114,13 +104,11 @@ services:
       notification-service:
         condition: service_started
     volumes:
-      - ./Common/certificates:/common/certificates
+      - ./Common/certificates:/app/certificates
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443
       - RabbitMQ__HostName=rabbitmq
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
 
   notification-service:
     build:
@@ -132,12 +120,10 @@ services:
       rabbitmq:
         condition: service_healthy
     volumes:
-      - ./Common/certificates:/common/certificates
+      - ./Common/certificates:/app/certificates
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - RabbitMQ__HostName=rabbitmq
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certificates/local-dev-certificate.p12
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=J1Ih#A\\X/D#hR
 
   rabbitmq:
     image: rabbitmq:3-management

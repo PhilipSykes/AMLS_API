@@ -4,9 +4,9 @@
 
         <DataAnnotationsValidator/>
         <div class="search-container">
-            <input type="text" class="text-field" placeholder="PaginatedSearch by Title" @bind="_searchModel.MediaTitle"/>
+            <input type="text" class="text-field" placeholder="Search by Title" @bind="_searchModel.MediaTitle"/>
             <div class="tag-section">
-                <input type="text" class="text-field glow" placeholder="PaginatedSearch by @_currentPlaceholderText"
+                <input type="text" class="text-field glow" placeholder="Search by @_currentPlaceholderText"
                        @bind="ActiveTagInput" @oninput="OnInputTagChange"/>
 
                 @if (FilteredGenreList.Any())
@@ -46,7 +46,7 @@
                 }
             </div>
             <button type="submit" class="search-button">
-                <span>PaginatedSearch</span></button>
+                <span>Search</span></button>
         </div>
         <ValidationSummary/>
     </EditForm>

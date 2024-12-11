@@ -1,8 +1,7 @@
-using Common;
 using Common.Constants;
 using Common.Database;
 using static Common.Models.Shared;
-using MessageBroker;
+using Common.MessageBroker;
 using Microsoft.AspNetCore.Mvc;
 using static Common.Models.Operations;
 using static Common.Models.Entities;
@@ -30,7 +29,7 @@ public class UserController : ControllerBase
         _userSearchRepo = userSearchRepo;
     }
     
-    public async Task<PaginatedResponse<List<Users>>> SearchUsers((int, int) pagination, List<Filter> filters)
+    public async Task<PaginatedResponse<List<Users>>> SearchUsers([FromQuery](int, int) pagination,[FromQuery] List<Filter> filters)
     {
         Console.WriteLine($"Performing user search with {filters.Count} filters");
         return await _userSearchRepo.PaginatedSearch(DocumentTypes.Users, pagination, filters);

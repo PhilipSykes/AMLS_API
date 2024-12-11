@@ -18,7 +18,6 @@ builder.Services.AddHostedService<NotificationManager>();
 
 var app = builder.Build();
 
-// Initialize the Exchange
 var exchange = app.Services.GetRequiredService<Exchange>();
 await exchange.EnsureInitialized();
 

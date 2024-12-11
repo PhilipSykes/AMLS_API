@@ -1,5 +1,6 @@
 using Common;
 using Common.Database;
+using Common.MessageBroker;
 using Common.Models;
 using static Common.Models.Entities;
 using MediaService;
@@ -12,7 +13,7 @@ builder.Services.AddControllers();
 // Add RabbitMQ configuration
 builder.Services.Configure<RabbitMQConfig>(
     builder.Configuration.GetSection("RabbitMQ"));
-
+builder.Services.AddMessageBroker();
 //Add Mongo configuration
 builder.Services.Configure<MongoDBConfig>(
     builder.Configuration.GetSection("MongoDB"));
@@ -31,6 +32,8 @@ builder.Services.AddAuthorization();
 PolicyConfig.ApplyPolicies(builder.Services);
 
 var app = builder.Build();
+var exchange = app.Services.GetRequiredService<Exchange>();
+await exchange.EnsureInitialized();
 app.UseRouting();
 app.UseHttpsRedirection();
 app.UseAuthentication();

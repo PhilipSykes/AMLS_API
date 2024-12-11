@@ -3,6 +3,7 @@ using AuthService;
 using static Common.Models.Entities;
 using Common;
 using Common.Database;
+using Common.MessageBroker;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
@@ -13,7 +14,7 @@ builder.Services.AddControllers();
 // Add RabbitMQ configuration
 builder.Services.Configure<RabbitMQConfig>(
     builder.Configuration.GetSection("RabbitMQ"));
-
+builder.Services.AddMessageBroker();
 //Add Mongo configuration
 builder.Services.Configure<MongoDBConfig>(
     builder.Configuration.GetSection("MongoDB"));
@@ -48,7 +49,8 @@ builder.Services.AddEndpointsApiExplorer();
 
 
 var app = builder.Build();
-
+var exchange = app.Services.GetRequiredService<Exchange>();
+await exchange.EnsureInitialized();
 app.UseRouting();
 app.UseHttpsRedirection();
 app.UseAuthentication();
