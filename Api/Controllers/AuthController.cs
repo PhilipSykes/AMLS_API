@@ -84,6 +84,7 @@ public class AuthController : ControllerBase
                 Data = new LoginDetails()
                 {
                     UserID = result[0].UserID,
+                    Branches = result[0].Branches,
                     Token = token
                 }
             });
