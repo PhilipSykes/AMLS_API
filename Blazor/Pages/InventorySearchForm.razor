@@ -55,7 +55,7 @@
         
         if (!string.IsNullOrEmpty(model.MediaType))
         {
-            _searchFilters.Add(new Filter("type", model.MediaType, FilterTypes.Equals));
+            _searchFilters.Add(new Filter("type", model.MediaType, DbOperations.Equals));
         }
 
         if (!string.IsNullOrEmpty(model.Branch))
