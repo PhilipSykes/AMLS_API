@@ -2,9 +2,9 @@ namespace Blazor.Models;
 using System.ComponentModel.DataAnnotations;
 
 
-public class AtLeastOnFieldRequiredAttribute : ValidationAttribute
+public class InventorySearchValidator : ValidationAttribute
 {
-    //TODO Make validation checker generic & apply to all forms 
+    //TODO: Make validation checker generic & apply to all forms 
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
         var model = (InventorySearchModel)validationContext.ObjectInstance;
@@ -19,6 +19,7 @@ public class AtLeastOnFieldRequiredAttribute : ValidationAttribute
     }
 }
 
+[InventorySearchValidator]
 public class InventorySearchModel
 {
     public string? MediaTitle { get; set; }

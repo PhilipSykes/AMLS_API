@@ -2,19 +2,19 @@
 
 <tr class="@(IsExpanded ? "expanded" : null)">
     <td>@Media.ObjectID</td> 
-    <td>@Media.Title</td> 
-    <td><span class="badge type-badge">@Media.Type</span></td> 
+    <td class="title">@Media.Title</td> 
+    <td><span class="pill">@Media.Type</span></td> 
     <td> 
         @if (IsAvailable)
         {
-            <span class="badge status-badge available">Available</span>
+            <span class="pill available">Available</span>
         }
         else
         {
-            <span class="badge status-badge unavailable">Unavailable</span>
+            <span class="pill unavailable">Unavailable</span>
         } 
     </td> 
-    <td><span class="badge branch-badge">@(Media.PhysicalCopies?.FirstOrDefault()?.Branch ?? "No Branch")</span></td> 
+    <td><span class="pill">@(Media.PhysicalCopies?.FirstOrDefault()?.Branch ?? "No Branch")</span></td> 
     <td>
         <div class="action-buttons">
             <button class="action-btn @(IsExpanded ? "active" : null)" @onclick="ToggleDetails">
