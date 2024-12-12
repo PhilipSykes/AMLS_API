@@ -7,9 +7,17 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+
+COPY ["Common/Common.csproj", "Common/"]
+RUN dotnet restore "Common/Common.csproj"
+
 COPY ["MediaService/MediaService.csproj", "MediaService/"]
 RUN dotnet restore "MediaService/MediaService.csproj"
-COPY . .
+
+COPY ["Common/", "Common/"]
+COPY ["MediaService/", "MediaService/"]
+
 WORKDIR "/src/MediaService"
 RUN dotnet build "MediaService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 

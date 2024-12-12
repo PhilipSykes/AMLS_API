@@ -7,9 +7,16 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+COPY ["Common/Common.csproj", "Common/"]
+RUN dotnet restore "Common/Common.csproj"
+
 COPY ["MetricService/MetricService.csproj", "MetricService/"]
 RUN dotnet restore "MetricService/MetricService.csproj"
-COPY . .
+
+COPY ["Common/", "Common/"]
+COPY ["MetricService/", "MetricService/"]
+
 WORKDIR "/src/MetricService"
 RUN dotnet build "MetricService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 

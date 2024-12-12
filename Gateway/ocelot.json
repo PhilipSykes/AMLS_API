@@ -7,7 +7,7 @@
       "UpstreamPathTemplate": "/api/auth/{everything}",
       "UpstreamHttpMethod": [ "POST" ],
       "DownstreamPathTemplate": "/auth/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {"Host": "auth-service", "Port": 443}
@@ -18,7 +18,7 @@
       "UpstreamPathTemplate": "/api/user/{everything}",
       "UpstreamHttpMethod": [ "POST", "GET" ],
       "DownstreamPathTemplate": "/user/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {"Host": "user-service", "Port": 443}
@@ -56,7 +56,7 @@
       "UpstreamPathTemplate": "/api/reservations/{everything}",
       "UpstreamHttpMethod": [ "POST","DELETE" ],
       "DownstreamPathTemplate": "/reservations/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {"Host": "reservation-service", "Port": 443}
@@ -68,7 +68,7 @@
       "UpstreamPathTemplate": "/api/loans/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT" ],
       "DownstreamPathTemplate": "/loans/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {"Host": "reservation-service", "Port": 443}
@@ -80,7 +80,7 @@
       "UpstreamPathTemplate": "/api/admin/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
       "DownstreamPathTemplate": "/admin/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {"Host": "metric-service", "Port": 443}

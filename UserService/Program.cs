@@ -1,6 +1,9 @@
+using System.Text;
 using Common;
 using Common.Database;
 using Common.MessageBroker;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
 using UserService;
 using UserService.Configuration;
@@ -21,6 +24,24 @@ builder.Services.Configure<MongoDBConfig>(
 //Add JWTToken config
 builder.Services.Configure<JWTTokenConfig>(
     builder.Configuration.GetSection("JWTToken"));
+var jwtConfig = builder.Configuration.GetSection("JWTToken").Get<JWTTokenConfig>();
+
+// Configure JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtConfig.Issuer,
+            ValidAudience = jwtConfig.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecretKey))
+
+        };
+    });
 
 builder.Services.AddScoped<IDatabaseConnection, DatabaseConnection>();
 builder.Services.AddScoped<IFilterBuilder<BsonDocument>, BsonFilterBuilder>();

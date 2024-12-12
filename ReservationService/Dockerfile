@@ -7,9 +7,16 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+COPY ["Common/Common.csproj", "Common/"]
+RUN dotnet restore "Common/Common.csproj"
+
 COPY ["ReservationService/ReservationService.csproj", "ReservationService/"]
 RUN dotnet restore "ReservationService/ReservationService.csproj"
-COPY . .
+
+COPY ["Common/", "Common/"]
+COPY ["ReservationService/", "ReservationService/"]
+
 WORKDIR "/src/ReservationService"
 RUN dotnet build "ReservationService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 

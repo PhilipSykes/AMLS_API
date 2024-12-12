@@ -7,9 +7,16 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+COPY ["Common/Common.csproj", "Common/"]
+RUN dotnet restore "Common/Common.csproj"
+
 COPY ["UserService/UserService.csproj", "UserService/"]
 RUN dotnet restore "UserService/UserService.csproj"
-COPY . .
+
+COPY ["Common/", "Common/"]
+COPY ["UserService/", "UserService/"]
+
 WORKDIR "/src/UserService"
 RUN dotnet build "UserService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
