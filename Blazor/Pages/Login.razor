@@ -73,6 +73,7 @@
     {
         error = null;
         success = null;
+        loginModel.Email = loginModel.Email?.ToLowerInvariant();
         var request = new Request<PayLoads.Login> { Data = loginModel };
 
         try

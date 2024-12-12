@@ -9,7 +9,10 @@
     max-width: 1200px;
     margin: 0 auto;
     position: relative;
-    overflow-y: auto;
+
+    height: calc(100vh - 58px);
+    box-sizing: border-box;
+    overflow: scroll;
 }
 
 .edit-container h2 {
@@ -95,8 +98,6 @@
     margin-top: 20px;
     padding-top: 15px;
     border-top: 1px solid #e7e5e4;
-    position: sticky;
-    bottom: 0;
     background-color: #FAFAF9;
 }
 
