@@ -30,7 +30,6 @@ public class AuthService : IAuthService
     {
         return await _sessionStorage.GetItemAsync<string>("token");
     }
-
     /// <summary>
     /// Logs a user in
     /// </summary>

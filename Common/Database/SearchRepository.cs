@@ -1,19 +1,22 @@
 using Common.Constants;
 using static Common.Models.Shared;
+using static Common.Models.Operations;
 using Common.Exceptions;
+using Common.Models;
+using Common.Utils;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Common.Database
 {
-    public interface ISearchRepository
+    public interface ISearchRepository<T> where T : class
     {
-        Task<List<BsonDocument>> Search(string documentType, (int, int)pagination, List<Filter> filters = null);
-        Task<List<BsonDocument>> Search(string documentType, List<Filter> filters = null);
+        Task<PaginatedResponse<List<T>>> PaginatedSearch(string documentType, (int, int)pagination, List<Filter> filters = null);
+        Task<List<T>> Search(string documentType, List<Filter> filters = null);
     }
 
-    public class SearchRepository : ISearchRepository
+    public class SearchRepository<T> : ISearchRepository<T> where T : class
     {
         private readonly IMongoDatabase _database;
         private readonly IFilterBuilder<BsonDocument> _filterBuilder;
@@ -26,42 +29,60 @@ namespace Common.Database
             _filterBuilder = new BsonFilterBuilder();
         }
 
-        public async Task<List<BsonDocument>> Search(string documentType, (int, int) pagination, List<Filter> filters)
+        public async Task<PaginatedResponse<List<T>>> PaginatedSearch(string documentType, (int, int) pagination, List<Filter> filters)
         {
             try
             {
                 var collection = _database.GetCollection<BsonDocument>(documentType);
-                
-                return await collection.Aggregate()
-                    .Match(_filterBuilder.BuildFilter(filters))
+                var filterDefinition = _filterBuilder.BuildFilter(filters);
+
+                var matches = collection.CountDocumentsAsync(filterDefinition);
+                var result = collection.Aggregate()
+                    .Match(filterDefinition)
                     .Lookup(DocumentTypes.PhysicalMedia, "_id", "info", "physicalCopies")
                     .Project(@"{  
-                    'physicalCopies._id': 0, 
-                    'physicalCopies.info': 0 
+                        'physicalCopies._id': 0, 
+                        'physicalCopies.info': 0 
                     }")
                     .Skip(pagination.Item1)
                     .Limit(pagination.Item2)
                     .ToListAsync();
+
+                await Task.WhenAll(result, matches);
+
+                List<T> convertedResult = BsonDTOMapper.ConvertBsonToEntity<T>(result.Result);
+                
+                return new PaginatedResponse<List<T>>
+                {
+                    Data = convertedResult,
+                    Success = true,
+                    MatchCount = matches.Result,
+                    StatusCode = QueryResultCode.Ok
+                };
             }
-            catch (MongoException) 
+            catch (MongoException ex)
             {
-                throw new SearchException(SearchException.SearchErrorType.Database);
+                return new PaginatedResponse<List<T>>
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    StatusCode = QueryResultCode.InternalServerError
+                };
             }
         }
 
-        public async Task<List<BsonDocument>> Search(string documentType, List<Filter> filters = null)
+        public async Task<List<T>> Search(string documentType, List<Filter> filters = null)
         {
             try
             {
                 var collection = _database.GetCollection<BsonDocument>(documentType);
-
-                return await collection.Find(_filterBuilder.BuildFilter(filters)).ToListAsync();
+                var documents = await collection.Find(_filterBuilder.BuildFilter(filters)).ToListAsync();
+                return BsonDTOMapper.ConvertBsonToEntity<T>(documents);
             }
             catch (MongoException)
             {
                 throw new SearchException(SearchException.SearchErrorType.Database);
             }
-
         }
     }
 }

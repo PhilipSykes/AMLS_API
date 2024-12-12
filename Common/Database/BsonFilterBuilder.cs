@@ -27,22 +27,22 @@ public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
             foreach (var filterObject in filterObjectsIn)
                 switch (filterObject.Operation)
                 {
-                    case DbOperations.Equals:
+                    case DbEnums.Equals:
                         if (filterObject.Key == "_id")
                             mongoFilters &= builder.Eq(filterObject.Key, new ObjectId(filterObject.Value));
                         else
                             mongoFilters &= builder.Eq(filterObject.Key, filterObject.Value);
                         break;
-                    case DbOperations.GreaterThan:
+                    case DbEnums.GreaterThan:
                         mongoFilters &= builder.Gt(filterObject.Key, filterObject.Value);
                         break;
-                    case DbOperations.LessThan:
+                    case DbEnums.LessThan:
                         mongoFilters &= builder.Lt(filterObject.Key, filterObject.Value);
                         break;
-                    case DbOperations.NotEquals:
+                    case DbEnums.NotEquals:
                         mongoFilters &= builder.Not(builder.Eq(filterObject.Key, filterObject.Value));
                         break;
-                    case DbOperations.Contains:
+                    case DbEnums.Contains:
                         if (filterObject.Value is string) // This is a temp hack, fix properly later
                             mongoFilters &= builder.Regex(filterObject.Key,
                                 new BsonRegularExpression($".*{filterObject.Value}.*", "i"));

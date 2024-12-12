@@ -70,7 +70,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _filters.Add(new Filter("_id", MediaId, DbOperations.Equals));
+        _filters.Add(new Filter("_id", MediaId, DbEnums.Equals));
 
         var response = await HttpClient.PostAsJsonAsync($"api/catalog/search?page={1}&count={1}", _filters);
         if (response.IsSuccessStatusCode)
@@ -94,5 +94,42 @@
             return "#44403C";
         }
         return "#D6D3D1";
+    }
+    public async Task<HttpResponseMessage> TestCreateReservation()
+    {
+        Entities.Reservation reservation = new Entities.Reservation
+        {
+            Id = ObjectId.GenerateNewId().ToString(),
+            StartDate = DateTime.UtcNow,
+            EndDate = DateTime.UtcNow.AddDays(1),
+            Item = "673f6d28e580ac7f9f4fa9b3",
+            Member = "67236480b4d08aab049740aa"
+
+        };
+        var response = await HttpClient.PostAsJsonAsync("api/reservations/create", reservation);
+        Console.WriteLine(await response.Content.ReadAsStringAsync());
+        
+        return response;
+    } 
+    public async Task<HttpResponseMessage> TestCancelReservation()
+    {
+        string reservationId = "67586896360a7f5735c67352";
+        var response = await HttpClient.PostAsJsonAsync("api/reservations/cancel", reservationId);
+        Console.WriteLine(await response.Content.ReadAsStringAsync());
+        
+        return response;
+    }
+
+    public async Task<HttpResponseMessage> TestExtendReservation()
+    {
+        var request = new PayLoads.ReservationExtension
+        {
+            ReservationId = "67586896360a7f5735c67352",
+            NewEndDate = DateTime.Now.AddDays(7)
+        };
+        var response = await HttpClient.PostAsJsonAsync("api/reservations/extend", request);
+        Console.WriteLine(await response.Content.ReadAsStringAsync());
+        
+        return response;
     }
 }

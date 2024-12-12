@@ -1,16 +1,157 @@
 ﻿services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Gateway/Dockerfile
+    ports:
+      - "7500:443"
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - auth-service
+      - reservation-service
+      - media-service
+      - metric-service
+      - user-service
+    volumes:
+      - ./Common/certificates:/app/certificates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:443
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: AuthService/Dockerfile
+    networks:
+      - backend
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      notification-service:
+        condition: service_started
+    volumes:
+      - ./Common/certificates:/app/certificates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:6000
+      - RabbitMQ__HostName=rabbitmq
+
+  media-service:
+    build:
+      context: .
+      dockerfile: MediaService/Dockerfile
+    networks:
+      - backend
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      notification-service:
+        condition: service_started
+    volumes:
+      - ./Common/certificates:/app/certificates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:6000
+      - RabbitMQ__HostName=rabbitmq
+
+  reservation-service:
+    build:
+      context: .
+      dockerfile: ReservationService/Dockerfile
+    networks:
+      - backend
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      notification-service:
+        condition: service_started
+    volumes:
+      - ./Common/certificates:/app/certificates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:6000
+      - RabbitMQ__HostName=rabbitmq
+
+  user-service:
+    build:
+      context: .
+      dockerfile: UserService/Dockerfile
+    networks:
+      - backend
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      notification-service:
+        condition: service_started
+    volumes:
+      - ./Common/certificates:/app/certificates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:6000
+      - RabbitMQ__HostName=rabbitmq
+  
+  metric-service:
+    user: "root"
+    build:
+      context: .
+      dockerfile: MetricService/Dockerfile
+    networks:
+      - backend
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      notification-service:
+        condition: service_started
+    volumes:
+      - ./Common/certificates:/app/certificates
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:6000
+      - RabbitMQ__HostName=rabbitmq
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: NotificationService/Dockerfile
+    networks:
+      - backend
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./Common/certificates:/app/certificates
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - RabbitMQ__HostName=rabbitmq
+
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_port_connectivity" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     ports:
-      - "5672:5672"   # RabbitMQ default port
-      - "15672:15672" # Management UI port
-    environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
       - rabbitmq_log:/var/log/rabbitmq
+    networks:
+      - backend
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
 
 volumes:
   rabbitmq_data:

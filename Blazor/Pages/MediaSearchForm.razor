@@ -54,21 +54,6 @@
 
 
 @code
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 {
     [Parameter] public EventCallback<List<Filter>> OnSubmitCallback { get; set; }
 
@@ -127,7 +112,7 @@
 
         if (!string.IsNullOrEmpty(model.MediaTitle))
         {
-            var titleFilter = new Filter("title", model.MediaTitle.ToLower(), DbOperations.Contains);
+            var titleFilter = new Filter("title", model.MediaTitle.ToLower(), DbEnums.Contains);
             Console.WriteLine("titleFilter:" + titleFilter);
             _searchFilters.Add(titleFilter);
         }
@@ -135,7 +120,7 @@
 
         foreach (var genre in model.MediaGenres)
         {
-            var genreFilter = new Filter("genres", genre, DbOperations.Contains);
+            var genreFilter = new Filter("genres", genre, DbEnums.Contains);
             Console.WriteLine("genreFilter key:" + genreFilter.Key + "genre value:" + genreFilter.Value + "operation" + genreFilter.Operation);
             _searchFilters.Add(genreFilter);
         }

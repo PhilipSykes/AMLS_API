@@ -1,0 +1,93 @@
+﻿{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7500"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/auth/{everything}",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/auth/{everything}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "auth-service", "Port": 6000}
+      ],
+      "LoadBalancerOptions": {"Type": "LeastConnection"}
+    },
+    {
+      "UpstreamPathTemplate": "/api/user/{everything}",
+      "UpstreamHttpMethod": [ "POST", "GET" ],
+      "DownstreamPathTemplate": "/user/{everything}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "user-service", "Port": 6000}
+      ],
+      "LoadBalancerOptions": {"Type": "LeastConnection"},
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/catalog/{everything}",
+      "UpstreamHttpMethod": [ "POST", "GET" ],
+      "DownstreamPathTemplate": "/catalog/{everything}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "media-service", "Port": 6000}
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/inventory/{everything}",
+      "UpstreamHttpMethod": [ "POST","GET","PUT","DELETE" ],
+      "DownstreamPathTemplate": "/inventory/{everything}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "media-service", "Port": 6000}
+      ],
+      "LoadBalancerOptions": {"Type": "LeastConnection"},
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": ["BranchLibrarian", "BranchManager"]}
+    },
+    {
+      "UpstreamPathTemplate": "/api/reservations/{everything}",
+      "UpstreamHttpMethod": [ "POST","DELETE" ],
+      "DownstreamPathTemplate": "/reservations/{everything}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "reservation-service", "Port": 6000}
+      ],
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
+    },
+    {
+      "UpstreamPathTemplate": "/api/loans/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT" ],
+      "DownstreamPathTemplate": "/loans/{everything}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "reservation-service", "Port": 6000}
+      ],
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
+    },
+    {
+      "UpstreamPathTemplate": "/api/admin/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamPathTemplate": "/admin/{everything}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "metric-service", "Port": 6000}
+      ],
+      "LoadBalancerOptions": {"Type": "LeastConnection"},
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "SystemAdmin"}
+    }
+  ]
+}

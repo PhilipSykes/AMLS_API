@@ -18,6 +18,16 @@ public class DatabaseConnection : IDatabaseConnection
     {
         var config = options.Value;
 
+        Console.WriteLine("\n=== Database Connection Initialization ===");
+        Console.WriteLine($"Service Name: {Environment.GetEnvironmentVariable("SERVICE_NAME")}");
+        Console.WriteLine($"Configuration Object Present: {config != null}");
+        if (config != null)
+        {
+            Console.WriteLine($"Connection String Present: {!string.IsNullOrEmpty(config.ConnectionString)}");
+            Console.WriteLine($"Database Name: {config.DatabaseName}");
+            Console.WriteLine($"Connection String Start: {config.ConnectionString?.Substring(0, 20)}...");
+        }
+        
         if (string.IsNullOrEmpty(config?.ConnectionString))
             throw new ArgumentException(
                 "MongoDB ConnectionString is null or empty. Check your configuration.");

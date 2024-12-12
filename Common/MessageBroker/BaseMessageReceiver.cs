@@ -31,7 +31,8 @@ public abstract class BaseMessageReceiver<TMessage> : BackgroundService
         using var connection = await factory.CreateConnectionAsync();
         using var channel = await connection.CreateChannelAsync();
 
-        await channel.ExchangeDeclareAsync(_config.ExchangeName, ExchangeType.Direct);
+        await channel.ExchangeDeclareAsync(_config.ExchangeName, ExchangeType.Direct,
+            durable: true, autoDelete: false);
         var queueName = (await channel.QueueDeclareAsync()).QueueName;
 
         foreach (var type in _messageTypes)

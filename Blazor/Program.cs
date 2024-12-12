@@ -11,7 +11,6 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddBlazoredSessionStorage();
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7500") });
 
 builder.Services.AddAuthorizationCore();

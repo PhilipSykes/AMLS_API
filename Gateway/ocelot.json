@@ -10,7 +10,7 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 5001}
+        {"Host": "localhost", "Port": 7007}
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"}
     },
@@ -21,7 +21,7 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 5001}
+        {"Host": "localhost", "Port": 7002}
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {
@@ -35,8 +35,22 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 5001}
+        {"Host": "localhost", "Port": 7006}
       ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/inventory/{everything}",
+      "UpstreamHttpMethod": [ "POST","GET","PUT","DELETE" ],
+      "DownstreamPathTemplate": "/inventory/{everything}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "localhost", "Port": 7006}
+      ],
+      "LoadBalancerOptions": {"Type": "LeastConnection"},
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": ["BranchLibrarian", "BranchManager"]}
     },
     {
       "UpstreamPathTemplate": "/api/reservations/{everything}",
@@ -45,7 +59,7 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 5001}
+        {"Host": "localhost", "Port": 7003}
       ],
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
       "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
@@ -57,27 +71,10 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 5001}
+        {"Host": "localhost", "Port": 7003}
       ],
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
       "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
-    },
-
-    {
-      "UpstreamPathTemplate": "/api/inventory/{everything}",
-      "UpstreamHttpMethod": [ "POST","GET","PUT","DELETE" ],
-      "DownstreamPathTemplate": "/inventory/{everything}",
-      "DownstreamScheme": "https",
-      "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ],
-      "LoadBalancerOptions": {"Type": "LeastConnection"},
-      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": ["BranchLibrarian", "BranchManager"]}
     },
     {
       "UpstreamPathTemplate": "/api/admin/{everything}",
@@ -86,7 +83,7 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 5001}
+        {"Host": "localhost", "Port": 7005}
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},

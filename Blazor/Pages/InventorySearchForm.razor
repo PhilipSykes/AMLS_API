@@ -45,22 +45,22 @@
         _searchFilters.Clear();
         if (!string.IsNullOrEmpty(model.Id))
         {
-            _searchFilters.Add(new Filter("_id", model.Id, DbOperations.Equals));
+            _searchFilters.Add(new Filter("_id", model.Id, DbEnums.Equals));
         }
 
         if (!string.IsNullOrEmpty(model.MediaTitle))
         {
-            _searchFilters.Add(new Filter("title", model.MediaTitle, DbOperations.Contains));
+            _searchFilters.Add(new Filter("title", model.MediaTitle, DbEnums.Contains));
         }
         
         if (!string.IsNullOrEmpty(model.MediaType))
         {
-            _searchFilters.Add(new Filter("type", model.MediaType, DbOperations.Equals));
+            _searchFilters.Add(new Filter("type", model.MediaType, DbEnums.Equals));
         }
 
         if (!string.IsNullOrEmpty(model.Branch))
         {
-            _searchFilters.Add(new Filter("branch", model.Branch, DbOperations.Equals));
+            _searchFilters.Add(new Filter("branch", model.Branch, DbEnums.Equals));
         } 
     }
 
