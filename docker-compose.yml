@@ -18,7 +18,7 @@
       - ./Common/certificates:/app/certificates
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
-      - ASPNETCORE_URLS=https://+:6000
+      - ASPNETCORE_URLS=https://+:443
 
   auth-service:
     build:
@@ -93,6 +93,7 @@
       - RabbitMQ__HostName=rabbitmq
   
   metric-service:
+    user: "root"
     build:
       context: .
       dockerfile: MetricService/Dockerfile
