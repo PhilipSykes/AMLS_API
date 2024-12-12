@@ -1,3 +1,4 @@
+@using Blazored.SessionStorage.StorageOptions
 @inject IJSRuntime JS
 @inject NavigationManager Nav
 @inject ISessionStorageService SessionStorage
@@ -39,8 +40,7 @@
     private int Rating => (int)Math.Round(Media.Rating);
     private string _genres => string.Join(" • ", Media.Genres.Take(3));
 
-    private string _preferedBranch = "6733491ba1ed2d02eef46a42";
-
+    
     protected override void OnInitialized()
     {
         foreach (var copy in Media.PhysicalCopies) 
@@ -59,7 +59,7 @@
             string[] result = await SessionStorage.GetItemAsync<string[]>("branches");
             if (result != null)
             {
-                foreach (var copy in Media.PhysicalCopies)
+                foreach (var copy in Media.PhysicalCopies) 
                 {
                     if (copy.Status == "Available" && result.Contains(copy.Branch))
                     {
@@ -67,7 +67,6 @@
                     }
                 }
             }
-
             StateHasChanged();
         }
     }
