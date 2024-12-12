@@ -1,5 +1,6 @@
 @inject IJSRuntime JS
 @inject NavigationManager Nav
+@inject ISessionStorageService SessionStorage
 
 <div @onclick="UpdateRouteParamAndNavigate" id="search-card">
     <h3 id="search-media-title">@Media.Title</h3>
@@ -44,10 +45,30 @@
     {
         foreach (var copy in Media.PhysicalCopies) 
         {
-            if (copy.Status == "Available" && copy.Branch == _preferedBranch)
+            if (copy.Status == "Available" && false)
             {
                 IsAvailable = true;
             }
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            string[] result = await SessionStorage.GetItemAsync<string[]>("branches");
+            if (result != null)
+            {
+                foreach (var copy in Media.PhysicalCopies)
+                {
+                    if (copy.Status == "Available" && result.Contains(copy.Branch))
+                    {
+                        IsAvailable = true;
+                    }
+                }
+            }
+
+            StateHasChanged();
         }
     }
 

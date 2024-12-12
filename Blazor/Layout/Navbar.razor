@@ -33,6 +33,7 @@
     private async Task HandleLogout()
     {
         await AuthState.Logout();
+        StateHasChanged();
         Nav.NavigateTo("/");
     }
     

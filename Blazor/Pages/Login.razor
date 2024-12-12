@@ -85,7 +85,7 @@
                 
                 if (tokenResponse != null)
                 {
-                    await AuthState.Login(tokenResponse.Data.Token);
+                    await AuthState.Login(tokenResponse.Data.Token, tokenResponse.Data.Branches);
                     success = "Successful login";
                     StateHasChanged();
                     NavigationManager.NavigateTo("/");
