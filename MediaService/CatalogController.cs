@@ -39,7 +39,19 @@ public class CatalogController : ControllerBase
     public async Task<ActionResult<PaginatedResponse<List<MediaInfo>>>> GetMedia(int page, int count)
     {
         (int, int) pagination = ((page - 1) * count, count);
-        return await _mediaSearchRepo.PaginatedSearch(DocumentTypes.MediaInfo,pagination,filters: null);
+        AgreggateSearchConfig config = new AgreggateSearchConfig()
+        {
+            UseAggregation = true,
+            LookupCollection = DocumentTypes.PhysicalMedia,
+            LocalField = "_id",
+            ForeignField = "info",
+            As = "physicalCopies",
+            ProjectionString = @"{  
+            'physicalCopies._id': 0, 
+            'physicalCopies.info': 0 
+            }"
+        };
+        return await _mediaSearchRepo.PaginatedSearch(DocumentTypes.MediaInfo,pagination,filters: null,config);
     }
     
     /// <summary>
@@ -53,6 +65,18 @@ public class CatalogController : ControllerBase
     public async Task<ActionResult<PaginatedResponse<List<MediaInfo>>>> SearchMedia(List<Filter> filters, int page, int count)
     {
         (int, int) pagination = ((page - 1) * count, count);
-        return await _mediaSearchRepo.PaginatedSearch(DocumentTypes.MediaInfo,pagination,filters);
+        AgreggateSearchConfig config = new AgreggateSearchConfig()
+        {
+            UseAggregation = true,
+            LookupCollection = DocumentTypes.PhysicalMedia,
+            LocalField = "_id",
+            ForeignField = "info",
+            As = "physicalCopies",
+            ProjectionString = @"{  
+            'physicalCopies._id': 0, 
+            'physicalCopies.info': 0 
+            }"
+        };
+        return await _mediaSearchRepo.PaginatedSearch(DocumentTypes.MediaInfo,pagination,filters,config);
     }
 }

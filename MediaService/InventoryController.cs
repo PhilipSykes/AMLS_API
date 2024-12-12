@@ -49,7 +49,7 @@ public class InventoryController : ControllerBase
             var mediaTask = _mediaSearchRepo.PaginatedSearch(
                 DocumentTypes.MediaInfo,
                 pagination,
-                filters: null);
+                filters: null,config: null);
             
             var branchTask = _branchSearchRepo.Search(
                 DocumentTypes.Branches,
@@ -94,7 +94,7 @@ public class InventoryController : ControllerBase
     public async Task<ActionResult<PaginatedResponse<List<MediaInfo>>>> SearchMedia(List<Filter> filters, int page, int count)
     {
         (int, int) pagination = ((page - 1) * count, count);
-        return  await _mediaSearchRepo.PaginatedSearch(DocumentTypes.MediaInfo,pagination, filters);
+        return  await _mediaSearchRepo.PaginatedSearch(DocumentTypes.MediaInfo,pagination, filters, config: null);
     }
     
     /// <summary>

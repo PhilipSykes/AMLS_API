@@ -10,9 +10,10 @@ using MongoDB.Driver;
 
 namespace Common.Database
 {
+    
     public interface ISearchRepository<T> where T : class
     {
-        Task<PaginatedResponse<List<T>>> PaginatedSearch(string documentType, (int, int)pagination, List<Filter> filters = null);
+        Task<PaginatedResponse<List<T>>> PaginatedSearch(string documentType, (int, int)pagination, List<Filter> filters = null,AgreggateSearchConfig config = null);
         Task<List<T>> Search(string documentType, List<Filter> filters = null);
     }
 
@@ -29,28 +30,29 @@ namespace Common.Database
             _filterBuilder = new BsonFilterBuilder();
         }
 
-        public async Task<PaginatedResponse<List<T>>> PaginatedSearch(string documentType, (int, int) pagination, List<Filter> filters)
+        public async Task<PaginatedResponse<List<T>>> PaginatedSearch(string documentType, (int, int) pagination, List<Filter> filters,AgreggateSearchConfig config)
         {
             try
             {
+                List<BsonDocument> result;
                 var collection = _database.GetCollection<BsonDocument>(documentType);
                 var filterDefinition = _filterBuilder.BuildFilter(filters);
 
                 var matches = collection.CountDocumentsAsync(filterDefinition);
-                var result = collection.Aggregate()
-                    .Match(filterDefinition)
-                    .Lookup(DocumentTypes.PhysicalMedia, "_id", "info", "physicalCopies")
-                    .Project(@"{  
-                        'physicalCopies._id': 0, 
-                        'physicalCopies.info': 0 
-                    }")
-                    .Skip(pagination.Item1)
-                    .Limit(pagination.Item2)
-                    .ToListAsync();
-
-                await Task.WhenAll(result, matches);
-
-                List<T> convertedResult = BsonDTOMapper.ConvertBsonToEntity<T>(result.Result);
+                if (config?.UseAggregation == true)
+                {
+                    result = await ApplyAggregate(collection, filterDefinition, pagination, config);
+                }
+                else
+                {
+                    result =  await collection
+                        .Find(filterDefinition)
+                        .Skip(pagination.Item1)
+                        .Limit(pagination.Item2)
+                        .ToListAsync();
+                }
+                
+                List<T> convertedResult = BsonDTOMapper.ConvertBsonToEntity<T>(result);
                 
                 return new PaginatedResponse<List<T>>
                 {
@@ -83,6 +85,18 @@ namespace Common.Database
             {
                 throw new SearchException(SearchException.SearchErrorType.Database);
             }
+        }
+
+        public async Task<List<BsonDocument>> ApplyAggregate(IMongoCollection<BsonDocument> collection,
+            FilterDefinition<BsonDocument> filterDefinition,(int, int) pagination, AgreggateSearchConfig Config)
+        {
+            return await collection.Aggregate()
+                .Match(filterDefinition)
+                .Lookup(Config.LookupCollection, Config.LocalField, Config.ForeignField, Config.As)
+                .Project(Config.ProjectionString)
+                .Skip(pagination.Item1)
+                .Limit(pagination.Item2)
+                .ToListAsync();
         }
     }
 }

@@ -33,6 +33,16 @@ namespace Common.Models
             public string[] Branches { get; set; } = [];
             public string? Token { get; set; }
         }
+        
+        public class AgreggateSearchConfig
+        {
+            public bool UseAggregation { get; set; } = false;
+            public string LookupCollection { get; set; }
+            public string LocalField { get; set; }
+            public string ForeignField { get; set; }
+            public string As { get; set; }
+            public string ProjectionString { get; set; }
+        }
     }
 }
 
