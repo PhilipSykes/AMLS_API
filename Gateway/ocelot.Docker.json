@@ -10,7 +10,7 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 7007}
+        {"Host": "auth-service", "Port": 6000}
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"}
     },
@@ -21,7 +21,7 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 7002}
+        {"Host": "user-service", "Port": 6000}
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {
@@ -35,7 +35,7 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 7006}
+        {"Host": "media-service", "Port": 6000}
       ]
     },
 
@@ -46,7 +46,7 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 7006}
+        {"Host": "media-service", "Port": 6000}
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
@@ -59,7 +59,7 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 7003}
+        {"Host": "reservation-service", "Port": 6000}
       ],
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
       "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
@@ -71,7 +71,7 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 7003}
+        {"Host": "reservation-service", "Port": 6000}
       ],
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
       "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
@@ -83,7 +83,7 @@
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 7005}
+        {"Host": "metric-service", "Port": 6000}
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},

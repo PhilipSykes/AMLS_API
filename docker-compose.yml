@@ -1,5 +1,4 @@
-﻿
-services:
+﻿services:
   gateway:
     build:
       context: .
@@ -18,8 +17,8 @@ services:
     volumes:
       - ./Common/certificates:/app/certificates
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:6000
 
   auth-service:
     build:
@@ -35,8 +34,8 @@ services:
     volumes:
       - ./Common/certificates:/app/certificates
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:6000
       - RabbitMQ__HostName=rabbitmq
 
   media-service:
@@ -53,9 +52,10 @@ services:
     volumes:
       - ./Common/certificates:/app/certificates
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:6000
       - RabbitMQ__HostName=rabbitmq
+
   reservation-service:
     build:
       context: .
@@ -70,8 +70,8 @@ services:
     volumes:
       - ./Common/certificates:/app/certificates
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:6000
       - RabbitMQ__HostName=rabbitmq
 
   user-service:
@@ -88,10 +88,10 @@ services:
     volumes:
       - ./Common/certificates:/app/certificates
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:6000
       - RabbitMQ__HostName=rabbitmq
-    
+  
   metric-service:
     build:
       context: .
@@ -107,8 +107,8 @@ services:
       - ./Common/certificates:/app/certificates
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=https://+:6000
       - RabbitMQ__HostName=rabbitmq
 
   notification-service:
@@ -123,7 +123,7 @@ services:
     volumes:
       - ./Common/certificates:/app/certificates
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Docker
       - RabbitMQ__HostName=rabbitmq
 
   rabbitmq:
@@ -151,8 +151,6 @@ networks:
     driver: bridge
   backend:
     driver: bridge
-    internal: true
-  
 
 volumes:
   rabbitmq_data:

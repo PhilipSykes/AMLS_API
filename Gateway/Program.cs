@@ -5,12 +5,22 @@ using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Ocelot
-builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+//Dictates which app & ocelot settings docs to use (Docker/Local)
+string appSettingsFileName = builder.Environment.EnvironmentName == "Docker" 
+    ? "appsettings.Docker.json" 
+    : "appsettings.json";
+
+string ocelotFileName = builder.Environment.EnvironmentName == "Docker" 
+    ? "ocelot.Docker.json" 
+    : "ocelot.json";
+
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile(appSettingsFileName, optional: false, reloadOnChange: true)
+    .AddJsonFile(ocelotFileName, optional: false, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
 var jwtConfig = builder.Configuration.GetSection("JWTToken").Get<JWTTokenConfig>();
 
@@ -27,10 +37,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = jwtConfig.Issuer,
             ValidAudience = jwtConfig.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecretKey))
-
         };
     });
-
 
 builder.Services.AddCors(options =>
 {
@@ -52,8 +60,6 @@ app.MapControllers();
 app.UseAuthentication();  
 app.UseAuthorization();
 
-
 await app.UseOcelot();
-
 
 app.Run();

@@ -10,6 +10,18 @@ using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Dictates which app settings doc to use (Docker/Local)
+string appSettingsFileName = builder.Environment.EnvironmentName == "Docker" 
+    ? "appsettings.Docker.json" 
+    : "appsettings.json";
+
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile(appSettingsFileName, optional: false, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
+
 builder.Services.AddControllers();
 
 // Add RabbitMQ configuration
