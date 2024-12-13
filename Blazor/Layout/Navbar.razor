@@ -34,7 +34,6 @@
     {
         await AuthState.Logout();
         StateHasChanged();
-        Nav.NavigateTo("/");
     }
     
     private IEnumerable<NavLink> GetAuthorizedLinks(ClaimsPrincipal user)

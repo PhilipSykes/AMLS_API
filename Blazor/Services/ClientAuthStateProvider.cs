@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using Blazored.SessionStorage;
 using Common.Models;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Blazor.Services;
@@ -12,12 +13,14 @@ public class ClientAuthStateProvider : AuthenticationStateProvider
 {
     private readonly HttpClient _httpClient;
     private readonly ISessionStorageService _sessionStorage;
+    private readonly NavigationManager _navigationManager;
     
     
-    public ClientAuthStateProvider(ISessionStorageService sessionStorage, HttpClient httpClient)
+    public ClientAuthStateProvider(ISessionStorageService sessionStorage, HttpClient httpClient, NavigationManager navigationManager)
     {
         _sessionStorage = sessionStorage;
         _httpClient = httpClient;
+        _navigationManager = navigationManager;
     }
     
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -50,5 +53,6 @@ public class ClientAuthStateProvider : AuthenticationStateProvider
     {
         var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(anonymousUser)));
+        _navigationManager.NavigateTo("/login");
     }
 }
