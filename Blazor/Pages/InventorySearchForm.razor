@@ -13,7 +13,7 @@
                     <option value="TV Series">TV Series</option>
                 </select>
                 <select class="text-field" @bind="_searchModel.Branch">
-                    <option value="">All Branches</option>
+                    <option value="">Branch</option>
                     @foreach (var branch in BranchList)
                     {
                         <option value="@branch.ObjectID">@branch.Name</option>
@@ -45,23 +45,40 @@
         _searchFilters.Clear();
         if (!string.IsNullOrEmpty(model.Id))
         {
-            _searchFilters.Add(new Filter("_id", model.Id, DbEnums.Equals));
+            _searchFilters.Add(new Filter(DbFieldNames.PhysicalCopies.Info, model.Id, DbEnums.Equals)
+            {
+                IsPostLookup = false,
+                IsObjectId = true
+            });
         }
-
+    
         if (!string.IsNullOrEmpty(model.MediaTitle))
         {
-            _searchFilters.Add(new Filter("title", model.MediaTitle, DbEnums.Contains));
-        }
-        
-        if (!string.IsNullOrEmpty(model.MediaType))
-        {
-            _searchFilters.Add(new Filter("type", model.MediaType, DbEnums.Equals));
+            _searchFilters.Add(new Filter($"{DbFieldNames.Aggregates.MediaInfo}.{DbFieldNames.MediaInfo.Title}", 
+                model.MediaTitle, DbEnums.Contains)
+            {
+                IsPostLookup = true
+            });
         }
 
+        if (!string.IsNullOrEmpty(model.MediaType))
+        {
+            _searchFilters.Add(new Filter($"{DbFieldNames.Aggregates.MediaInfo}.{DbFieldNames.MediaInfo.Type}", 
+                model.MediaType, DbEnums.Equals)
+            {
+                IsPostLookup = true
+            });
+        }
+        
         if (!string.IsNullOrEmpty(model.Branch))
         {
-            _searchFilters.Add(new Filter("branch", model.Branch, DbEnums.Equals));
+            _searchFilters.Add(new Filter(DbFieldNames.PhysicalCopies.Branch, model.Branch, DbEnums.Equals)
+            {
+                IsPostLookup = false,
+                IsObjectId = true
+            });
         } 
     }
+    
 
 }

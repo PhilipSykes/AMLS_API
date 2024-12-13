@@ -1,15 +1,20 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace Blazor.Models;
 using System.ComponentModel.DataAnnotations;
 
 
 public class InventorySearchValidator : ValidationAttribute
 {
-    //TODO: Make validation checker generic & apply to all forms 
+
     protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
         var model = (InventorySearchModel)validationContext.ObjectInstance;
 
-        if (string.IsNullOrWhiteSpace(model.MediaTitle) && string.IsNullOrWhiteSpace(model.Branch)
+        if (string.IsNullOrWhiteSpace(model.MediaTitle) 
+            && string.IsNullOrWhiteSpace(model.Branch) 
+            && string.IsNullOrWhiteSpace(model.MediaType) 
             && string.IsNullOrWhiteSpace(model.Id))
         {
             return new ValidationResult("At least one field must be filled.");

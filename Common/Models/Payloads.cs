@@ -16,7 +16,7 @@ public static class PayLoads
 
     public record Inventory
     {
-        public required List<Entities.MediaInfo> MediaInfoList { get; set; }
+        public required List<Entities.PhysicalInventory> PhysicalMediaList { get; set; }
         public required List<Entities.Branch> BranchesList { get; set; }
     }
 

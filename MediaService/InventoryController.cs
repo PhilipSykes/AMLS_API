@@ -18,19 +18,52 @@ namespace MediaService;
 public class InventoryController : ControllerBase
 {
     private readonly IInventoryManager _inventoryManager;
-    private readonly ISearchRepository<MediaInfo> _mediaSearchRepo;
+    private readonly ISearchRepository<PhysicalInventory> _inventorySearchRepo;
     private readonly ISearchRepository<Branch> _branchSearchRepo;
+    private AgreggateSearchConfig _config = new()
+    { 
+        UseAggregation = true,
+        LookupCollections = new List<string> 
+        { 
+            DocumentTypes.MediaInfo,
+            DocumentTypes.Branches,
+            DocumentTypes.Reservations 
+        },
+        LocalFields = new List<string> 
+        { 
+            DbFieldNames.PhysicalCopies.Info,
+            DbFieldNames.PhysicalCopies.Branch,
+            DbFieldNames.PhysicalCopies.Info 
+        },
+        ForeignFields = new List<string> 
+        { 
+            DbFieldNames.Id,
+            DbFieldNames.Id,
+            DbFieldNames.Reservations.Item 
+        },
+        OutputFields = new List<string> 
+        { 
+            DbFieldNames.Aggregates.MediaInfo,
+            DbFieldNames.Aggregates.BranchDetails,
+            DbFieldNames.Aggregates.Reservations 
+        },
+        ProjectionString = $@"{{
+            '{DbFieldNames.Aggregates.MediaInfo}': {{ $arrayElemAt: ['${DbFieldNames.Aggregates.MediaInfo}', 0] }},
+            '{DbFieldNames.Aggregates.BranchDetails}': {{ $arrayElemAt: ['${DbFieldNames.Aggregates.BranchDetails}', 0] }},
+            '{DbFieldNames.PhysicalCopies.Status}': 1,
+            '{DbFieldNames.PhysicalCopies.Branch}': 1}}"
+    };
 
     /// <summary>
     /// Initializes a new instance of the InventoryController
     /// </summary>
-    /// <param name="mediaSearchRepo">Service for searching mediainfo table</param>
+    /// <param name="inventorySearchRepo">Service for searching and aggregating several tables to produce media inventory</param>
     /// <param name="inventoryManager">Service for managing inventory operations</param>
     /// <param name="branchSearchRepo">Service for searching branch table</param>
-    public InventoryController(ISearchRepository<MediaInfo> mediaSearchRepo,IInventoryManager inventoryManager,ISearchRepository<Branch> branchSearchRepo)
+    public InventoryController(ISearchRepository<PhysicalInventory>  inventorySearchRepo,IInventoryManager inventoryManager,ISearchRepository<Branch> branchSearchRepo)
     {
         _inventoryManager = inventoryManager;
-        _mediaSearchRepo = mediaSearchRepo;
+        _inventorySearchRepo =  inventorySearchRepo;
         _branchSearchRepo = branchSearchRepo;
     }
     
@@ -39,28 +72,25 @@ public class InventoryController : ControllerBase
     /// </summary>
     /// <param name="page">Page number</param>
     /// <param name="count">Items per page</param>
-    /// <returns>Response containing media info and branches list</returns>
+    /// <returns>Response containing media inventory and branches list</returns>
     [Authorize(Policy = Policies.CanViewInventory)]
     [HttpGet]
     public async Task<ActionResult<PaginatedResponse<PayLoads.Inventory>>> Get([FromQuery] int page, [FromQuery] int count)
     {
             (int, int) pagination = ((page - 1) * count, count);
-        
-            var mediaTask = _mediaSearchRepo.PaginatedSearch(
-                DocumentTypes.MediaInfo,
-                pagination,
-                filters: null);
+            
+            var inventoryTask =  _inventorySearchRepo.PaginatedSearch(DocumentTypes.PhysicalMedia, pagination,filters: null,_config);
             
             var branchTask = _branchSearchRepo.Search(
                 DocumentTypes.Branches,
                 filters: null);
 
-            await Task.WhenAll(mediaTask, branchTask);
+            await Task.WhenAll(inventoryTask, branchTask);
         
-            var mediaInfoList = await mediaTask;
+            var mediaInventoryList = await inventoryTask;
             var branches = await branchTask;
             
-            if(mediaInfoList.MatchCount == 0 || branches == null)
+            if(mediaInventoryList.MatchCount == 0 || branches == null)
             {
                 return new PaginatedResponse<PayLoads.Inventory>
                 {
@@ -73,10 +103,10 @@ public class InventoryController : ControllerBase
             {
                 Success = true,
                 StatusCode = QueryResultCode.Ok,
-                MatchCount = mediaInfoList.MatchCount,
+                MatchCount = mediaInventoryList.MatchCount,
                 Data = new PayLoads.Inventory
                 {
-                    MediaInfoList = mediaInfoList.Data,
+                    PhysicalMediaList = mediaInventoryList.Data,
                     BranchesList = branches
                 }
             };
@@ -89,12 +119,12 @@ public class InventoryController : ControllerBase
     /// <param name="filters">List of filters to apply to the search</param>
     /// <param name="page">Page number</param>
     /// <param name="count">Items per page</param>
-    /// <returns>Filtered list of media items</returns>
+    /// <returns>Filtered inventory list of media items</returns>
     [HttpPost("search")]
-    public async Task<ActionResult<PaginatedResponse<List<MediaInfo>>>> SearchMedia(List<Filter> filters, int page, int count)
+    public async Task<ActionResult<PaginatedResponse<List<PhysicalInventory>>>> SearchMedia(List<Filter> filters, int page, int count)
     {
         (int, int) pagination = ((page - 1) * count, count);
-        return  await _mediaSearchRepo.PaginatedSearch(DocumentTypes.MediaInfo,pagination, filters);
+        return await _inventorySearchRepo.PaginatedSearch(DocumentTypes.PhysicalMedia, pagination, filters,_config);
     }
     
     /// <summary>

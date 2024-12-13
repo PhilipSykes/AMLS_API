@@ -87,5 +87,12 @@ namespace Common.Constants
             public const string StartDate = "startDate";
             public const string EndDate = "endDate";
         }
+        
+        public static class Aggregates
+        {
+            public const string MediaInfo = "mediaInfo";
+            public const string BranchDetails = "branchDetails";
+            public const string Reservations = "reservations";
+        }
     }
 }
