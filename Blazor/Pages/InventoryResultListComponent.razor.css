@@ -67,3 +67,39 @@ tbody tr:hover{
     width: 100%;
     padding-left: 20px;
 }
+
+ .action-btn.disabled {
+     opacity: 0.5;
+     cursor: not-allowed;
+ }
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--background-color);
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 300px;
+    text-align: center;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: var(--secondary-text-color);
+}
+
+.modal-content p {
+    margin: 20px 0;
+    color: var(--text-field-border-color);
+}

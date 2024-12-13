@@ -22,12 +22,35 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                 </svg>
             </button>
-            <button class="action-btn edit" @onclick="() => OnEdit(Media)">
-                <svg class="action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                </svg>
-            </button>
+
+            <AuthorizeView Policy="CanEditBranchMedia">
+                <Authorized Context="auth">
+                    <button class="action-btn edit @(HasBranchAccess(auth.User, Media.BranchDetails?.ObjectID) ? "" : "disabled")"@onclick="() => HandleEditClick(auth.User)">
+                        <svg class="action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                    </button>
+                </Authorized>
+                <NotAuthorized>
+                    <button class="action-btn edit disabled" @onclick="ShowUnauthorizedModal">
+                        <svg class="action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                    </button>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
+        @if (showModal)
+        {
+            <div class="modal-backdrop" @onclick="CloseModal">
+                
+                <div class="modal-content" @onclick:stopPropagation="true">
+                    <h3>Access Denied</h3>
+                    <p>@unauthorizedMessage</p> 
+                    <button class="button-primary" @onclick="CloseModal">Close</button> 
+                    </div>
+            </div>
+        }
     </td> 
 </tr>
 @if (IsExpanded)
@@ -78,6 +101,8 @@
     [Parameter] public Entities.PhysicalInventory Media { get; set; } = new();
     public bool IsAvailable { get; set; }
     private bool IsExpanded { get; set; }
+    private bool showModal; 
+    private string unauthorizedMessage = "";
 
     private void ToggleDetails()
     {
@@ -98,5 +123,36 @@
     {
         return Media.BranchDetails?.Name ?? "No Branch";
     } 
+    
+    private void HandleEditClick(ClaimsPrincipal user)
+    {
+        if (HasBranchAccess(user, Media.BranchDetails?.ObjectID))
+        {
+            OnEdit(Media); 
+            
+        }
+        else
+        {
+            unauthorizedMessage = $"You do not have access to edit media items at {Media.BranchDetails?.Name ?? "this branch"}."; showModal = true;
+        }
+    }
+
+    private void ShowUnauthorizedModal()
+    {
+        unauthorizedMessage = "You do not have the required role to edit media items."; 
+        showModal = true;
+    }
+
+    private void CloseModal()
+    {
+        showModal = false; unauthorizedMessage = "";
+    }
+
+    private bool HasBranchAccess(ClaimsPrincipal user, string? branchId)
+    {
+        if (string.IsNullOrEmpty(branchId)) return false; 
+        var branchClaims = user.FindAll(PolicyClaims.BranchAccess).Select(c => c.Value); 
+        return branchClaims.Contains(branchId);
+    }
     
 }

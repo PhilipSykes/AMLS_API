@@ -2,6 +2,7 @@
 @using System.Text.Json
 @inject HttpClient HttpClient
 @inject IAuthService AuthState
+@attribute [Authorize(Policy = Policies.CanViewMetricsReports)]
 
 <div id="page">
     
