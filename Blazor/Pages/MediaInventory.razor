@@ -67,15 +67,12 @@
         var response = await HttpClient.PostAsJsonAsync(
             $"api/inventory/search?page={_pagination.Item1}&count={_pagination.Item2}", 
             filters);
-        Console.WriteLine($"Search Response Status: {response.StatusCode}");
         if (response.IsSuccessStatusCode)
         {
             var searchResponse = await response.Content.ReadFromJsonAsync<PaginatedResponse<List<Entities.PhysicalInventory>>>();
-            Console.WriteLine($"Search Results Count: {searchResponse?.Data?.Count ?? 0}");
             if (searchResponse?.Success == true && searchResponse.Data != null)
             {
                 inventoryData.PhysicalMediaList = searchResponse.Data;
-                Console.WriteLine($"Updated PhysicalMediaList Count: {inventoryData.PhysicalMediaList.Count}");
             }
         } 
         StateHasChanged();
