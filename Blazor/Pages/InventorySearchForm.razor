@@ -45,7 +45,7 @@
         _searchFilters.Clear();
         if (!string.IsNullOrEmpty(model.Id))
         {
-            _searchFilters.Add(new Filter(DbFieldNames.PhysicalCopies.Info, model.Id, DbEnums.Equals)
+            _searchFilters.Add(new Filter(DbFieldNames.PhysicalMedia.Info, model.Id, DbEnums.Equals)
             {
                 IsPostLookup = false,
                 IsObjectId = true
@@ -72,7 +72,7 @@
         
         if (!string.IsNullOrEmpty(model.Branch))
         {
-            _searchFilters.Add(new Filter(DbFieldNames.PhysicalCopies.Branch, model.Branch, DbEnums.Equals)
+            _searchFilters.Add(new Filter(DbFieldNames.PhysicalMedia.Branch, model.Branch, DbEnums.Equals)
             {
                 IsPostLookup = false,
                 IsObjectId = true

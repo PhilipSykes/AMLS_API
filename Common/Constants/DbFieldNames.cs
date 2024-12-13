@@ -73,7 +73,7 @@ namespace Common.Constants
             public const string Branches = "branches";
         }
 
-        public static class PhysicalCopies
+        public static class PhysicalMedia
         {
             public const string Info = "info";
             public const string Branch = "branch";
