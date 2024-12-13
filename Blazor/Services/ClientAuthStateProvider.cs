@@ -1,7 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using Blazored.SessionStorage;
+using Common.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Blazor.Services;
@@ -10,6 +12,7 @@ public class ClientAuthStateProvider : AuthenticationStateProvider
 {
     private readonly HttpClient _httpClient;
     private readonly ISessionStorageService _sessionStorage;
+    
     
     public ClientAuthStateProvider(ISessionStorageService sessionStorage, HttpClient httpClient)
     {
@@ -34,7 +37,7 @@ public class ClientAuthStateProvider : AuthenticationStateProvider
         return new AuthenticationState(new ClaimsPrincipal(identity));
     }
     
-    public void MarkUserAsAuthenticated(string token)
+    public void SetUserAsAuthenticated(string token)
     {
         var handler = new JwtSecurityTokenHandler();
         var jwtToken = handler.ReadJwtToken(token);
@@ -43,7 +46,7 @@ public class ClientAuthStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
     }
 
-    public void MarkUserAsLoggedOut()
+    public void SetUserAsLoggedOut()
     {
         var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(anonymousUser)));

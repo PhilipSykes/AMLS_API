@@ -7,6 +7,11 @@ public static class PayLoads
         public required string Email { get; set; } = string.Empty;
         public required string Password { get; set; } = string.Empty;
     }
+    
+    public record RefreshToken
+    {
+        public required string Token { get; set; }
+    }
 
     public record Reserve
     {

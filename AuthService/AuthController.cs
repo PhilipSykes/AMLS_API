@@ -6,6 +6,8 @@ using static Common.Models.Operations;
 using Common.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Common.Database;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 using static Common.Models.Entities;
 
 namespace AuthService;
@@ -55,6 +57,7 @@ public class AuthController : ControllerBase
             return Unauthorized(new Response<LoginDetails>
             {
                 Success = false,
+                StatusCode = QueryResultCode.BadRequest,
                 Message = "No Results Found",
             });
         }
@@ -65,6 +68,7 @@ public class AuthController : ControllerBase
                 return Unauthorized(new Response<LoginDetails>
                 {
                     Success = false,
+                    StatusCode = QueryResultCode.Unauthorized,
                     Message = "Invalid Credentials",
                 });
             }
@@ -81,6 +85,7 @@ public class AuthController : ControllerBase
             {
                 Success = true,
                 Message = "Login successful",
+                StatusCode = QueryResultCode.Ok,
                 Data = new LoginDetails()
                 {
                     UserID = result[0].UserID,
@@ -88,6 +93,35 @@ public class AuthController : ControllerBase
                     Token = token
                 }
             });
+    }
+    [Authorize]
+    [HttpPost("refresh-token")]
+    public ActionResult<Response<LoginDetails>> RefreshToken([FromBody] Request<PayLoads.RefreshToken> request)
+    {
+        try
+        {
+            var newToken = _tokenAuthService.RefreshToken(request.Data.Token);
+        
+            return Ok(new Response<LoginDetails>
+            {
+                Success = true,
+                Message = "Token refreshed successfully",
+                StatusCode = QueryResultCode.Ok,
+                Data = new LoginDetails
+                {
+                    Token = newToken
+                }
+            });
+        }
+        catch (SecurityTokenException)
+        {
+            return Unauthorized(new Response<LoginDetails>
+            {
+                Success = false,
+                StatusCode = QueryResultCode.Unauthorized,
+                Message = "Invalid token"
+            });
+        }
     }
     
     
