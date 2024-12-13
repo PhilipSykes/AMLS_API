@@ -75,7 +75,7 @@ namespace Common.Constants
 
         public static class PhysicalMedia
         {
-            public const string InfoRef = "info";
+            public const string Info = "info";
             public const string Branch = "branch";
             public const string Status = "status";
         }

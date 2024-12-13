@@ -57,7 +57,7 @@ namespace Common.Models
         {
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
-            public string ObjectID { get; init; } = string.Empty;
+            public string Id { get; init; } = string.Empty;
 
         [BsonElement(DbFieldNames.MediaInfo.Title)]
         public string Title { get; init; } = string.Empty;
@@ -140,7 +140,7 @@ namespace Common.Models
             [BsonRepresentation(BsonType.ObjectId)]
             public string Id { get; init; } = string.Empty;
             
-            [BsonElement(DbFieldNames.PhysicalMedia.InfoRef)]
+            [BsonElement(DbFieldNames.PhysicalMedia.Info)]
             [BsonRepresentation(BsonType.ObjectId)]
             public string InfoRef = string.Empty;
             
