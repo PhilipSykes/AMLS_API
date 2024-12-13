@@ -24,3 +24,11 @@ Code for this service was inspired from [Securing Your Blazor Apps - Authenticat
 Code for this system was inspired from
 - [Clarifying Identity Authorization using Claims as Roles, Roles and Claims](https://stackoverflow.com/questions/45997100/clarifying-identity-authorization-using-claims-as-roles-roles-and-claims-or-ro)
 - [Securing Your Blazor Apps - Configuring Role-Based Authorization with Client-Side Blazor](https://chrissainty.com/securing-your-blazor-apps-configuring-role-based-authorization-with-client-side-blazor/)
+### 3. JWT Creation & Validation
+
+**Classes Affected:**
+-`AuthService/Program.cs`
+- `AuthService/TokenAuthService.cs`
+**Sources:**
+https://auth0.com/blog/how-to-validate-jwt-dotnet/
+https://dotnetfullstackdev.medium.com/jwt-token-authentication-in-c-a-beginners-guide-with-code-snippets-7545f4c7c597
