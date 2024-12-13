@@ -2,7 +2,7 @@
 @* @attribute [Authorize(Policy = )] *@
 @inject HttpClient HttpClient
 @inject IAuthService AuthState
-@inject NavigationManager Nav
+
 
 <PageTitle>Inventory</PageTitle>
 
@@ -21,9 +21,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var media in inventoryData.MediaInfoList)
+                @foreach (var item in inventoryData.PhysicalMediaList)
                 {
-                    <InventoryResultListComponent Media="@media" OnViewDetailsCallback="HandleViewDetails" OnEditCallback="HandleEdit"/>
+                    <InventoryResultListComponent Media="@item"/>
                 }
                 </tbody>
             </table>
@@ -35,7 +35,7 @@
 @code { 
     private PayLoads.Inventory inventoryData = new() 
     { 
-        MediaInfoList = new(), 
+        PhysicalMediaList = new(), 
         BranchesList = new() 
     };
     private (int, int) _pagination = (1, 20); 
@@ -53,22 +53,30 @@
     {
         HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken); 
         var response = await HttpClient.GetFromJsonAsync<Response<PayLoads.Inventory>>($"api/inventory/?page={_pagination.Item1}&count={_pagination.Item2}");
+        
         if (response?.Success == true && response.Data != null)
         {
+            Console.WriteLine($"PhysicalMediaList Entry: {response.Data.PhysicalMediaList[0]}");
             inventoryData = response.Data;
         }
     }
 
     private async Task GetSearchResults(List<Filter> filters)
     {
-        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken); 
-        var response = await HttpClient.PostAsJsonAsync($"api/inventory/search?page={_pagination.Item1}&count={_pagination.Item2}", filters);
+        HttpClient.DefaultRequestHeaders.Authorization = 
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken); 
+        var response = await HttpClient.PostAsJsonAsync(
+            $"api/inventory/search?page={_pagination.Item1}&count={_pagination.Item2}", 
+            filters);
+        Console.WriteLine($"Search Response Status: {response.StatusCode}");
         if (response.IsSuccessStatusCode)
         {
-            var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.MediaInfo>>>();
-            if (searchResponse != null)
+            var searchResponse = await response.Content.ReadFromJsonAsync<PaginatedResponse<List<Entities.PhysicalInventory>>>();
+            Console.WriteLine($"Search Results Count: {searchResponse?.Data?.Count ?? 0}");
+            if (searchResponse?.Success == true && searchResponse.Data != null)
             {
-                inventoryData.MediaInfoList = searchResponse.Data;
+                inventoryData.PhysicalMediaList = searchResponse.Data;
+                Console.WriteLine($"Updated PhysicalMediaList Count: {inventoryData.PhysicalMediaList.Count}");
             }
         } 
         StateHasChanged();
@@ -76,14 +84,8 @@
 
     private async Task MakeSearch(List<Filter> filters)
     {
-        inventoryData.MediaInfoList.Clear();
+        inventoryData.PhysicalMediaList.Clear();
         await GetSearchResults(filters);
-    } 
-    private async Task HandleViewDetails(Entities.MediaInfo item) { 
-        // Implement view details logic 
-    } 
-    private async Task HandleEdit(Entities.MediaInfo item) { 
-        // Implement edit logic 
     } 
 
 }

@@ -17,6 +17,17 @@ public class CatalogController : ControllerBase
 {
     private readonly Exchange _exchange;
     private readonly ISearchRepository<MediaInfo> _mediaSearchRepo;
+    private AgreggateSearchConfig _config = new()
+    {
+        UseAggregation = true,
+        LookupCollections = new List<string> { DocumentTypes.PhysicalMedia },
+        LocalFields = new List<string> { DbFieldNames.Id },
+        ForeignFields = new List<string> { DbFieldNames.PhysicalCopies.Info },
+        OutputFields = new List<string> { DbFieldNames.MediaInfo.PhysicalCopies },
+        ProjectionString = $@"{{  
+            '{DbFieldNames.MediaInfo.PhysicalCopies}.{DbFieldNames.Id}': 0, 
+            '{DbFieldNames.MediaInfo.PhysicalCopies}.{DbFieldNames.PhysicalCopies.Info}': 0 }}"
+    };
     
     /// <summary>
     /// Initializes a new instance of the CatalogController
@@ -39,19 +50,7 @@ public class CatalogController : ControllerBase
     public async Task<ActionResult<PaginatedResponse<List<MediaInfo>>>> GetMedia(int page, int count)
     {
         (int, int) pagination = ((page - 1) * count, count);
-        AgreggateSearchConfig config = new AgreggateSearchConfig()
-        {
-            UseAggregation = true,
-            LookupCollection = DocumentTypes.PhysicalMedia,
-            LocalField = "_id",
-            ForeignField = "info",
-            As = "physicalCopies",
-            ProjectionString = @"{  
-            'physicalCopies._id': 0, 
-            'physicalCopies.info': 0 
-            }"
-        };
-        return await _mediaSearchRepo.PaginatedSearch(DocumentTypes.MediaInfo,pagination,filters: null,config);
+        return await _mediaSearchRepo.PaginatedSearch(DocumentTypes.MediaInfo,pagination,filters: null,_config);
     }
     
     /// <summary>
@@ -65,18 +64,6 @@ public class CatalogController : ControllerBase
     public async Task<ActionResult<PaginatedResponse<List<MediaInfo>>>> SearchMedia(List<Filter> filters, int page, int count)
     {
         (int, int) pagination = ((page - 1) * count, count);
-        AgreggateSearchConfig config = new AgreggateSearchConfig()
-        {
-            UseAggregation = true,
-            LookupCollection = DocumentTypes.PhysicalMedia,
-            LocalField = "_id",
-            ForeignField = "info",
-            As = "physicalCopies",
-            ProjectionString = @"{  
-            'physicalCopies._id': 0, 
-            'physicalCopies.info': 0 
-            }"
-        };
-        return await _mediaSearchRepo.PaginatedSearch(DocumentTypes.MediaInfo,pagination,filters,config);
+        return await _mediaSearchRepo.PaginatedSearch(DocumentTypes.MediaInfo,pagination,filters,_config);
     }
 }

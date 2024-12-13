@@ -9,6 +9,7 @@ namespace Common.Database;
 public interface IFilterBuilder<T>
 {
     FilterDefinition<T> BuildFilter(List<Filter> filterObjectsIn);
+    (List<Filter> preFilters, List<Filter> postFilters) SplitFilters(List<Filter> filters);
 }
 public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
 {
@@ -21,14 +22,13 @@ public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
             if (filterObjectsIn is null) // Allows filterless queries
                 return builder.Empty;
 
-
             var mongoFilters = Builders<BsonDocument>.Filter.Empty;
 
             foreach (var filterObject in filterObjectsIn)
                 switch (filterObject.Operation)
                 {
                     case DbEnums.Equals:
-                        if (filterObject.Key == "_id")
+                        if (filterObject.Key == DbFieldNames.Id || filterObject.IsObjectId)
                             mongoFilters &= builder.Eq(filterObject.Key, new ObjectId(filterObject.Value));
                         else
                             mongoFilters &= builder.Eq(filterObject.Key, filterObject.Value);
@@ -58,5 +58,15 @@ public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
         {
             throw new SearchException(SearchException.SearchErrorType.Validation);
         }
+    }
+    public (List<Filter> preFilters, List<Filter> postFilters) SplitFilters(List<Filter> filters)
+    {
+        if (filters == null || !filters.Any())
+            return (new List<Filter>(), new List<Filter>());
+
+        return (
+            filters.Where(f => !f.IsPostLookup).ToList(),
+            filters.Where(f => f.IsPostLookup).ToList()
+        );
     }
 }

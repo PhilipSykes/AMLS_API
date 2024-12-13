@@ -1,9 +1,9 @@
 @inject NavigationManager Nav
 
 <tr class="@(IsExpanded ? "expanded" : null)">
-    <td>@Media.ObjectID</td> 
-    <td class="title">@Media.Title</td> 
-    <td><span class="pill">@Media.Type</span></td> 
+    <td>@Media.ObjectID</td>
+    <td class="title">@Media.MediaInfo.Title</td>
+    <td><span class="pill">@Media.MediaInfo.Type</span></td>
     <td> 
         @if (IsAvailable)
         {
@@ -14,7 +14,7 @@
             <span class="pill unavailable">Unavailable</span>
         } 
     </td> 
-    <td><span class="pill">@(Media.PhysicalCopies?.FirstOrDefault()?.Branch ?? "No Branch")</span></td> 
+    <td><span class="pill">@GetBranchName()</span> </td> 
     <td>
         <div class="action-buttons">
             <button class="action-btn @(IsExpanded ? "active" : null)" @onclick="ToggleDetails">
@@ -37,43 +37,45 @@
             <div class="details-content"> 
                 <div class="details-section"> 
                     <h3>Details</h3>
-                    @switch (Media.Type?.ToLower())
+                    @switch (Media.MediaInfo.Type?.ToLower())
                     {
                         case "book":
-                            <p><strong>ISBN:</strong> @Media.Isbn</p>
-                            <p><strong>Author:</strong> @Media.Author</p>
-                            <p><strong>Publisher:</strong> @Media.Publisher</p>
+                            <p><strong>ISBN:</strong> @Media.MediaInfo.Isbn</p>
+                            <p><strong>Author:</strong> @Media.MediaInfo.Author</p>
+                            <p><strong>Publisher:</strong> @Media.MediaInfo.Publisher</p>
                             break;
                         case "film":
-                            <p><strong>Director:</strong> @Media.Director</p>
-                            <p><strong>Studio:</strong> @Media.Studio</p>
+                            <p><strong>Director:</strong> @Media.MediaInfo.Director</p>
+                            <p><strong>Studio:</strong> @Media.MediaInfo.Studio</p>
                             break;
                         case "tv series":
-                            <p><strong>Creator:</strong> @Media.Creator</p>
-                            <p><strong>Network:</strong> @Media.Network</p>
-                            <p><strong>Season:</strong> @Media.Season</p>
-                            <p><strong>Episodes:</strong> @Media.Episodes</p>
+                            <p><strong>Creator:</strong> @Media.MediaInfo.Creator</p>
+                            <p><strong>Network:</strong> @Media.MediaInfo.Network</p>
+                            <p><strong>Season:</strong> @Media.MediaInfo.Season</p>
+                            <p><strong>Episodes:</strong> @Media.MediaInfo.Episodes</p>
                             break;
                     }
-                    <p><strong>Release Date:</strong> @Media.ReleaseDate.ToShortDateString()</p>
+                    <p><strong>Release Date:</strong> @Media.MediaInfo.ReleaseDate.ToShortDateString()</p>
                 </div>
-                <div class="details-section"> 
+                <div class="details-section">
                     <h3>Status</h3> 
-                    <p><strong>Loan Status:</strong> @Media.Publisher</p> 
-                    <p><strong>Loan Date:</strong> </p> 
-                    <p><strong>Reservation Status:</strong> @Media.Publisher</p> 
-                    <p><strong>Reservation Date:</strong> </p> 
-                    <p><strong>No of Reservations:</strong> </p> 
+                    @{ var currentReservation = Media.Reservations?.OrderBy(r => r.StartDate).FirstOrDefault(); } 
+                    <p><strong>Loan Status:</strong> @Media.Status</p>
+                    <p><strong>Reservation Status:</strong> 
+                        @if (currentReservation != null) { <span>Reserved</span> } else { <span>Available for Reservation</span> } </p> 
+                    @if (currentReservation != null) { 
+                        <p><strong>Next Reservation:</strong> @currentReservation.StartDate.ToShortDateString()</p>
+                        <p><strong>Reservation End:</strong> @currentReservation.EndDate.ToShortDateString()</p>
+                        
+                    } <p><strong>Total Reservations:</strong> @(Media.Reservations?.Count ?? 0)</p> 
                 </div> 
             </div> 
         </td> 
-    </tr> 
-}
+    </tr>
+} 
 
 @code {
-    [Parameter] public Entities.MediaInfo Media { get; set; } = new();
-    [Parameter] public EventCallback<Entities.MediaInfo> OnViewDetailsCallback { get; set; }
-    [Parameter] public EventCallback<Entities.MediaInfo> OnEditCallback { get; set; }
+    [Parameter] public Entities.PhysicalInventory Media { get; set; } = new();
     public bool IsAvailable { get; set; }
     private bool IsExpanded { get; set; }
 
@@ -82,13 +84,19 @@
         IsExpanded = !IsExpanded;
     }
 
-    private async Task OnEdit(Entities.MediaInfo item)
+    private async Task OnEdit(Entities.PhysicalInventory item)
     {
-        Nav.NavigateTo($"/editMedia/{Media.ObjectID}");
+        Nav.NavigateTo($"/editMedia/{Media.MediaInfo.ObjectID}");
     }
 
     protected override void OnInitialized()
     {
-        IsAvailable = Media.PhysicalCopies?.Any(copy => copy.Status == "Available") ?? false;
+        IsAvailable = Media.Status == "Available";
     }
+
+    private string GetBranchName()
+    {
+        return Media.BranchDetails?.Name ?? "No Branch";
+    } 
+    
 }

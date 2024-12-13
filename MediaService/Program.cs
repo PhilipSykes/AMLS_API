@@ -58,6 +58,7 @@ builder.Services.AddScoped<IDatabaseConnection, DatabaseConnection>();
 builder.Services.AddScoped<IFilterBuilder<BsonDocument>, BsonFilterBuilder>();
 builder.Services.AddScoped<ISearchRepository<MediaInfo>, SearchRepository<MediaInfo>>();
 builder.Services.AddScoped<ISearchRepository<Branch>, SearchRepository<Branch>>();
+builder.Services.AddScoped<ISearchRepository<PhysicalInventory>, SearchRepository<PhysicalInventory>>();
 builder.Services.AddScoped<IInventoryManager, InventoryManager>();
 builder.Services.AddEndpointsApiExplorer();
 
