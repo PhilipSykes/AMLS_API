@@ -14,7 +14,8 @@ namespace Common.Database
         public Task<Response<bool>> CreateReservation(Reservation reservation);
         public Task<Response<bool>> ExtendReservation(string reservationId, DateTime newEndDate);
         public Task<Response<bool>> CancelReservation(string reservationId);
-        
+        public Task<Response<List<ReservableItem>>> GetReservableItems(string media, string[] branches, int minimumLengthDays);
+
     }
 
     
@@ -23,6 +24,7 @@ namespace Common.Database
         private readonly IMongoDatabase _database;
         private readonly IMongoCollection<Reservation> _reservations;
         private readonly IMongoCollection<Users> _users;
+        private readonly IMongoCollection<PhysicalMedia> _physical;
         
         public ReservationRepository(IOptions<MongoDBConfig> options)
         {
@@ -31,6 +33,7 @@ namespace Common.Database
             _database = client.GetDatabase(config.DatabaseName);
             _reservations = _database.GetCollection<Reservation>("Reservations");
             _users = _database.GetCollection<Users>("Users");
+            _physical = _database.GetCollection<PhysicalMedia>("PhysicalMedia");
         }
 
         /// <summary>
@@ -187,6 +190,91 @@ namespace Common.Database
                     StatusCode = QueryResultCode.InternalServerError
                 };
             }
+        }
+
+
+        public async Task<Response<List<ReservableItem>>> GetReservableItems(string media, string[] branches, int minimumLengthDays)
+        {
+            List<ReservableItem> reservables = new List<ReservableItem>();
+            const string lookupField = "reservations";
+            try
+            {
+                // aggregate physicalmedia with reservations
+                // where info is media, and branch is in branches
+                // sort reservations by start date
+                // for each item, parse reservations, find time gaps bigger than minimum days
+                // add to list
+
+                var items = await _physical.Aggregate()
+                    .Match(i => i.InfoRef == media && branches.Contains(i.Location))
+                    .Lookup(DocumentTypes.Reservations, DbFieldNames.Id, DbFieldNames.Reservations.Item, lookupField)
+                    .Project(new BsonDocument
+                    {
+                        {
+                            lookupField, new BsonDocument
+                            {
+                                {
+                                    "$sortArray", new BsonDocument
+                                    {
+                                        { "input", "$" + lookupField },
+                                        { "sortBy", new BsonDocument { { DbFieldNames.Reservations.StartDate, 1 } } }
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    .ToListAsync();
+
+                DateTime start = DateTime.Today;
+                DateTime end;
+                List<Timeslot> timeslots = new();
+                // The code below finds timeslots for each item when it can be reserved.
+                // It isn't perfect though, because it still searches in ascending order, and skips until it gets to present/future reservations
+                // I'm keeping it this way (for now) because the start always contains the last end date by the end of the loop,
+                // otherwise I have to find and store before the loop which looks a bit ugly
+                foreach (var item in items)
+                {
+                    foreach (var reservation in item[lookupField].AsBsonArray)
+                    {
+                        if (reservation[DbFieldNames.Reservations.EndDate].ToUniversalTime() < DateTime.Today)
+                            continue; // Skip through the reservations in the past
+
+                        end = reservation[DbFieldNames.Reservations.StartDate].ToUniversalTime();
+                        if (end > start.AddDays(minimumLengthDays))
+                        {
+                            timeslots.Add(new Timeslot(start, end));
+                        }
+
+                        start = reservation[DbFieldNames.Reservations.EndDate].ToUniversalTime();
+                    }
+
+                    reservables.Add(new ReservableItem
+                    {
+                        Item = item["_id"].ToString(),
+                        BranchName = "temporary",
+                        Timeslots = timeslots,
+                        LastEnd = start
+                    });
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                return new Response<List<ReservableItem>>
+                {
+                    Success = false,
+                    Message = "Couldn't return reservable media due to an error",
+                    StatusCode = QueryResultCode.InternalServerError
+                };
+            }
+            
+            return new Response<List<ReservableItem>>
+            {
+                Data = reservables,
+                Success = true,
+                StatusCode = QueryResultCode.Ok
+            };
         }
 
         /// <summary>

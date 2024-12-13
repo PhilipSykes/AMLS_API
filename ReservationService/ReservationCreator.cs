@@ -14,7 +14,8 @@ public interface IReservationCreator
     Task<Response<bool>> CreateReservation(Reservation reservation);
     Task<Response<bool>> ExtendReservation(string reservationId, DateTime newEndDate);
     Task<Response<bool>> CancelReservation(string reservationId);
-    
+    Task<Response<List<ReservableItem>>> GetReservableItems(string media, string[] branches, int minimumDuration);
+
 }
 public class ReservationCreator : IReservationCreator
 {
@@ -39,5 +40,11 @@ public class ReservationCreator : IReservationCreator
     {
         return await _reservationRepository.CancelReservation(reservationId);
     }
+
+    public async Task<Response<List<ReservableItem>>> GetReservableItems(string media, string[] branches, int minimumDuration)
+    {
+        return await _reservationRepository.GetReservableItems(media, branches, minimumDuration);
+    }
+
     
 }

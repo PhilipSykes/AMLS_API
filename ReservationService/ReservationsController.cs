@@ -41,7 +41,7 @@ public class ReservationsController : ControllerBase
     /// </summary>
     /// <param name="request">Reservation details including email recipients</param>
     /// <returns>ActionResult indicating success or failure</returns>
-    [HttpPost("create")] // Change to POST after tests
+    [HttpPost("create")]
     public async Task<ActionResult> Create(Reservation reservation)
     {
         //if (request.EmailDetails.RecipientAddresses.Count == 0)
@@ -75,5 +75,13 @@ public class ReservationsController : ControllerBase
         var result = await _reservationCreator.ExtendReservation(id, newEndDate);
         
         return Ok(new { message = result.StatusCode });
+    }
+
+    [HttpPost("getReservable")]
+    public async Task<ActionResult<Operations.Response<List<ReservableItem>>>> GetReservableItems(string media, string[] branches, int minimumDays)
+    {
+        var result = await _reservationCreator.GetReservableItems(media, branches, minimumDays);
+
+        return result;
     }
 }
