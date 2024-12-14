@@ -1,0 +1,83 @@
+@page "/ManageMembers"
+@inject HttpClient HttpClient
+@inject IAuthService AuthState
+@attribute [Authorize(Policy = Policies.CanViewUsers)]
+
+<PageTitle>Member Management</PageTitle>
+
+<div id="responsive-layout">
+    <MemberSearchForm BranchList="@MemberData.BranchesList" OnSubmitCallback="MakeSearch"/>
+    <div class="results-container">
+        <table class="results-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Date of Birth</th>
+                <th>Branch</th>  
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var user in MemberData.MemberList)
+            {
+                <MemberResultList user="@user"/>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@code {
+    private PayLoads.MemberData MemberData = new() 
+    { 
+        MemberList = new(),
+        BranchesList = new()
+    };
+    
+    private (int, int) _pagination = (1, 20); 
+    private string? _jwtToken;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _jwtToken = await AuthState.GetBearerToken(); 
+        await GetMembers(); 
+    }
+    
+    private async Task MakeSearch(List<Filter> filters)
+    {
+        MemberData.MemberList.Clear();
+        await GetMemberSearchResults(filters);
+    } 
+
+    private async Task GetMembers()
+    {
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        var response = await HttpClient.GetFromJsonAsync<Response<PayLoads.MemberData>>(
+            $"api/usermanagement/members?page={_pagination.Item1}&count={_pagination.Item2}");
+        
+        if (response?.Success == true && response.Data != null)
+        {
+            MemberData = response.Data;
+        }
+    }
+
+    private async Task GetMemberSearchResults(List<Filter> filters)
+    {
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        var response = await HttpClient.PostAsJsonAsync(
+            $"api/sermanagement/members/search?page={_pagination.Item1}&count={_pagination.Item2}", 
+            filters);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.Members>>>();
+            if (searchResponse?.Success == true && searchResponse.Data != null)
+            {
+                MemberData.MemberList = searchResponse.Data;
+            }
+        }
+        StateHasChanged();
+    }
+}

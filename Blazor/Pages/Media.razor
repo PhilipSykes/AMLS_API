@@ -99,7 +99,7 @@
     {
         Entities.Reservation reservation = new Entities.Reservation
         {
-            Id = ObjectId.GenerateNewId().ToString(),
+            ObjectId = ObjectId.GenerateNewId().ToString(),
             StartDate = DateTime.UtcNow,
             EndDate = DateTime.UtcNow.AddDays(1),
             Item = "673f6d28e580ac7f9f4fa9b3",

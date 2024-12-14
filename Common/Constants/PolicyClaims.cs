@@ -32,7 +32,8 @@ public static class Policies
     public const string CanViewInventory = "CanViewInventory";
     
     //SystemAdmin permissions 
-    public const string CanEditUserRoles = "RequireEditUsers";
+    public const string CanViewUsers = "CanViewUsers";
+    public const string CanEditUserRoles = "CanEditUsers";
     public const string CanEditUserPermissions = "CanEditUserPermissions";
     public const string CanViewMetricsReports = "CanViewMetricsReports";
 }

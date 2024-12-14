@@ -50,7 +50,7 @@ namespace Common.Constants
             public const string Episodes = "episodes";  
             public const string EndDate = "endDate";    
         }
-        public static class Users
+        public static class Members
         {
             public const string FirstName = "firstName";
             public const string LastName = "lastName";
@@ -68,8 +68,9 @@ namespace Common.Constants
             public const string FirstName = "firstName";
             public const string LastName = "lastName";
             public const string DateOfBirth = "dateOfBirth";
+            public const string Role = "role";
             public const string Email = "email";
-            public const string PhoneNumber = "phoneNumber";
+            public const string PhoneNumber = "phone";
             public const string Branches = "branches";
         }
 

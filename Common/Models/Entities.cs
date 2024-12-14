@@ -30,7 +30,7 @@ namespace Common.Models
         {
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
-            public string ObjectID { get; init; } = string.Empty;
+            public string ObjectId { get; init; } = string.Empty;
 
             [BsonElement(DbFieldNames.Branch.Name)]
             public string Name { get; init; } = string.Empty;
@@ -56,7 +56,7 @@ namespace Common.Models
             //Common 
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
-            public string ObjectID { get; init; } = string.Empty;
+            public string ObjectId { get; init; } = string.Empty;
 
             [BsonElement(DbFieldNames.MediaInfo.Title)]
             public string Title { get; init; } = string.Empty;
@@ -137,46 +137,74 @@ namespace Common.Models
             public string Status { get; init; } = "Unknown";
         }
 
-        public record Users
+        public record Members
         {
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
-            public string Id { get; init; }
+            public string ObjectId { get; init; }
 
-            [BsonElement(DbFieldNames.Users.FirstName)]
+            [BsonElement(DbFieldNames.Members.FirstName)]
             public string FirstName { get; init; } = string.Empty;
 
-            [BsonElement(DbFieldNames.Users.LastName)]
+            [BsonElement(DbFieldNames.Members.LastName)]
             public string LastName { get; init; } = string.Empty;
 
-            [BsonElement(DbFieldNames.Users.DateOfBirth)]
+            [BsonElement(DbFieldNames.Members.DateOfBirth)]
             [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
             public DateTime DateOfBirth { get; init; } = DateTime.UtcNow;
 
-            [BsonElement(DbFieldNames.Users.Email)]
+            [BsonElement(DbFieldNames.Members.Email)]
             public string Email { get; init; } = string.Empty;
 
-            [BsonElement(DbFieldNames.Users.PhoneNumber)]
+            [BsonElement(DbFieldNames.Members.PhoneNumber)]
             public string PhoneNumber { get; init; } = string.Empty;
 
-            [BsonElement(DbFieldNames.Users.Settings)]
+            [BsonElement(DbFieldNames.Members.Settings)]
             public Dictionary<string, string> Settings { get; init; } = new Dictionary<string, string>();
 
-            [BsonElement(DbFieldNames.Users.Favourites)]
+            [BsonElement(DbFieldNames.Members.Favourites)]
             public string[] Favourites { get; init; } = [];
 
-            [BsonElement(DbFieldNames.Users.History)]
+            [BsonElement(DbFieldNames.Members.History)]
             public string[] History { get; init; } = [];
 
-            [BsonElement(DbFieldNames.Users.NearestBranch)]
+            [BsonElement(DbFieldNames.Members.NearestBranch)]
             public string NearestBranch { get; init; } = string.Empty;
+        }
+        
+        public record Staff
+        {
+            [BsonId]
+            [BsonRepresentation(BsonType.ObjectId)]
+            public string ObjectId { get; init; } = string.Empty;
+            
+            [BsonElement(DbFieldNames.Staff.FirstName)]
+            public string FirstName { get; init; } = string.Empty;
+            
+            [BsonElement(DbFieldNames.Staff.LastName)]
+            public string LastName { get; init; } = string.Empty;
+            
+            [BsonElement(DbFieldNames.Staff.DateOfBirth)]
+            public string DateOfBirth { get; init; } = string.Empty;
+            
+            [BsonElement(DbFieldNames.Staff.Role)]
+            public string Role { get; init; } = string.Empty;
+            
+            [BsonElement(DbFieldNames.Staff.Email)]
+            public string Email { get; init; } = string.Empty;
+            
+            [BsonElement(DbFieldNames.Staff.PhoneNumber)]
+            public string PhoneNumber { get; init; } = string.Empty;
+            
+            [BsonElement(DbFieldNames.Staff.Branches)]
+            public string[] Branches { get; init; } = [];
         }
 
         public record Reservation
         {
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
-            public string Id { get; init; }
+            public string ObjectId { get; init; }
 
             [BsonRepresentation(BsonType.ObjectId)]
             [BsonElement(DbFieldNames.Reservations.Member)]
@@ -200,7 +228,7 @@ namespace Common.Models
         {
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
-            public string ObjectID { get; init; } = string.Empty;
+            public string ObjectId { get; init; } = string.Empty;
 
             [BsonElement(DbFieldNames.PhysicalCopies.Status)]
             public string Status { get; init; } = string.Empty;

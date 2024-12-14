@@ -29,6 +29,19 @@
       }
     },
     {
+      "UpstreamPathTemplate": "/api/usermanagement/{everything}",
+      "UpstreamHttpMethod": [ "POST", "GET","PUT","DELETE" ],
+      "DownstreamPathTemplate": "/usermanagement/{everything}",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "localhost", "Port": 7002}
+      ],
+      "LoadBalancerOptions": {"Type": "LeastConnection"},
+      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "SystemAdmin"}
+    },
+    {
       "UpstreamPathTemplate": "/api/catalog/{everything}",
       "UpstreamHttpMethod": [ "POST", "GET" ],
       "DownstreamPathTemplate": "/catalog/{everything}",
@@ -77,9 +90,9 @@
       "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
     },
     {
-      "UpstreamPathTemplate": "/api/admin/{everything}",
+      "UpstreamPathTemplate": "/api/metric/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "DownstreamPathTemplate": "/admin/{everything}",
+      "DownstreamPathTemplate": "/metric/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [

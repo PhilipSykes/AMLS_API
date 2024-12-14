@@ -24,6 +24,19 @@ public static class PayLoads
         public required List<Entities.PhysicalInventory> PhysicalMediaList { get; set; }
         public required List<Entities.Branch> BranchesList { get; set; }
     }
+    
+    public record StaffData
+    {
+        public required List<Entities.Staff> StaffList { get; set; }
+        public required List<Entities.Branch> BranchesList { get; set; }
+    }
+    
+    public record MemberData
+    { 
+        public required List<Entities.Members> MemberList { get; set; }
+        
+        public required List<Entities.Branch> BranchesList { get; set; }
+    }
 
     public record ReservationExtension
     {

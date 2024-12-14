@@ -44,11 +44,15 @@ builder.Services.AddAuthorizationCore(options =>
         .RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager)
         .RequireClaim(PolicyClaims.BranchAccess));
     
+    options.AddPolicy(Policies.CanViewUsers, policy => 
+        policy.RequireRole(PolicyRoles.SystemAdmin));
+    
     options.AddPolicy(Policies.CanEditUserRoles, policy => 
         policy.RequireRole(PolicyRoles.SystemAdmin));
             
     options.AddPolicy(Policies.CanEditUserPermissions, policy => 
         policy.RequireRole(PolicyRoles.SystemAdmin));
+    
     options.AddPolicy(Policies.CanViewMetricsReports, policy => 
         policy.RequireRole(PolicyRoles.SystemAdmin));
     

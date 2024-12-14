@@ -10,21 +10,33 @@
         </div>
         <div class="nav-right">
             <AuthorizeView>
-            <Authorized>
-                @foreach (var link in GetAuthorizedLinks(context.User))
-                {
+                <Authorized>
+                    @foreach (var link in GetAuthorizedLinks(context.User))
+                    {
+                    @if (link.SubLinks != null)
+                    {
+                    <div class="dropdown">
+                        <button class="button-secondary dropdown-toggle">@link.Text</button>
+                        <div class="dropdown-menu">
+                            @foreach (var subLink in link.SubLinks)
+                            {
+                            <a href="@subLink.Href">@subLink.Text</a>
+                            }
+                        </div>
+                    </div>
+                    }
+                    else
+                    {
                     <a class="button-secondary" href="@link.Href">@link.Text</a>
-                }
-                <a class="button-primary" @onclick="HandleLogout">Log out</a>
-            </Authorized>
-            <NotAuthorized>
-                <a class="button-primary" href="/login">Sign in</a>
-            </NotAuthorized>
-                </AuthorizeView>
+                    }
+                    }
+                    <a class="button-primary" @onclick="HandleLogout">Log out</a>
+                </Authorized>
+                <NotAuthorized>
+                    <a class="button-primary" href="/login">Sign in</a>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
-    </div>
-    <div id="mobile-nav">
-        
     </div>
 </nav>
 
@@ -58,7 +70,7 @@
         }
         return allowedLinks;
     }
-    private record NavLink(string Text, string Href, string[] Roles);
+    private record NavLink(string Text, string Href, string[] Roles, NavLink[]? SubLinks = null);
     
     private readonly NavLink[] _navLinks = new[]
     {
@@ -66,7 +78,11 @@
         new NavLink("Staff Management", "/staff", new[] { PolicyRoles.BranchManager }),
         new NavLink("Branch Reports", "/reports", new[] { PolicyRoles.BranchManager }),
         new NavLink("System Metrics", "/metrics", new[] { PolicyRoles.SystemAdmin }),
-        new NavLink("User Management", "/users", new[] { PolicyRoles.SystemAdmin }),
+        new NavLink("User Management", "", new[] { PolicyRoles.SystemAdmin }, new[]
+        {
+            new NavLink("Manage Staff", "/managestaff", new[] { PolicyRoles.SystemAdmin }),
+            new NavLink("Manage Members", "/managemembers", new[] { PolicyRoles.SystemAdmin })
+        }),
         new NavLink("My Reservations", "/reservations", new[] { PolicyRoles.Member }),
         new NavLink("My Loans", "/loans", new[] { PolicyRoles.Member }),
     };

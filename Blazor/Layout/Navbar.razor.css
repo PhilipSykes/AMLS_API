@@ -73,7 +73,101 @@
     transition: 0.3s ease-in-out;
 }
 
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    font-size: 14px;
+    font-weight: 650;
+    text-decoration: none;
+    color: var(--text-field-border-color);
+    user-select: none;
+    width: fit-content;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.dropdown-toggle:hover {
+    color: var(--button-secondary-hover-color);
+    transition: 0.3s ease-in-out;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 0;
+    margin-top: 10px;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    min-width: 180px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.dropdown:hover .dropdown-menu,
+.dropdown-menu:hover {
+    display: block;
+}
+
+.dropdown::after {
+    content: '';
+    position: absolute;
+    bottom: -15px; 
+    left: 0;
+    right: 0;
+    height: 15px;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: var(--text-field-border-color);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.dropdown-menu a:hover {
+    background-color: var(--text-field-background-color);
+    color: var(--button-secondary-hover-color);
+}
+
+.dropdown-menu a:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dropdown-toggle::after {
+    content: '';
+    display: inline-block;
+    margin-left: 6px;
+    vertical-align: middle;
+    border-top: 4px solid var(--text-field-border-color);
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+    transition: transform 0.2s ease;
+}
+
+.dropdown:hover .dropdown-toggle::after {
+    transform: rotate(180deg);
+    border-top-color: var(--button-secondary-hover-color);
+}
+
 @media (max-width: 868px) {
+    .dropdown-menu {
+        position: fixed;
+        top: auto;
+        bottom: 58px;
+        right: 20px;
+        margin-top: 0;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
 }
 @media (max-width: 560px) {
     .navbar {
@@ -81,5 +175,10 @@
         bottom: 0;
         left: 0;
         width: 100vw;
+    }
+    .dropdown-menu {
+        width: calc(100vw - 40px);
+        right: 50%;
+        transform: translateX(50%);
     }
 }
