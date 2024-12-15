@@ -213,7 +213,7 @@ namespace Common.Models
             public DateTime DateOfBirth { get; init; } = DateTime.UtcNow;
             
             [BsonElement(DbFieldNames.Staff.Role)]
-            public string Role { get; init; } = string.Empty;
+            public string Role { get; set; } = string.Empty;
             
             [BsonElement(DbFieldNames.Staff.Email)]
             public string Email { get; init; } = string.Empty;
@@ -222,7 +222,7 @@ namespace Common.Models
             public string PhoneNumber { get; init; } = string.Empty;
             
             [BsonElement(DbFieldNames.Staff.Branches)]
-            public string[] Branches { get; init; } = [];
+            public string[] Branches { get; set; } = [];
         }
 
         public record Reservation

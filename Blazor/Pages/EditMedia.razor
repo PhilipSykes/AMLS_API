@@ -7,7 +7,7 @@
 
 <div class="edit-container">
     <h2>Edit Media Details</h2>
-    <EditForm Model="@editModel" OnValidSubmit="@HandleSubmit" class="edit-form">
+    <EditForm Model="@_editModel" OnValidSubmit="@HandleSubmit" class="edit-form">
         <DataAnnotationsValidator />
 
         <div class="form-grid">
@@ -15,12 +15,12 @@
                 <h3>Basic Information</h3>
                 <div class="input-group">
                     <label for="title">Title</label>
-                    <input type="text" id="title" @bind="editModel.Title" class="text-field" />
+                    <input type="text" id="title" @bind="_editModel.Title" class="text-field" />
                 </div>
 
                 <div class="input-group">
                     <label for="type">Type</label>
-                    <select id="type" @bind="editModel.Type" @bind:after="OnTypeChanged" class="text-field">
+                    <select id="type" @bind="_editModel.Type" @bind:after="OnTypeChanged" class="text-field">
                         <option value="Book">Book</option>
                         <option value="Film">Film</option>
                         <option value="TV Series">TV Series</option>
@@ -29,63 +29,63 @@
 
                 <div class="input-group">
                     <label for="language">Language</label>
-                    <input type="text" id="language" @bind="editModel.Language" class="text-field" />
+                    <input type="text" id="language" @bind="_editModel.Language" class="text-field" />
                 </div>
             </div>
 
             <div class="form-section">
                 <h3>@GetDetailsHeader()</h3>
-                @switch (editModel.Type?.ToLower())
+                @switch (_editModel.Type?.ToLower())
                 {
                     case "book":
                         <div class="input-group">
                             <label for="author">Author</label>
-                            <input type="text" id="author" @bind="editModel.Author" class="text-field" />
+                            <input type="text" id="author" @bind="_editModel.Author" class="text-field" />
                         </div>
                         <div class="input-group">
                             <label for="publisher">Publisher</label>
-                            <input type="text" id="publisher" @bind="editModel.Publisher" class="text-field" />
+                            <input type="text" id="publisher" @bind="_editModel.Publisher" class="text-field" />
                         </div>
                         <div class="input-group">
                             <label for="isbn">ISBN</label>
-                            <input type="text" id="isbn" @bind="editModel.Isbn" class="text-field" />
+                            <input type="text" id="isbn" @bind="_editModel.Isbn" class="text-field" />
                         </div>
                         break;
                         
                     case "film":
                         <div class="input-group">
                             <label for="director">Director</label>
-                            <input type="text" id="director" @bind="editModel.Director" class="text-field" />
+                            <input type="text" id="director" @bind="_editModel.Director" class="text-field" />
                         </div>
                         <div class="input-group">
                             <label for="studio">Studio</label>
-                            <input type="text" id="studio" @bind="editModel.Studio" class="text-field" />
+                            <input type="text" id="studio" @bind="_editModel.Studio" class="text-field" />
                         </div>
                         break;
                         
                     case "tv series":
                         <div class="input-group">
                             <label for="creator">Creator</label>
-                            <input type="text" id="creator" @bind="editModel.Creator" class="text-field" />
+                            <input type="text" id="creator" @bind="_editModel.Creator" class="text-field" />
                         </div>
                         <div class="input-group">
                             <label for="network">Network</label>
-                            <input type="text" id="network" @bind="editModel.Network" class="text-field" />
+                            <input type="text" id="network" @bind="_editModel.Network" class="text-field" />
                         </div>
                         <div class="input-group">
                             <label for="season">Season</label>
-                            <input type="number" id="season" @bind="editModel.Season" class="text-field" />
+                            <input type="number" id="season" @bind="_editModel.Season" class="text-field" />
                         </div>
                         <div class="input-group">
                             <label for="episodes">Episodes</label>
-                            <input type="number" id="episodes" @bind="editModel.Episodes" class="text-field" />
+                            <input type="number" id="episodes" @bind="_editModel.Episodes" class="text-field" />
                         </div>
                         break;
                 }
 
                 <div class="input-group">
                     <label for="publishDate">Release Date</label>
-                    <input type="date" id="publishDate" @bind="editModel.PublishDate" class="text-field" />
+                    <input type="date" id="publishDate" @bind="_editModel.PublishDate" class="text-field" />
                 </div>
             </div>
 
@@ -93,12 +93,12 @@
                 <h3>Additional Details</h3>
                 <div class="input-group">
                     <label for="description">Description</label>
-                    <textarea id="description" @bind="editModel.Description" class="text-field" rows="4"></textarea>
+                    <textarea id="description" @bind="_editModel.Description" class="text-field" rows="4"></textarea>
                 </div>
 
                 <div class="input-group">
                     <label for="genres">Genres (comma-separated)</label>
-                    <input type="text" id="genres" @bind="genresInput" class="text-field" />
+                    <input type="text" id="genres" @bind="_genresInput" class="text-field" />
                 </div>
             </div>
         </div>
@@ -110,12 +110,12 @@
             <button type="button" class="action-button secondary-button" @onclick="CancelEdit">Cancel</button>
         </div>
         
-        @if (showDeleteConfirmation)
+        @if (_showDeleteConfirmation)
         {
             <div class="modal-overlay">
                 <div class="modal-content">
                     <h3>Confirm Deletion</h3>
-                    <p>Are you sure you want to delete "@media.Title"? This action cannot be undone.</p>
+                    <p>Are you sure you want to delete "@_media.Title"? This action cannot be undone.</p>
                     <div class="modal-actions">
                         <button class="action-button secondary-button" @onclick="CancelDelete">Cancel</button>
                         <button class="action-button danger-button" @onclick="DeleteMedia">Delete</button>
@@ -128,15 +128,15 @@
 
 @code {
     [Parameter] public string MediaId { get; set; }
-    private Entities.MediaInfo media;
-    private MediaInfoEditModel editModel = new();
+    private Entities.MediaInfo _media;
+    private MediaInfoEditModel _editModel = new();
     private readonly List<Filter> _filters = new();
-    private string genresInput = string.Empty;
-    private bool showDeleteConfirmation = false;
+    private string _genresInput = string.Empty;
+    private bool _showDeleteConfirmation = false;
 
     private string GetDetailsHeader()
     {
-        switch (editModel.Type?.ToLower())
+        switch (_editModel.Type?.ToLower())
         {
             case "book":
                 return "Publishing Details";
@@ -159,7 +159,7 @@
             var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.MediaInfo>>>();
             if (searchResponse != null)
             {
-                media = searchResponse.Data[0];
+                _media = searchResponse.Data[0];
                 InitializeEditModel();
             }
         }
@@ -167,26 +167,26 @@
 
     private void InitializeEditModel()
     {
-        editModel = new MediaInfoEditModel
+        _editModel = new MediaInfoEditModel
         {
-            Title = media.Title,
-            Language = media.Language,
-            Description = media.Description,
-            Isbn = media.Isbn,
-            PublishDate = media.ReleaseDate,
-            Type = media.Type,
+            Title = _media.Title,
+            Language = _media.Language,
+            Description = _media.Description,
+            Isbn = _media.Isbn,
+            PublishDate = _media.ReleaseDate,
+            Type = _media.Type,
             
             // Type-specific fields
-            Author = media.Author,
-            Publisher = media.Publisher,
-            Director = media.Director,
-            Studio = media.Studio,
-            Creator = media.Creator,
-            Network = media.Network,
-            Season = media.Season,
-            Episodes = media.Episodes
+            Author = _media.Author,
+            Publisher = _media.Publisher,
+            Director = _media.Director,
+            Studio = _media.Studio,
+            Creator = _media.Creator,
+            Network = _media.Network,
+            Season = _media.Season,
+            Episodes = _media.Episodes
         };
-        genresInput = string.Join(",", media.Genres);
+        _genresInput = string.Join(",", _media.Genres);
     }
 
     private async Task HandleSubmit()
@@ -194,24 +194,24 @@
         var updateModel = new Entities.MediaInfo
         {
             ObjectId = MediaId,
-            Title = editModel.Title,
-            Language = editModel.Language,
-            Description = editModel.Description,
-            Isbn = editModel.Isbn,
-            ReleaseDate = editModel.PublishDate,
-            Type = editModel.Type,
+            Title = _editModel.Title,
+            Language = _editModel.Language,
+            Description = _editModel.Description,
+            Isbn = _editModel.Isbn,
+            ReleaseDate = _editModel.PublishDate,
+            Type = _editModel.Type,
             
             // Type-specific fields based on media type
-            Author = editModel.Type == "Book" ? editModel.Author : string.Empty,
-            Publisher = editModel.Type == "Book" ? editModel.Publisher : string.Empty,
-            Director = editModel.Type == "Film" ? editModel.Director : string.Empty,
-            Studio = editModel.Type == "Film" ? editModel.Studio : string.Empty,
-            Creator = editModel.Type == "TV Series" ? editModel.Creator : string.Empty,
-            Network = editModel.Type == "TV Series" ? editModel.Network : string.Empty,
-            Season = editModel.Type == "TV Series" ? editModel.Season : 0,
-            Episodes = editModel.Type == "TV Series" ? editModel.Episodes : 0,
+            Author = _editModel.Type == "Book" ? _editModel.Author : string.Empty,
+            Publisher = _editModel.Type == "Book" ? _editModel.Publisher : string.Empty,
+            Director = _editModel.Type == "Film" ? _editModel.Director : string.Empty,
+            Studio = _editModel.Type == "Film" ? _editModel.Studio : string.Empty,
+            Creator = _editModel.Type == "TV Series" ? _editModel.Creator : string.Empty,
+            Network = _editModel.Type == "TV Series" ? _editModel.Network : string.Empty,
+            Season = _editModel.Type == "TV Series" ? _editModel.Season : 0,
+            Episodes = _editModel.Type == "TV Series" ? _editModel.Episodes : 0,
             
-            Genres = genresInput.Split(',', StringSplitOptions.RemoveEmptyEntries)
+            Genres = _genresInput.Split(',', StringSplitOptions.RemoveEmptyEntries)
                               .Select(g => g.Trim())
                               .ToArray()
         };
@@ -226,19 +226,19 @@
     private void OnTypeChanged()
     {
         // Reset type-specific fields when type changes
-        editModel.Author = string.Empty;
-        editModel.Publisher = string.Empty;
-        editModel.Director = string.Empty;
-        editModel.Studio = string.Empty;
-        editModel.Creator = string.Empty;
-        editModel.Network = string.Empty;
-        editModel.Season = 0;
-        editModel.Episodes = 0;
+        _editModel.Author = string.Empty;
+        _editModel.Publisher = string.Empty;
+        _editModel.Director = string.Empty;
+        _editModel.Studio = string.Empty;
+        _editModel.Creator = string.Empty;
+        _editModel.Network = string.Empty;
+        _editModel.Season = 0;
+        _editModel.Episodes = 0;
     }
 
     private void CancelEdit() => Nav.NavigateTo("/inventory");
-    private void ShowDeleteConfirmation() => showDeleteConfirmation = true;
-    private void CancelDelete() => showDeleteConfirmation = false;
+    private void ShowDeleteConfirmation() => _showDeleteConfirmation = true;
+    private void CancelDelete() => _showDeleteConfirmation = false;
 
     private async Task DeleteMedia()
     {

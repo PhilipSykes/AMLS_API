@@ -14,7 +14,13 @@ public static class PolicyConfig
             options.AddPolicy(Policies.CanEditUserPermissions, policy => 
                 policy.RequireRole(PolicyRoles.SystemAdmin));
             
-            options.AddPolicy(Policies.CanViewUsers, policy => 
+            options.AddPolicy(Policies.CanViewStaff, policy => 
+                policy.RequireRole(PolicyRoles.SystemAdmin, PolicyRoles.BranchManager));
+            
+            options.AddPolicy(Policies.CanViewMembers, policy => 
+                policy.RequireRole(PolicyRoles.SystemAdmin, PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));
+            
+            options.AddPolicy(Policies.CanDeleteUserAccounts, policy => 
                 policy.RequireRole(PolicyRoles.SystemAdmin));
             
         });
