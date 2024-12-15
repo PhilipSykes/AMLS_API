@@ -6,7 +6,7 @@
 <PageTitle>Inventory</PageTitle>
 
 <div id="responsive-layout">
-        <InventorySearchForm BranchList="@inventoryData.BranchesList" OnSubmitCallback="MakeSearch"/>
+        <InventorySearchForm BranchList="@_inventoryData.BranchesList" OnSubmitCallback="MakeSearch"/>
         <div class="results-container">
             <table class="results-table">
                 <thead>
@@ -20,26 +20,33 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var item in inventoryData.PhysicalMediaList)
+                @foreach (var item in _inventoryData.PhysicalMediaList)
                 {
                     <InventoryResultListComponent Media="@item"/>
                 }
                 </tbody>
             </table>
+            <Pagination
+                CurrentPage="@_currentPage"
+                TotalItems="@_totalItems"
+                ItemsPerPage="@_pageSize"
+                OnPageSelected="@HandlePageChange" />
         </div>
     </div>
 
 
 
 @code { 
-    private PayLoads.Inventory inventoryData = new() 
+    private PayLoads.Inventory _inventoryData = new() 
     { 
         PhysicalMediaList = new(), 
         BranchesList = new() 
     };
-    private (int, int) _pagination = (1, 20); 
+    private int _currentPage = 1; 
+    private int _pageSize = 20; 
+    private long _totalItems;
+    private List<Filter>? _currentFilters;
     private string? _jwtToken;
-    private ClaimsPrincipal? currentUser;
 
     protected override async Task OnInitializedAsync()
     {
@@ -47,15 +54,29 @@
         
         await GetInventory();
     }
+    
+    private async Task HandlePageChange(int page)
+    {
+        _currentPage = page;
+        if (_currentFilters != null && _currentFilters.Any())
+        {
+            await GetSearchResults(_currentFilters);
+        }
+        else
+        {
+            await GetInventory();
+        }
+    }
 
     private async Task GetInventory()
     {
         HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken); 
-        var response = await HttpClient.GetFromJsonAsync<Response<PayLoads.Inventory>>($"api/inventory/?page={_pagination.Item1}&count={_pagination.Item2}");
+        var response = await HttpClient.GetFromJsonAsync<PaginatedResponse<PayLoads.Inventory>>($"api/inventory/?page={_currentPage}&count={_pageSize}");
         
         if (response?.Success == true && response.Data != null)
         {
-            inventoryData = response.Data;
+            _inventoryData = response.Data;
+            _totalItems = response.MatchCount;
         }
     }
 
@@ -64,14 +85,15 @@
         HttpClient.DefaultRequestHeaders.Authorization = 
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken); 
         var response = await HttpClient.PostAsJsonAsync(
-            $"api/inventory/search?page={_pagination.Item1}&count={_pagination.Item2}", 
+            $"api/inventory/search?page={_currentPage}&count={_pageSize}", 
             filters);
         if (response.IsSuccessStatusCode)
         {
             var searchResponse = await response.Content.ReadFromJsonAsync<PaginatedResponse<List<Entities.PhysicalInventory>>>();
             if (searchResponse?.Success == true && searchResponse.Data != null)
             {
-                inventoryData.PhysicalMediaList = searchResponse.Data;
+                _inventoryData.PhysicalMediaList = searchResponse.Data;
+                _totalItems = searchResponse.MatchCount;
             }
         } 
         StateHasChanged();
@@ -79,7 +101,9 @@
 
     private async Task MakeSearch(List<Filter> filters)
     {
-        inventoryData.PhysicalMediaList.Clear();
+        _currentPage = 1; 
+        _currentFilters = filters;
+        _inventoryData.PhysicalMediaList.Clear();
         await GetSearchResults(filters);
     } 
 

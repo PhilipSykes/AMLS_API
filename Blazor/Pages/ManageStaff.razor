@@ -6,7 +6,7 @@
 <PageTitle>Staff Management</PageTitle>
 
 <div id="responsive-layout">
-    <StaffSearchForm BranchList="@StaffData.BranchesList" OnSubmitCallback="MakeSearch"/>
+    <StaffSearchForm BranchList="@_staffData.BranchesList" OnSubmitCallback="MakeSearch"/>
     <div class="results-container">
         <table class="results-table">
             <thead>
@@ -21,23 +21,30 @@
             </tr>
             </thead>
             <tbody>
-            @foreach (var user in StaffData.StaffList)
+            @foreach (var user in _staffData.StaffList)
             {
-                <StaffResultList user="@user" branchList="@StaffData.BranchesList"/>
+                <StaffResultList user="@user" branchList="@_staffData.BranchesList"/>
             }
             </tbody>
         </table>
+        <Pagination
+            CurrentPage="@_currentPage"
+            TotalItems="@_totalItems"
+            ItemsPerPage="@_pageSize"
+            OnPageSelected="@HandlePageChange" />
     </div>
 </div>
 
 @code {
-    private PayLoads.StaffData StaffData = new()
+    private PayLoads.StaffData _staffData = new()
     {
         StaffList = new(),
         BranchesList = new()
     };
-
-    private (int, int) _pagination = (1, 20);
+    private int _currentPage = 1; 
+    private int _pageSize = 20; 
+    private long _totalItems;
+    private List<Filter>? _currentFilters;
     private string? _jwtToken;
 
     protected override async Task OnInitializedAsync()
@@ -45,21 +52,37 @@
         _jwtToken = await AuthState.GetBearerToken();
         await GetStaff();
     }
+    
+    private async Task HandlePageChange(int page)
+    {
+        _currentPage = page;
+        if (_currentFilters != null && _currentFilters.Any())
+        {
+            await GetStaffSearchResults(_currentFilters);
+        }
+        else
+        {
+            await GetStaff();
+        }
+    }
 
     private async Task MakeSearch(List<Filter> filters)
     {
-        StaffData.StaffList.Clear();
+        _currentPage = 1; 
+        _currentFilters = filters;
+        _staffData.StaffList.Clear();
         await GetStaffSearchResults(filters);
     }
 
     private async Task GetStaff()
     {
         HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
-        var response = await HttpClient.GetFromJsonAsync<Response<PayLoads.StaffData>>($"api/usermanagement/staff?page={_pagination.Item1}&count={_pagination.Item2}");
+        var response = await HttpClient.GetFromJsonAsync<PaginatedResponse<PayLoads.StaffData>>($"api/usermanagement/staff?page={_currentPage}&count={_pageSize}");
 
         if (response?.Success == true && response.Data != null)
         {
-            StaffData = response.Data;
+            _staffData = response.Data;
+            _totalItems = response.MatchCount;
         }
     }
 
@@ -67,14 +90,15 @@
     {
         HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
         var response = await HttpClient.PostAsJsonAsync(
-            $"api/usermanagement/staff/search?page={_pagination.Item1}&count={_pagination.Item2}", filters);
+            $"api/usermanagement/staff/search?page={_currentPage}&count={_pageSize}", filters);
 
         if (response.IsSuccessStatusCode)
         {
-            var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.Staff>>>();
+            var searchResponse = await response.Content.ReadFromJsonAsync<PaginatedResponse<List<Entities.Staff>>>();
             if (searchResponse?.Success == true && searchResponse.Data != null)
             {
-                StaffData.StaffList = searchResponse.Data;
+                _staffData.StaffList = searchResponse.Data;
+                _totalItems = searchResponse.MatchCount;
             }
         }
         StateHasChanged();

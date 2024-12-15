@@ -46,7 +46,7 @@
                 
                 <div class="modal-content" @onclick:stopPropagation="true">
                     <h3>Access Denied</h3>
-                    <p>@unauthorizedMessage</p> 
+                    <p>@_unauthorizedMessage</p> 
                     <button class="button-primary" @onclick="CloseModal">Close</button> 
                     </div>
             </div>
@@ -99,10 +99,10 @@
 
 @code {
     [Parameter] public Entities.PhysicalInventory Media { get; set; } = new();
-    public bool IsAvailable { get; set; }
+    private bool IsAvailable { get; set; }
     private bool IsExpanded { get; set; }
     private bool showModal; 
-    private string unauthorizedMessage = "";
+    private string _unauthorizedMessage = "";
 
     private void ToggleDetails()
     {
@@ -133,19 +133,19 @@
         }
         else
         {
-            unauthorizedMessage = $"You do not have access to edit media items at {Media.BranchDetails?.Name ?? "this branch"}."; showModal = true;
+            _unauthorizedMessage = $"You do not have access to edit media items at {Media.BranchDetails?.Name ?? "this branch"}."; showModal = true;
         }
     }
 
     private void ShowUnauthorizedModal()
     {
-        unauthorizedMessage = "You do not have the required role to edit media items."; 
+        _unauthorizedMessage = "You do not have the required role to edit media items."; 
         showModal = true;
     }
 
     private void CloseModal()
     {
-        showModal = false; unauthorizedMessage = "";
+        showModal = false; _unauthorizedMessage = "";
     }
 
     private bool HasBranchAccess(ClaimsPrincipal user, string? branchId)

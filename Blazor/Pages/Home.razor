@@ -6,10 +6,15 @@
 <div id="responsive-layout">
     <MediaSearchForm OnSubmitCallback="MakeSearch"/>
     <div id="search-results">
-        @foreach (var media in mediaResults)
+        @foreach (var media in _mediaResults)
         {
             <SearchResultListComponent Media="@media"></SearchResultListComponent>
         }
+        <Pagination
+            CurrentPage="@_currentPage"
+            TotalItems="@_totalItems"
+            ItemsPerPage="@_pageSize"
+            OnPageSelected="@HandlePageChange" />
     </div>
 </div>
 
@@ -17,33 +22,51 @@
 @code {
     //TODO: do something to stop the glow fade-out on page load
 
-    private List<Entities.MediaInfo> mediaResults = new();
+    private List<Entities.MediaInfo> _mediaResults = new();
     private bool test = false;
-    readonly (int, int) _pagination = (1, 20); // temp for testing
+    private int _currentPage = 1; 
+    private int _pageSize = 20; 
+    private long _totalItems;
+    private List<Filter>? _currentFilters;
 
     protected override async Task OnInitializedAsync()
     {
         await GetMedia();
     }
+    
+    private async Task HandlePageChange(int page)
+    {
+        _currentPage = page;
+        if (_currentFilters != null && _currentFilters.Any())
+        {
+            await GetSearchResults(_currentFilters);
+        }
+        else
+        {
+            await GetMedia();
+        }
+    }
 
     private async Task GetMedia()
     {
-        var response = await HttpClient.GetFromJsonAsync<Response<List<Entities.MediaInfo>>>($"/api/catalog/?page={_pagination.Item1}&count={_pagination.Item2}");
+        var response = await HttpClient.GetFromJsonAsync<PaginatedResponse<List<Entities.MediaInfo>>>($"/api/catalog/?page={_currentPage}&count={_pageSize}");
         if (response?.Success == true && response.Data != null)
         {
-            mediaResults = response.Data;
+            _mediaResults = response.Data;
+            _totalItems = response.MatchCount;
         }
     }
 
     private async Task GetSearchResults(List<Filter> filters)
     {
-        var response = await HttpClient.PostAsJsonAsync($"/api/catalog/search?page={_pagination.Item1}&count={_pagination.Item2}", filters);
+        var response = await HttpClient.PostAsJsonAsync($"/api/catalog/search?page={_currentPage}&count={_pageSize}", filters);
         if (response.IsSuccessStatusCode)
         {
-            var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.MediaInfo>>>();
+            var searchResponse = await response.Content.ReadFromJsonAsync<PaginatedResponse<List<Entities.MediaInfo>>>();
             if (searchResponse != null)
             {
-                mediaResults = searchResponse.Data;
+                _mediaResults = searchResponse.Data;
+                _totalItems = searchResponse.MatchCount;
             }
         }
 
@@ -52,7 +75,9 @@
 
     private async Task MakeSearch(List<Filter> filters)
     {
-        mediaResults.Clear();
+        _currentPage = 1; 
+        _currentFilters = filters;
+        _mediaResults.Clear();
         await GetSearchResults(filters);
     }
 
