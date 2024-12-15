@@ -81,9 +81,7 @@ public class InventoryController : ControllerBase
             
             var inventoryTask =  _inventorySearchRepo.PaginatedSearch(DocumentTypes.PhysicalMedia, pagination,filters: null,_config);
             
-            var branchTask = _branchSearchRepo.Search(
-                DocumentTypes.Branches,
-                filters: null);
+            var branchTask = _branchSearchRepo.Search(DocumentTypes.Branches);
 
             await Task.WhenAll(inventoryTask, branchTask);
         

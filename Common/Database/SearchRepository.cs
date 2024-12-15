@@ -14,9 +14,9 @@ namespace Common.Database
     public interface ISearchRepository<T> where T : class
     {
         Task<PaginatedResponse<List<T>>> PaginatedSearch(string documentType, (int, int) pagination,
-            List<Filter> filters = null, AgreggateSearchConfig config = null);
+            List<Filter>? filters = null, AgreggateSearchConfig? config = null);
 
-        Task<List<T>> Search(string documentType, List<Filter> filters = null);
+        Task<List<T>> Search(string documentType, List<Filter>? filters = null);
     }
 
     public class SearchRepository<T> : ISearchRepository<T> where T : class
@@ -33,13 +33,13 @@ namespace Common.Database
         }
 
         public async Task<PaginatedResponse<List<T>>> PaginatedSearch(string documentType, (int, int) pagination,
-            List<Filter> filters, AgreggateSearchConfig config)
+            List<Filter>? filters, AgreggateSearchConfig? config)
         {
             try
             {
                 var collection = _database.GetCollection<BsonDocument>(documentType);
 
-                if (config.UseAggregation)
+                if (config != null)
                 {
                     return await HandleAggregationSearch(collection, pagination, filters, config);
                 }
@@ -59,7 +59,7 @@ namespace Common.Database
         }
 
         private async Task<PaginatedResponse<List<T>>> HandleSimpleSearch(IMongoCollection<BsonDocument> collection,
-            (int, int) pagination, List<Filter> filters)
+            (int, int) pagination, List<Filter>? filters)
         {
             var filterDefinition = _filterBuilder.BuildFilter(filters);
             var matches = await collection.CountDocumentsAsync(filterDefinition);
@@ -83,7 +83,7 @@ namespace Common.Database
 
         private async Task<PaginatedResponse<List<T>>> HandleAggregationSearch(
             IMongoCollection<BsonDocument> collection, (int, int) pagination,
-            List<Filter> filters, AgreggateSearchConfig config)
+            List<Filter>? filters, AgreggateSearchConfig config)
         {
             var (preFilters, postFilters) = _filterBuilder.SplitFilters(filters);
             
@@ -113,11 +113,11 @@ namespace Common.Database
         }
 
         private IAggregateFluent<BsonDocument> CreateBasePipeline(IMongoCollection<BsonDocument> collection,
-            List<Filter> preFilters, List<Filter> postFilters, AgreggateSearchConfig config)
+            List<Filter>? preFilters, List<Filter>? postFilters, AgreggateSearchConfig config)
         {
             var pipeline = collection.Aggregate();
             
-            if (preFilters?.Any() == true)
+            if (preFilters != null && preFilters.Any())
             {
                 pipeline = pipeline.Match(_filterBuilder.BuildFilter(preFilters));
             }
@@ -132,7 +132,7 @@ namespace Common.Database
                 );
             }
             
-            if (postFilters?.Any() == true)
+            if (postFilters != null && postFilters.Any())
             {
                 pipeline = pipeline.Match(_filterBuilder.BuildFilter(postFilters));
             }
@@ -140,7 +140,7 @@ namespace Common.Database
             return pipeline;
         }
 
-        public async Task<List<T>> Search(string documentType, List<Filter> filters = null)
+        public async Task<List<T>> Search(string documentType, List<Filter>? filters = null)
         {
             try
             {

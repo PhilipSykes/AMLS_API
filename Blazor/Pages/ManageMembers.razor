@@ -22,7 +22,7 @@
             <tbody>
             @foreach (var user in MemberData.MemberList)
             {
-                <MemberResultList user="@user"/>
+                <MemberResultList user="@user" branchList="@MemberData.BranchesList"/>
             }
             </tbody>
         </table>
@@ -67,7 +67,7 @@
     {
         HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
         var response = await HttpClient.PostAsJsonAsync(
-            $"api/sermanagement/members/search?page={_pagination.Item1}&count={_pagination.Item2}", 
+            $"api/usermanagement/members/search?page={_pagination.Item1}&count={_pagination.Item2}", 
             filters);
         
         if (response.IsSuccessStatusCode)

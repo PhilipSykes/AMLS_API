@@ -8,12 +8,12 @@ namespace Common.Database;
 
 public interface IFilterBuilder<T>
 {
-    FilterDefinition<T> BuildFilter(List<Filter> filterObjectsIn);
+    FilterDefinition<T> BuildFilter(List<Filter>? filterObjectsIn);
     (List<Filter> preFilters, List<Filter> postFilters) SplitFilters(List<Filter> filters);
 }
 public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
 {
-    public FilterDefinition<BsonDocument> BuildFilter(List<Filter> filterObjectsIn)
+    public FilterDefinition<BsonDocument> BuildFilter(List<Filter>? filterObjectsIn)
     {
         try // Note from Will: This try catch is redundant, as operators are enforced by the enum. // Second note from Will: Keep for now, Add AND/OR to filters
         {
@@ -59,7 +59,7 @@ public class BsonFilterBuilder : IFilterBuilder<BsonDocument>
             throw new SearchException(SearchException.SearchErrorType.Validation);
         }
     }
-    public (List<Filter> preFilters, List<Filter> postFilters) SplitFilters(List<Filter> filters)
+    public (List<Filter> preFilters, List<Filter> postFilters) SplitFilters(List<Filter>? filters)
     {
         if (filters == null || !filters.Any())
             return (new List<Filter>(), new List<Filter>());

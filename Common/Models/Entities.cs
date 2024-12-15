@@ -160,7 +160,7 @@ namespace Common.Models
             public string PhoneNumber { get; init; } = string.Empty;
 
             [BsonElement(DbFieldNames.Members.Settings)]
-            public Dictionary<string, string> Settings { get; init; } = new Dictionary<string, string>();
+            public List<Setting> Settings { get; init; } = new();
 
             [BsonElement(DbFieldNames.Members.Favourites)]
             public string[] Favourites { get; init; } = [];
@@ -170,6 +170,15 @@ namespace Common.Models
 
             [BsonElement(DbFieldNames.Members.NearestBranch)]
             public string NearestBranch { get; init; } = string.Empty;
+        }
+        
+        public class Setting
+        {
+            [BsonElement(DbFieldNames.Settings.Name)]
+            public string Name { get; init; } = string.Empty;
+    
+            [BsonElement(DbFieldNames.Settings.Value)]
+            public string Value { get; init; } = string.Empty;
         }
         
         public record Staff
@@ -185,7 +194,8 @@ namespace Common.Models
             public string LastName { get; init; } = string.Empty;
             
             [BsonElement(DbFieldNames.Staff.DateOfBirth)]
-            public string DateOfBirth { get; init; } = string.Empty;
+            [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
+            public DateTime DateOfBirth { get; init; } = DateTime.UtcNow;
             
             [BsonElement(DbFieldNames.Staff.Role)]
             public string Role { get; init; } = string.Empty;

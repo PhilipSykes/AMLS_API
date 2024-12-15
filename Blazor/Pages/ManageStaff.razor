@@ -23,7 +23,7 @@
             <tbody>
             @foreach (var user in StaffData.StaffList)
             {
-            <StaffResultList user="@user"/>
+                <StaffResultList user="@user" branchList="@StaffData.BranchesList"/>
             }
             </tbody>
         </table>

@@ -22,10 +22,15 @@
 
 @code {
     [Parameter] public Entities.Members user { get; set; } = new();
+    [Parameter] public List<Entities.Branch> branchList { get; set; } = new();
 
     private string GetBranchName()
     {
-        return user.NearestBranch ?? "No Branch Assigned";
+        if (string.IsNullOrEmpty(user.NearestBranch))
+            return "No Branch Assigned";
+
+        var branch = branchList.FirstOrDefault(b => b.ObjectId == user.NearestBranch);
+        return branch?.Name ?? "Unknown Branch";
     }
     
     private async Task ViewHistory()
