@@ -22,11 +22,11 @@ public class CatalogController : ControllerBase
         UseAggregation = true,
         LookupCollections = new List<string> { DocumentTypes.PhysicalMedia },
         LocalFields = new List<string> { DbFieldNames.Id },
-        ForeignFields = new List<string> { DbFieldNames.PhysicalCopies.Info },
+        ForeignFields = new List<string> { DbFieldNames.PhysicalMedia.Info },
         OutputFields = new List<string> { DbFieldNames.MediaInfo.PhysicalCopies },
         ProjectionString = $@"{{  
             '{DbFieldNames.MediaInfo.PhysicalCopies}.{DbFieldNames.Id}': 0, 
-            '{DbFieldNames.MediaInfo.PhysicalCopies}.{DbFieldNames.PhysicalCopies.Info}': 0 }}"
+            '{DbFieldNames.MediaInfo.PhysicalCopies}.{DbFieldNames.PhysicalMedia.Info}': 0 }}"
     };
     
     /// <summary>

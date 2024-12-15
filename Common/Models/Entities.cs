@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Common.Models
 {
-    public static class Entities
+   public static class Entities
     {
         public record Login
         {
@@ -12,7 +12,8 @@ namespace Common.Models
             [BsonRepresentation(BsonType.ObjectId)]
             public string ObjectID { get; init; } = string.Empty;
 
-            [BsonElement(DbFieldNames.Login.User)] public string UserID { get; init; } = string.Empty;
+            [BsonElement(DbFieldNames.Login.User)]
+            public string UserID { get; init; } = string.Empty;
 
             [BsonElement(DbFieldNames.Login.Email)]
             public string Email { get; init; } = string.Empty;
@@ -20,8 +21,9 @@ namespace Common.Models
             [BsonElement(DbFieldNames.Login.PasswordHash)]
             public string PasswordHash { get; init; } = string.Empty;
 
-            [BsonElement(DbFieldNames.Login.Role)] public string Role { get; init; } = string.Empty;
-
+            [BsonElement(DbFieldNames.Login.Role)]
+            public string Role { get; init; } = string.Empty;
+            
             [BsonElement(DbFieldNames.Login.Branches)]
             public string[] Branches { get; init; } = [];
         }
@@ -53,7 +55,6 @@ namespace Common.Models
 
         public record MediaInfo
         {
-            //Common 
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
             public string ObjectId { get; init; } = string.Empty;
@@ -125,16 +126,30 @@ namespace Common.Models
 
         public record PhysicalCopy
         {
-            [BsonElement(DbFieldNames.PhysicalCopies.Info)]
-            [BsonRepresentation(BsonType.ObjectId)]
-            public string Info { get; init; } = string.Empty;
-
-            [BsonElement(DbFieldNames.PhysicalCopies.Branch)]
+            [BsonElement(DbFieldNames.PhysicalMedia.Branch)]
             [BsonRepresentation(BsonType.ObjectId)]
             public string Branch { get; init; } = string.Empty;
-
-            [BsonElement(DbFieldNames.PhysicalCopies.Status)]
+            
+            [BsonElement(DbFieldNames.PhysicalMedia.Status)]
             public string Status { get; init; } = "Unknown";
+        }
+
+        public record PhysicalMedia
+        {
+            [BsonId]
+            [BsonRepresentation(BsonType.ObjectId)]
+            public string Id { get; init; } = string.Empty;
+            
+            [BsonElement(DbFieldNames.PhysicalMedia.Info)]
+            [BsonRepresentation(BsonType.ObjectId)]
+            public string InfoRef = string.Empty;
+            
+            [BsonElement(DbFieldNames.PhysicalMedia.Branch)]
+            [BsonRepresentation(BsonType.ObjectId)]
+            public string Location { get; init; } = string.Empty;
+            
+            [BsonElement(DbFieldNames.PhysicalMedia.Status)]
+            public string Status = "Unknown";
         }
 
         public record Members
@@ -232,6 +247,27 @@ namespace Common.Models
             [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
             public DateTime EndDate { get; init; }
         }
+        
+        
+        public record ReservableItem
+        {
+            public string Item { get; init; } = string.Empty;
+            public string BranchName { get; init; } = string.Empty;
+            public List<Timeslot> Timeslots { get; init; } = new();
+            public DateTime LastEnd { get; init; }
+        }
+
+        public class Timeslot
+        {
+            public DateTime Start { get; set; }
+            public DateTime End { get; set; }
+
+            public Timeslot(DateTime start, DateTime end)
+            {
+                Start = start;
+                End = end;
+            }
+        }
 
         //Aggregates
         public record PhysicalInventory
@@ -240,10 +276,10 @@ namespace Common.Models
             [BsonRepresentation(BsonType.ObjectId)]
             public string ObjectId { get; init; } = string.Empty;
 
-            [BsonElement(DbFieldNames.PhysicalCopies.Status)]
+            [BsonElement(DbFieldNames.PhysicalMedia.Status)]
             public string Status { get; init; } = string.Empty;
 
-            [BsonElement(DbFieldNames.PhysicalCopies.Branch)]
+            [BsonElement(DbFieldNames.PhysicalMedia.Branch)]
             [BsonRepresentation(BsonType.ObjectId)]
             public string Branch { get; init; } = string.Empty;
 

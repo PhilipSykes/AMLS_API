@@ -31,9 +31,9 @@ public class InventoryController : ControllerBase
         },
         LocalFields = new List<string> 
         { 
-            DbFieldNames.PhysicalCopies.Info,
-            DbFieldNames.PhysicalCopies.Branch,
-            DbFieldNames.PhysicalCopies.Info 
+            DbFieldNames.PhysicalMedia.Info,
+            DbFieldNames.PhysicalMedia.Branch,
+            DbFieldNames.PhysicalMedia.Info 
         },
         ForeignFields = new List<string> 
         { 
@@ -50,8 +50,8 @@ public class InventoryController : ControllerBase
         ProjectionString = $@"{{
             '{DbFieldNames.Aggregates.MediaInfo}': {{ $arrayElemAt: ['${DbFieldNames.Aggregates.MediaInfo}', 0] }},
             '{DbFieldNames.Aggregates.BranchDetails}': {{ $arrayElemAt: ['${DbFieldNames.Aggregates.BranchDetails}', 0] }},
-            '{DbFieldNames.PhysicalCopies.Status}': 1,
-            '{DbFieldNames.PhysicalCopies.Branch}': 1}}"
+            '{DbFieldNames.PhysicalMedia.Status}': 1,
+            '{DbFieldNames.PhysicalMedia.Branch}': 1}}"
     };
 
     /// <summary>
