@@ -39,15 +39,21 @@
       <Content Update="Pages\InventorySearchForm.razor">
         <DependentUpon>MediaInventory.razor</DependentUpon>
       </Content>
+      <Content Update="Pages\StaffResultList.razor">
+        <DependentUpon>ManageStaff.razor</DependentUpon>
+      </Content>
+      <Content Update="Pages\StaffSearchForm.razor">
+        <DependentUpon>ManageStaff.razor</DependentUpon>
+      </Content>
+      <Content Update="Pages\MemberResultList.razor">
+        <DependentUpon>ManageMembers.razor</DependentUpon>
+      </Content>
+      <Content Update="Pages\MemberSearchForm.razor">
+        <DependentUpon>ManageMembers.razor</DependentUpon>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Pages\MediaSearchModel.cs">
-        <DependentUpon>MediaSearchForm.razor</DependentUpon>
-      </Compile>
-      <Compile Update="Pages\InventorySearchModel.cs">
-        <DependentUpon>InventorySearchForm.razor</DependentUpon>
-      </Compile>
       <Compile Update="Pages\MediaInfoEditModel.cs">
         <DependentUpon>EditMedia.razor</DependentUpon>
       </Compile>

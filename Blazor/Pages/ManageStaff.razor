@@ -1,0 +1,106 @@
+@page "/ManageStaff"
+@inject HttpClient HttpClient
+@inject IAuthService AuthState
+@attribute [Authorize(Policy = Policies.CanViewUsers)]
+
+<PageTitle>Staff Management</PageTitle>
+
+<div id="responsive-layout">
+    <StaffSearchForm BranchList="@_staffData.BranchesList" OnSubmitCallback="MakeSearch"/>
+    <div class="results-container">
+        <table class="results-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Date of Birth</th>
+                <th>Role</th>
+                <th>Branches</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var user in _staffData.StaffList)
+            {
+                <StaffResultList user="@user" branchList="@_staffData.BranchesList"/>
+            }
+            </tbody>
+        </table>
+        <Pagination
+            CurrentPage="@_currentPage"
+            TotalItems="@_totalItems"
+            ItemsPerPage="@_pageSize"
+            OnPageSelected="@HandlePageChange" />
+    </div>
+</div>
+
+@code {
+    private PayLoads.StaffData _staffData = new()
+    {
+        StaffList = new(),
+        BranchesList = new()
+    };
+    private int _currentPage = 1; 
+    private int _pageSize = 20; 
+    private long _totalItems;
+    private List<Filter>? _currentFilters;
+    private string? _jwtToken;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _jwtToken = await AuthState.GetBearerToken();
+        await GetStaff();
+    }
+    
+    private async Task HandlePageChange(int page)
+    {
+        _currentPage = page;
+        if (_currentFilters != null && _currentFilters.Any())
+        {
+            await GetStaffSearchResults(_currentFilters);
+        }
+        else
+        {
+            await GetStaff();
+        }
+    }
+
+    private async Task MakeSearch(List<Filter> filters)
+    {
+        _currentPage = 1; 
+        _currentFilters = filters;
+        _staffData.StaffList.Clear();
+        await GetStaffSearchResults(filters);
+    }
+
+    private async Task GetStaff()
+    {
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        var response = await HttpClient.GetFromJsonAsync<PaginatedResponse<PayLoads.StaffData>>($"api/usermanagement/staff?page={_currentPage}&count={_pageSize}");
+
+        if (response?.Success == true && response.Data != null)
+        {
+            _staffData = response.Data;
+            _totalItems = response.MatchCount;
+        }
+    }
+
+    private async Task GetStaffSearchResults(List<Filter> filters)
+    {
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        var response = await HttpClient.PostAsJsonAsync(
+            $"api/usermanagement/staff/search?page={_currentPage}&count={_pageSize}", filters);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var searchResponse = await response.Content.ReadFromJsonAsync<PaginatedResponse<List<Entities.Staff>>>();
+            if (searchResponse?.Success == true && searchResponse.Data != null)
+            {
+                _staffData.StaffList = searchResponse.Data;
+                _totalItems = searchResponse.MatchCount;
+            }
+        }
+        StateHasChanged();
+    }
+}

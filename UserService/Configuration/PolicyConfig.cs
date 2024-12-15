@@ -13,6 +13,10 @@ public static class PolicyConfig
             
             options.AddPolicy(Policies.CanEditUserPermissions, policy => 
                 policy.RequireRole(PolicyRoles.SystemAdmin));
+            
+            options.AddPolicy(Policies.CanViewUsers, policy => 
+                policy.RequireRole(PolicyRoles.SystemAdmin));
+            
         });
     }
 }

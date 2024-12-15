@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Blazor.Models;
+namespace Blazor.SearchModels;
 
 public class AtLeastOneFieldRequiredAttribute : ValidationAttribute
 {

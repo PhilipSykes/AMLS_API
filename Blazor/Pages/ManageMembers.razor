@@ -1,0 +1,107 @@
+@page "/ManageMembers"
+@inject HttpClient HttpClient
+@inject IAuthService AuthState
+@attribute [Authorize(Policy = Policies.CanViewUsers)]
+
+<PageTitle>Member Management</PageTitle>
+
+<div id="responsive-layout">
+    <MemberSearchForm BranchList="@_memberData.BranchesList" OnSubmitCallback="MakeSearch"/>
+    <div class="results-container">
+        <table class="results-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Date of Birth</th>
+                <th>Branch</th>  
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var user in _memberData.MemberList)
+            {
+                <MemberResultList user="@user" branchList="@_memberData.BranchesList"/>
+            }
+            </tbody>
+        </table>
+        <Pagination
+            CurrentPage="@_currentPage"
+            TotalItems="@_totalItems"
+            ItemsPerPage="@_pageSize"
+            OnPageSelected="@HandlePageChange" />
+    </div>
+</div>
+
+@code {
+    private PayLoads.MemberData _memberData = new() 
+    { 
+        MemberList = new(),
+        BranchesList = new()
+    };
+    private int _currentPage = 1; 
+    private int _pageSize = 20; 
+    private long _totalItems;
+    private List<Filter>? _currentFilters;
+    private string? _jwtToken;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _jwtToken = await AuthState.GetBearerToken(); 
+        await GetMembers(); 
+    }
+
+    private async Task HandlePageChange(int page)
+    {
+        _currentPage = page;
+        if (_currentFilters != null && _currentFilters.Any())
+        {
+            await GetMemberSearchResults(_currentFilters);
+        }
+        else
+        {
+            await GetMembers();
+        }
+    }
+    
+    private async Task MakeSearch(List<Filter> filters)
+    {
+        _currentPage = 1; 
+        _currentFilters = filters;
+        _memberData.MemberList.Clear();
+        await GetMemberSearchResults(filters);
+    } 
+
+    private async Task GetMembers()
+    {
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        var response = await HttpClient.GetFromJsonAsync<PaginatedResponse<PayLoads.MemberData>>(
+            $"api/usermanagement/members?page={_currentPage}&count={_pageSize}");
+        
+        if (response?.Success == true && response.Data != null)
+        {
+            _memberData = response.Data;
+            _totalItems = response.MatchCount;
+        }
+    }
+
+    private async Task GetMemberSearchResults(List<Filter> filters)
+    {
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        var response = await HttpClient.PostAsJsonAsync(
+            $"api/usermanagement/members/search?page={_currentPage}&count={_pageSize}", 
+            filters);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var searchResponse = await response.Content.ReadFromJsonAsync<PaginatedResponse<List<Entities.Members>>>();
+            if (searchResponse?.Success == true && searchResponse.Data != null)
+            {
+                _memberData.MemberList = searchResponse.Data;
+                _totalItems = searchResponse.MatchCount;
+            }
+        }
+        StateHasChanged();
+    }
+}

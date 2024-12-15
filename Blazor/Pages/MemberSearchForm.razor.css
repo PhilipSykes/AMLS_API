@@ -1,0 +1,123 @@
+#sidebar {
+    width: 350px;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-color);
+    padding: 30px;
+    transition: all 0.3s ease;
+
+    border-right: 1px solid var(--border-color);
+}
+
+.search-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.text-field {
+    max-width: 300px;
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
+
+    align-items: center;
+    justify-content: flex-start;
+
+    background-color: var(--text-field-background-color);
+    border-radius: 5px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: var(--border-color);
+    outline: none;
+
+    padding-inline: 12px;
+    padding-block: 7px;
+
+    width: 100%;
+    font-size: 14px;
+    color: var(--text-color);
+}
+.text-field:hover {
+    border-color: var(--pill-background-color);
+    transition: border-color 0.3s ease-in-out;
+    outline: none;
+}
+
+.text-field::placeholder {
+    color: var(--pill-background-color);
+    transition: opacity 0.5s ease;
+}
+
+.search-button {
+    max-width: 300px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    font-family: "Regular", sans-serif;
+    padding-inline: 14px;
+    padding-block: 9px;
+
+    width: 100%;
+    font-size: 14px;
+
+    border-radius: 5px;
+    background-color: var(--secondary-text-color);
+    color: var(--background-color);
+    border: none;
+    outline: none;
+    user-select: none;
+    text-align: left;
+}
+.search-button:hover {
+    background-color: var(--button-primary-hover-color);
+    transition: background-color 0.3s ease;
+}
+
+@media (max-width: 868px) {
+    #sidebar {
+        width: 100%;
+        margin-right: 0;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        position: fixed;
+        top: 58px;
+        left: 0;
+        z-index: 1000;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+        border-right: none !important;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    #sidebar .text-field{
+        width: 150px;
+    }
+
+    #sidebar .search-container {
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    #sidebar .search-button  {
+        margin: 0;
+        width: 75px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 560px) {
+    #sidebar {
+        flex-wrap: wrap;
+        padding: 15px;
+        top: 0;
+    }
+
+    #sidebar .text-field {
+        flex-grow: 1;
+        margin: 0 5px;
+    }
+}

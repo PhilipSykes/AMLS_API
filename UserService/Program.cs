@@ -56,7 +56,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddScoped<IDatabaseConnection, DatabaseConnection>();
 builder.Services.AddScoped<IFilterBuilder<BsonDocument>, BsonFilterBuilder>();
-builder.Services.AddScoped<ISearchRepository<Users>, SearchRepository<Users>>();
+builder.Services.AddScoped<ISearchRepository<Staff>, SearchRepository<Staff>>();
+builder.Services.AddScoped<ISearchRepository<Branch>, SearchRepository<Branch>>();
+builder.Services.AddScoped<ISearchRepository<Members>, SearchRepository<Members>>();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddAuthorization();

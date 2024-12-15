@@ -31,6 +31,23 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+    public string RefreshToken(string existingToken)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var jwtToken = tokenHandler.ReadJwtToken(existingToken);
+
+        var token = new JwtSecurityToken(
+            issuer: _config.Issuer,
+            audience: _config.Audience,
+            claims: jwtToken.Claims,                   
+            expires: DateTime.Now.AddMinutes(_config.ExpirationMinutes),
+            signingCredentials: new SigningCredentials(
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.SecretKey)), 
+                SecurityAlgorithms.HmacSha256)
+        );
+
+        return tokenHandler.WriteToken(token);
+    }
     
     private List<Claim> AddClaims(Entities.Login user)
     {

@@ -6,7 +6,7 @@ namespace MetricService;
 /// Controller for retrieving Docker container metrics
 /// </summary>
 [ApiController]
-[Route("admin/[controller]")] 
+[Route("[controller]")] 
 public class MetricController : ControllerBase
 {
     /// <summary>

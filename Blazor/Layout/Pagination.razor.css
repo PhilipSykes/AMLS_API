@@ -1,0 +1,47 @@
+*{
+    font-family: "Regular", sans-serif;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    padding: 20px;
+    user-select: none;
+}
+
+.pagination-btn {
+    font-size: 12px;
+    padding-inline: 10px;
+    padding-block: 5px;
+    border-radius: 5px;
+    background-color: var(--text-field-background-color);
+    color: var(--secondary-text-color);
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    border-color: var(--pill-background-color);
+    background-color: var(--text-field-background-color);
+}
+
+.pagination-btn.active {
+    background-color: var(--secondary-text-color);
+    color: var(--background-color);
+    border-color: var(--secondary-text-color);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: var(--border-color);
+}
+
+@media (max-width: 868px) {
+    .pagination {
+        padding: 15px;
+        margin-bottom: 10px;
+    }
+}

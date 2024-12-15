@@ -1,8 +1,7 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
-namespace Blazor.Models;
 using System.ComponentModel.DataAnnotations;
+
+namespace Blazor.SearchModels;
+
 
 
 public class InventorySearchValidator : ValidationAttribute

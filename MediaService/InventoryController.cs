@@ -81,9 +81,7 @@ public class InventoryController : ControllerBase
             
             var inventoryTask =  _inventorySearchRepo.PaginatedSearch(DocumentTypes.PhysicalMedia, pagination,filters: null,_config);
             
-            var branchTask = _branchSearchRepo.Search(
-                DocumentTypes.Branches,
-                filters: null);
+            var branchTask = _branchSearchRepo.Search(DocumentTypes.Branches);
 
             await Task.WhenAll(inventoryTask, branchTask);
         
@@ -135,7 +133,7 @@ public class InventoryController : ControllerBase
     /// <returns>Response indicating creation success</returns>
     [Authorize(Policy = Policies.CanCreateMedia)]
     [HttpPost("{branchId}/create")]
-    public async Task<ActionResult<Response<string>>> Create(string branchId, [FromBody] Request<MediaInfo> item)
+    public async Task<ActionResult<Response<string>>> Create(string branchId, [FromBody] Request<PhysicalInventory> item)
     {
         if (!HasBranchAccess(branchId))
         {
@@ -152,7 +150,7 @@ public class InventoryController : ControllerBase
     /// <returns>Response indicating update success</returns>
     [Authorize(Policy = Policies.CanEditMedia)]
     [HttpPut("{branchId}/edit")]
-    public async Task<ActionResult<Response<string>>> Update(string branchId, [FromBody] Request<MediaInfo> item)
+    public async Task<ActionResult<Response<string>>> Update(string branchId, [FromBody] Request<PhysicalInventory> item)
     {
         if (!HasBranchAccess(branchId))
         {
@@ -169,7 +167,7 @@ public class InventoryController : ControllerBase
     /// <returns>Response indicating deletion success</returns>
     [Authorize(Policy = Policies.CanDeleteMedia)]
     [HttpDelete("{branchId}/delete")]
-    public async Task<ActionResult<Response<string>>> Delete(string branchId, [FromBody] Request<MediaInfo> item)
+    public async Task<ActionResult<Response<string>>> Delete(string branchId, [FromBody] Request<PhysicalInventory> item)
     {
         if (!HasBranchAccess(branchId))
         {

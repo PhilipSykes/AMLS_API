@@ -3,37 +3,13 @@ td{
     text-align: left;
     color: var(--secondary-text-color);
 }
-.title{
+.role{
     text-transform: capitalize;
     font-weight: bold;
 }
 
 tbody tr:hover{
     background-color: var(--text-field-background-color);
-}
-
-.pill {
-    font-family: "Regular", sans-serif;
-    font-size: 10px;
-    font-weight: 450;
-    
-    padding-inline: 7px;
-    padding-block: 3px;
-    border-radius: 5px;
-
-    background-color: var(--border-color);
-    color: var(--secondary-text-color);
-    text-transform: uppercase;
-}
-
-.pill.available {
-    background-color: var(--success-background-color);
-    color: var(--success-text-color);
-}
-
-.pill.unavailable {
-    background-color: var(--danger-background-color);
-    color: var(--danger-text-color);
 }
 
 .action-btn{
@@ -47,7 +23,7 @@ tbody tr:hover{
     background-color: var(--border-color);
     color: var(--secondary-text-color);
     text-transform: uppercase;
-    
+
     width: 19.5px;
     height: 19.5px;
     outline: none;
@@ -59,19 +35,11 @@ tbody tr:hover{
     width: 15px;
     transform: translate( -30%, -5%);
 }
-.details-content{
-    display: flex;
-    flex-direction: row;
-}
-.details-section{
-    width: 100%;
-    padding-left: 20px;
-}
 
- .action-btn.disabled {
-     opacity: 0.5;
-     cursor: not-allowed;
- }
+.action-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 
 .modal-backdrop {
     position: fixed;

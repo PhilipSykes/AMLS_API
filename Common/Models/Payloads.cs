@@ -7,6 +7,11 @@ public static class PayLoads
         public required string Email { get; set; } = string.Empty;
         public required string Password { get; set; } = string.Empty;
     }
+    
+    public record RefreshToken
+    {
+        public required string Token { get; set; }
+    }
 
     public record Reserve
     {
@@ -17,6 +22,19 @@ public static class PayLoads
     public record Inventory
     {
         public required List<Entities.PhysicalInventory> PhysicalMediaList { get; set; }
+        public required List<Entities.Branch> BranchesList { get; set; }
+    }
+    
+    public record StaffData
+    {
+        public required List<Entities.Staff> StaffList { get; set; }
+        public required List<Entities.Branch> BranchesList { get; set; }
+    }
+    
+    public record MemberData
+    { 
+        public required List<Entities.Members> MemberList { get; set; }
+        
         public required List<Entities.Branch> BranchesList { get; set; }
     }
 

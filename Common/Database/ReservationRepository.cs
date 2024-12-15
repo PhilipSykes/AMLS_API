@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using Common.Constants;
 using Common.Models;
 using Common.Exceptions;
@@ -23,8 +24,9 @@ namespace Common.Database
     {
         private readonly IMongoDatabase _database;
         private readonly IMongoCollection<Reservation> _reservations;
-        private readonly IMongoCollection<Users> _users;
+        private readonly IMongoCollection<Members> _users;
         private readonly IMongoCollection<PhysicalMedia> _physical;
+
         
         public ReservationRepository(IOptions<MongoDBConfig> options)
         {
@@ -32,7 +34,7 @@ namespace Common.Database
             var client = new MongoClient(config.ConnectionString);
             _database = client.GetDatabase(config.DatabaseName);
             _reservations = _database.GetCollection<Reservation>("Reservations");
-            _users = _database.GetCollection<Users>("Users");
+            _users = _database.GetCollection<Members>(DocumentTypes.Members);
             _physical = _database.GetCollection<PhysicalMedia>("PhysicalMedia");
         }
 
@@ -70,8 +72,8 @@ namespace Common.Database
                     await _reservations.InsertOneAsync(session, reservation);
 
                     // Add reference to member history
-                    await _users.UpdateOneAsync(u => u.Id == reservation.Member, 
-                        Builders<Users>.Update.Push(u => u.History, reservation.Id));
+                    await _users.UpdateOneAsync(u => u.ObjectId == reservation.Member, 
+                        Builders<Members>.Update.Push(u => u.History, reservation.ObjectId));
                     //What if user not found?
                     
                     await session.CommitTransactionAsync();
@@ -108,7 +110,7 @@ namespace Common.Database
         {
             try
             {
-                var originalReservation = await _reservations.Find(o => o.Id == reservationId).FirstOrDefaultAsync();
+                var originalReservation = await _reservations.Find(o => o.ObjectId == reservationId).FirstOrDefaultAsync();
                 if (originalReservation == null) throw new InvalidOperationException("Reservation could not be extended, because it wasn't found");
             
             
@@ -122,7 +124,7 @@ namespace Common.Database
                     };
                 }
             
-                await _reservations.UpdateOneAsync(r => r.Id == reservationId,
+                await _reservations.UpdateOneAsync(r => r.ObjectId == reservationId,
                     Builders<Reservation>.Update.Set(r => r.EndDate, newEndDate)
                 );
 
@@ -156,10 +158,10 @@ namespace Common.Database
                 using (var session = await _database.Client.StartSessionAsync())
                 {
                     // Delete the reservation from the reservations collection
-                    var result = await _reservations.FindOneAndDeleteAsync(session, u => u.Id == reservationId);
+                    var result = await _reservations.FindOneAndDeleteAsync(session, u => u.ObjectId == reservationId);
                     // Delete the reference to it in the user's history
-                    await _users.FindOneAndUpdateAsync(session, u => u.Id == result.Member,
-                        Builders<Users>.Update.Pull(DbFieldNames.Users.History, reservationId));
+                    await _users.FindOneAndUpdateAsync(session, u => u.ObjectId == result.Member,
+                        Builders<Members>.Update.Pull(DbFieldNames.Members.History, reservationId));
                 
                     if (result is null)
                     {
@@ -291,7 +293,7 @@ namespace Common.Database
             //Todo - What if item not found?
             // Find overlapping reservations for the current item
             var result = await _reservations.CountDocumentsAsync(
-                r => r.Item == item && r.Id != excludeReservationId &&
+                r => r.Item == item && r.ObjectId != excludeReservationId &&
                 (r.EndDate >= startDate && r.StartDate <= endDate));
             
             return result == 0;

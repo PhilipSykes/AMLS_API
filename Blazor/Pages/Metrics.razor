@@ -2,6 +2,7 @@
 @using System.Text.Json
 @inject HttpClient HttpClient
 @inject IAuthService AuthState
+@attribute [Authorize(Policy = Policies.CanViewMetricsReports)]
 
 <div id="page">
     
@@ -57,7 +58,7 @@
     {
         _lastUpdated = DateTime.Now;
         HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
-        _snapshot = await HttpClient.GetFromJsonAsync<List<JsonDocument>>("https://localhost:7500/api/admin/metric");
+        _snapshot = await HttpClient.GetFromJsonAsync<List<JsonDocument>>("https://localhost:7500/api/metric");
         
         StateHasChanged();
     }

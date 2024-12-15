@@ -79,7 +79,9 @@
         try
         {
             var response = await HttpClient.PostAsJsonAsync("api/auth/login", request);
-
+            
+            var content = await response.Content.ReadAsStringAsync();
+            
             if (response.IsSuccessStatusCode)
             {
                 var tokenResponse = await response.Content.ReadFromJsonAsync<Response<LoginDetails>>();
@@ -87,7 +89,6 @@
                 if (tokenResponse != null)
                 {
                     await AuthState.Login(tokenResponse.Data.Token, tokenResponse.Data.Branches);
-                    success = "Successful login";
                     StateHasChanged();
                     NavigationManager.NavigateTo("/");
                 }
@@ -97,9 +98,10 @@
                 error = "Invalid credentials";
             }
         }
-        catch
+        catch(Exception ex)
         {
-            error = "Login failed";
+            error = "Login failed.";
+            Console.WriteLine($"Exception during login: {ex}");
         }
     }
 

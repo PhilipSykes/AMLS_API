@@ -17,7 +17,7 @@
         
         <div class="info-description">
             <div class="description">
-                <h3 class="section-title">Desctription</h3>
+                <h3 class="section-title">Description</h3>
                 <p>@_result.Description</p>
             </div>
             
@@ -99,7 +99,7 @@
     {
         Entities.Reservation reservation = new Entities.Reservation
         {
-            Id = ObjectId.GenerateNewId().ToString(),
+            ObjectId = ObjectId.GenerateNewId().ToString(),
             StartDate = DateTime.UtcNow,
             EndDate = DateTime.UtcNow.AddDays(1),
             Item = "673f6d28e580ac7f9f4fa9b3",

@@ -26,12 +26,14 @@ public static class Policies
     //Branch staff permissions
     public const string HasBranchAccess = "HasBranchAccess";
     public const string CanEditMedia = "CanEditMedia";
+    public const string CanEditBranchMedia = "CanEditBranchMedia";
     public const string CanCreateMedia = "CanCreateMedia";
     public const string CanDeleteMedia = "CanDeleteMedia";
     public const string CanViewInventory = "CanViewInventory";
     
     //SystemAdmin permissions 
-    public const string CanEditUserRoles = "RequireEditUsers";
+    public const string CanViewUsers = "CanViewUsers";
+    public const string CanEditUserRoles = "CanEditUsers";
     public const string CanEditUserPermissions = "CanEditUserPermissions";
     public const string CanViewMetricsReports = "CanViewMetricsReports";
 }

@@ -2,6 +2,8 @@
 @using Blazor.Models
 @inject HttpClient HttpClient
 @inject NavigationManager Nav
+@attribute [Authorize(Policy = Policies.CanEditMedia)]
+@attribute [Authorize(Policy = Policies.CanDeleteMedia)]
 
 <div class="edit-container">
     <h2>Edit Media Details</h2>
@@ -191,7 +193,7 @@
     {
         var updateModel = new Entities.MediaInfo
         {
-            Id = MediaId,
+            ObjectId = MediaId,
             Title = editModel.Title,
             Language = editModel.Language,
             Description = editModel.Description,

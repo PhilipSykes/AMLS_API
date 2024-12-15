@@ -1,0 +1,36 @@
+<div class="pagination">
+    <button class="pagination-btn" @onclick="PreviousPage" disabled="@(CurrentPage <= 1)">
+        Previous
+    </button>
+    
+    @for (int i = Math.Max(1, CurrentPage - 2); i <= Math.Min(TotalPages, CurrentPage + 2); i++)
+    {
+        var pageNumber = i;
+        <button class="pagination-btn @(pageNumber == CurrentPage ? "active" : "")" 
+                @onclick="() => GoToPage(pageNumber)">
+            @pageNumber
+        </button>
+    }
+    
+    <button class="pagination-btn" @onclick="NextPage" disabled="@(CurrentPage >= TotalPages)">
+        Next
+    </button>
+</div>
+
+@code {
+    [Parameter] public int CurrentPage { get; set; } = 1;
+    [Parameter] public long TotalItems { get; set; }
+    [Parameter] public int ItemsPerPage { get; set; } = 20;
+    [Parameter] public EventCallback<int> OnPageSelected { get; set; }
+
+    private int TotalPages => (int)Math.Ceiling(TotalItems / (double)ItemsPerPage);
+
+    private async Task GoToPage(int page)
+    {
+        if (page != CurrentPage)
+            await OnPageSelected.InvokeAsync(page);
+    }
+
+    private Task PreviousPage() => GoToPage(CurrentPage - 1);
+    private Task NextPage() => GoToPage(CurrentPage + 1);
+}

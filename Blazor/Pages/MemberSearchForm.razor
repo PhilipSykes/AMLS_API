@@ -1,0 +1,63 @@
+<div id="sidebar">
+    <EditForm Model="@_searchModel" OnValidSubmit="@OnSubmit">
+        <DataAnnotationsValidator />
+        <div class="search-container">
+            <input type="text" class="text-field" placeholder="Enter ID" @bind="_searchModel.Id"/>
+            <input type="text" class="text-field" placeholder="Enter first name" @bind="_searchModel.FirstName"/>
+            <input type="text" class="text-field" placeholder="Enter last name" @bind="_searchModel.LastName"/>
+            <select class="text-field" @bind="_searchModel.Branch">
+                <option value="">Branch</option>
+                @foreach (var branch in BranchList)
+                {
+                <option value="@branch.ObjectId">@branch.Name</option>
+                }
+            </select>
+            <button type="submit" class="search-button">
+                <span>Search</span>
+            </button>
+        </div>
+        <ValidationSummary />
+    </EditForm>
+</div>
+
+@code {
+    [Parameter] public EventCallback<List<Filter>> OnSubmitCallback { get; set; }
+    [Parameter] public List<Entities.Branch> BranchList { get; set; } = new();
+    
+    private MemberSearchModel _searchModel = new(); 
+    private List<Filter> _searchFilters = new();
+
+    public async Task OnSubmit()
+    {
+        FormatSearchFilters(_searchModel);
+        await OnSubmitCallback.InvokeAsync(_searchFilters);
+    }
+
+    private void FormatSearchFilters(MemberSearchModel model)
+    {
+        _searchFilters.Clear();
+
+        if (!string.IsNullOrEmpty(model.Id))
+        {
+            _searchFilters.Add(new Filter(DbFieldNames.Id, model.Id, DbEnums.Equals));
+        }
+
+        if (!string.IsNullOrEmpty(model.FirstName))
+        {
+            _searchFilters.Add(new Filter(DbFieldNames.Members.FirstName,model.FirstName, DbEnums.Contains));
+        }
+
+        if (!string.IsNullOrEmpty(model.LastName))
+        {
+            _searchFilters.Add(new Filter(DbFieldNames.Members.LastName, model.LastName, DbEnums.Contains));
+        }
+        
+        if (!string.IsNullOrEmpty(model.Branch))
+        {
+            _searchFilters.Add(new Filter(DbFieldNames.Members.NearestBranch,model.Branch, DbEnums.Contains)
+            {
+                IsObjectId = true
+            });
+        }
+    }
+}

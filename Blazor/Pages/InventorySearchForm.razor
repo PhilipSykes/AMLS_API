@@ -1,5 +1,3 @@
-@using Blazor.Models
-
 <div id="sidebar">
     <EditForm Model="@_searchModel" OnValidSubmit="@OnSubmit">
         <DataAnnotationsValidator />
@@ -16,7 +14,7 @@
                     <option value="">Branch</option>
                     @foreach (var branch in BranchList)
                     {
-                        <option value="@branch.ObjectID">@branch.Name</option>
+                        <option value="@branch.ObjectId">@branch.Name</option>
                     }
                 </select>
                 <button type="submit" class="search-button">
@@ -27,14 +25,12 @@
 </div>
 
 @code { 
-    [Parameter] 
-    public EventCallback<List<Filter>> OnSubmitCallback { get; set; } 
+    [Parameter] public EventCallback<List<Filter>> OnSubmitCallback { get; set; } 
     
     private InventorySearchModel _searchModel = new InventorySearchModel(); 
     private List<Filter> _searchFilters = new List<Filter>(); 
     
-    [Parameter]
-    public List<Entities.Branch> BranchList { get; set; } = new();
+    [Parameter] public List<Entities.Branch> BranchList { get; set; } = new();
     
     public async Task OnSubmit() { 
         FormatSearchFilters(_searchModel); 
