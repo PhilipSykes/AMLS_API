@@ -20,7 +20,7 @@ namespace ReservationService;
 public class ReservationsController : ControllerBase
 {
     private readonly Exchange _exchange;
-    private readonly IReservationCreator _reservationCreator;
+    private readonly IReservationRepository _reservationRepository;
     private readonly ISearchRepository<Reservation> _reservationSearchRepo;
     
     /// <summary>
@@ -29,10 +29,10 @@ public class ReservationsController : ControllerBase
     /// <param name="exchange">Message broker exchange service</param>
     /// <param name="reservationCreator">Reservation creator service</param>
     /// <param name="reservationSearchRepo">Service for searching reservation items</param>
-    public ReservationsController(Exchange exchange, IReservationCreator reservationCreator,ISearchRepository<Reservation> reservationSearchRepo)
+    public ReservationsController(Exchange exchange, IReservationRepository reservationRepository,ISearchRepository<Reservation> reservationSearchRepo)
     {
         _exchange = exchange;
-        _reservationCreator = reservationCreator;
+        _reservationRepository = reservationRepository;
         _reservationSearchRepo = reservationSearchRepo;
     }
     
@@ -50,7 +50,7 @@ public class ReservationsController : ControllerBase
         //}
         
         
-        var result = await _reservationCreator.CreateReservation(reservation);
+        var result = await _reservationRepository.CreateReservation(reservation);
         
         //await _exchange.PublishNotification(
         //    MessageTypes.EmailNotifications.ReserveMedia, 
@@ -62,7 +62,7 @@ public class ReservationsController : ControllerBase
     [HttpPost("cancel")]
     public async Task<ActionResult> Cancel(string id)
     {
-        var result = await _reservationCreator.CancelReservation(id);
+        var result = await _reservationRepository.CancelReservation(id);
         
         return Ok(new { message = result.StatusCode });
     }
@@ -72,7 +72,7 @@ public class ReservationsController : ControllerBase
     {
         string id = request.ReservationId;
         DateTime newEndDate = request.NewEndDate;
-        var result = await _reservationCreator.ExtendReservation(id, newEndDate);
+        var result = await _reservationRepository.ExtendReservation(id, newEndDate);
         
         return Ok(new { message = result.StatusCode });
     }
@@ -80,7 +80,7 @@ public class ReservationsController : ControllerBase
     [HttpPost("getReservable")]
     public async Task<ActionResult<Operations.Response<List<ReservableItem>>>> GetReservableItems(string media, string[] branches, int minimumDays)
     {
-        var result = await _reservationCreator.GetReservableItems(media, branches, minimumDays);
+        var result = await _reservationRepository.GetReservableItems(media, branches, minimumDays);
 
         return result;
     }

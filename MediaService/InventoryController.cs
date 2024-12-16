@@ -149,9 +149,8 @@ public class InventoryController : ControllerBase
     /// <param name="mediaId">ID of the Media item to delete</param>
     /// <returns>Response indicating deletion success</returns>
     [Authorize(Policy = Policies.CanDeleteMedia)]
-    [Authorize(Policy = Policies.CanDeleteMedia)]
     [HttpDelete("{branchId}/delete/{mediaId}")]
-    public async Task<ActionResult<Response<string>>> Delete(string branchId, string mediaId)
+    public async Task<ActionResult<Response<string>>>Delete(string branchId, string mediaId)
     {
         if (!HasBranchAccess(branchId))
         {
