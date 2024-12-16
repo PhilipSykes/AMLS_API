@@ -1,7 +1,4 @@
-using System.Reflection.Metadata;
 using Common.Constants;
-using Common.Models;
-using Common.Exceptions;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -17,6 +14,8 @@ namespace Common.Database
         public Task<Response<bool>> CancelReservation(string reservationId);
         public Task<Response<List<ReservableItem>>> GetReservableItems(string media, string[] branches, int minimumLengthDays);
 
+        public Task<Response<bool>> CheckIn(string reservationId);
+        public Task<Response<bool>> CheckOut(string physicalId, string memberId, int reservationLength = 7);
     }
 
     
@@ -74,6 +73,7 @@ namespace Common.Database
                     // Add reference to member history
                     await _users.UpdateOneAsync(u => u.ObjectId == reservation.Member, 
                         Builders<Members>.Update.Push(u => u.History, reservation.ObjectId));
+                    
                     //What if user not found?
                     
                     await session.CommitTransactionAsync();
@@ -212,6 +212,7 @@ namespace Common.Database
                     .Lookup(DocumentTypes.Reservations, DbFieldNames.Id, DbFieldNames.Reservations.Item, lookupField)
                     .Project(new BsonDocument
                     {
+                        { "branch", "$branch" },
                         {
                             lookupField, new BsonDocument
                             {
@@ -253,7 +254,7 @@ namespace Common.Database
                     reservables.Add(new ReservableItem
                     {
                         Item = item["_id"].ToString(),
-                        BranchName = "temporary",
+                        BranchName = item["branch"].ToString(),
                         Timeslots = timeslots,
                         LastEnd = start
                     });
@@ -279,6 +280,64 @@ namespace Common.Database
             };
         }
 
+
+        public async Task<Response<bool>> CheckIn(string physicalId)
+        {
+            var t = await _physical.UpdateOneAsync(p => p.Id == physicalId,
+                Builders<PhysicalMedia>.Update.Set(p => p.Status, "available"));
+            if (t is null)
+            {
+                return new Response<bool>
+                {
+                    Success = false,
+                    Message = "Couldn't find item",
+                    StatusCode = QueryResultCode.NotFound
+                };
+            }
+
+            return new Response<bool>
+            {
+                Success = true,
+                StatusCode = QueryResultCode.Ok
+            };
+        }
+
+        
+        public async Task<Response<bool>> CheckOut(string physicalId, string memberId, int reservationLength = 7)
+        {
+            
+            // If reserved by current user, allow checkout
+            if (await CheckReservationOwner(physicalId, DateTime.Now) == memberId)
+            {
+                await _physical.UpdateOneAsync(p => p.Id == physicalId, Builders<PhysicalMedia>.Update.Set(p => p.Status, "borrowed"));
+                return new Response<bool>
+                {
+                    Success = true,
+                    StatusCode = QueryResultCode.Ok
+                };
+            }
+            
+            // Otherwise, try to create a reservation; allow checkout if no conflicts
+            var resId = ObjectId.GenerateNewId().ToString();
+            var start = DateTime.Today;
+            var end = DateTime.Today.AddDays(reservationLength);
+            var result = await CreateReservation(new Reservation
+            {
+                ObjectId = resId,
+                Item = physicalId,
+                Member = memberId,
+                StartDate = start,
+                EndDate = end
+            });
+            if (result.Success)
+            {
+                await _physical.UpdateOneAsync(p => p.Id == physicalId, Builders<PhysicalMedia>.Update.Set(p => p.Status, "borrowed"));
+            }
+
+            return result;
+        }
+
+
         /// <summary>
         /// Checks if the given item is available in the given time range
         /// </summary>
@@ -289,14 +348,25 @@ namespace Common.Database
         /// <returns>True if the reservation is possible, False if it would collide with another reservation</returns>
         private async Task<bool> CheckAvailability(string item, DateTime startDate, DateTime endDate, string? excludeReservationId = null)
         {
-            var filters = Builders<Reservation>.Filter;
-            //Todo - What if item not found?
+            //Todo - What if item not found? Change this to use Find() instead if i get time
             // Find overlapping reservations for the current item
             var result = await _reservations.CountDocumentsAsync(
                 r => r.Item == item && r.ObjectId != excludeReservationId &&
                 (r.EndDate >= startDate && r.StartDate <= endDate));
             
             return result == 0;
+        }
+
+        // Searches for this item at this time, to see who is currently entitled to it, if anyone.
+        private async Task<string> CheckReservationOwner(string physicalid, DateTime now)
+        {
+            var result = await _reservations.Find(r => r.Item == physicalid && r.StartDate <= now && r.EndDate > now).FirstOrDefaultAsync();
+            if (result == null)
+            {
+                return "";
+            }
+
+            return result.Member;
         }
     }
 }
