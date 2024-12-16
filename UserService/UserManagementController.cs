@@ -154,39 +154,21 @@ public class UserManagementController : ControllerBase
     [HttpPut("staff/edit")]
     public async Task<ActionResult<Response<string>>> EditStaff(Request<PayLoads.StaffUser> user)
     {
-        var config = new AgreggateSearchConfig 
-        {
-            //TODO incorporate aggreggate for editing role in login + staff table if applicable
-            ProjectionString = $"{{ '{DbFieldNames.Members.Settings}': 0, '{DbFieldNames.Members.Favourites}': 0, '{DbFieldNames.Members.Email}': 0 }}"
-        };
-        
         return await _userManager.EditStaff(user);
     }
     
     
     [Authorize(Policy = Policies.CanDeleteUserAccounts)]
-    [HttpDelete("members/delete")]
-    public async Task<ActionResult<Response<string>>> DeleteMember(Request<PayLoads.MemberUser> user)
+    [HttpDelete("members/delete/{userId}")]
+    public async Task<ActionResult<Response<string>>> DeleteMember(string userId)
     {
-        var config = new AgreggateSearchConfig 
-        {
-            //TODO incorporate aggreggate for deleting from login + member table
-            ProjectionString = $"{{ '{DbFieldNames.Members.Settings}': 0, '{DbFieldNames.Members.Favourites}': 0, '{DbFieldNames.Members.Email}': 0 }}"
-        };
-        
-        return await _userManager.DeleteMember(user);
+        return await _userManager.DeleteMember(userId);
     }
     
     [Authorize(Policy = Policies.CanDeleteUserAccounts)]
-    [HttpDelete("staff/delete")]
-    public async Task<ActionResult<Response<string>>> DeleteStaff(Request<PayLoads.StaffUser> user)
+    [HttpDelete("staff/delete/{userId}")]
+    public async Task<ActionResult<Response<string>>> DeleteStaff(string userId)
     {
-        var config = new AgreggateSearchConfig 
-        {
-            //TODO incorporate aggreggate for deleting from login + staff table
-            ProjectionString = $"{{ '{DbFieldNames.Members.Settings}': 0, '{DbFieldNames.Members.Favourites}': 0, '{DbFieldNames.Members.Email}': 0 }}"
-        };
-        
-        return await _userManager.DeleteStaff(user);
+        return await _userManager.DeleteStaff(userId);
     }
 }

@@ -1,5 +1,6 @@
 @inject HttpClient HttpClient
 @inject NavigationManager Nav
+@inject IAuthService AuthState
 <tr class="@(IsExpanded ? "expanded" : null)">
     <td>@user.ObjectId</td>
     <td>@user.FirstName</td>
@@ -95,6 +96,7 @@
         </div>
     </div>
 }
+<StatusModal @ref="_statusModal" />
 
 @code {
     [Parameter] public Entities.Staff user { get; set; } = new();
@@ -103,13 +105,15 @@
     private bool IsExpanded = false;
     private string selectedBranch = "";
     private Entities.Staff editUser = new() { Branches = Array.Empty<string>() };
+    private string? _jwtToken;
+    private StatusModal? _statusModal;
     
     private IEnumerable<Entities.Branch> AvailableBranches => branchList
         .Where(b => !editUser.Branches.Contains(b.ObjectId));
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // Create a clone of the user for editing
+        _jwtToken = await AuthState.GetBearerToken();
         editUser = new Entities.Staff
         {
             ObjectId = user.ObjectId,
@@ -151,16 +155,33 @@
 
     private async Task SaveChanges()
     {
-        // TODO: Implement API call to save changes
-        user.Role = editUser.Role;
-        user.Branches = editUser.Branches;
-        IsExpanded = false;
+        var request = new Request<PayLoads.StaffUser>
+        {
+            Data = new PayLoads.StaffUser 
+            { 
+                User = editUser 
+            }
+        };
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        var response = await HttpClient.PutAsJsonAsync("api/usermanagement/staff/edit", request);
+        var result = await response.Content.ReadFromJsonAsync<Response<string>>();
+        if (result != null)
+        {
+            if (result.Success)
+            {
+                user.Role = editUser.Role;
+                user.Branches = editUser.Branches;
+                IsExpanded = false;
+            }
+            await _statusModal.ShowStatusModal(result);
+        }
+        
     }
 
     private void CancelEdit()
     {
         editUser.Role = user.Role;
-        editUser.Branches = user.Branches?.ToArray() ?? Array.Empty<string>();
+        editUser.Branches = user.Branches.ToArray();
         IsExpanded = false;
     }
 
@@ -169,10 +190,12 @@
 
     private async Task DeleteUser()
     {
-        var response = await HttpClient.DeleteAsync($"api/usermanagement/staff/delete");
-        if (response.IsSuccessStatusCode)
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        var response = await HttpClient.DeleteAsync($"api/usermanagement/staff/delete/{user.ObjectId}");
+        var result = await response.Content.ReadFromJsonAsync<Response<string>>();
+        if (result != null && _statusModal != null)
         {
-            Nav.NavigateTo("/managestaff");
+            await _statusModal.ShowStatusModal(result, result.Success ? "/managestaff" : null);
         }
     }
 }

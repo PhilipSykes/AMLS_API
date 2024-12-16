@@ -27,8 +27,8 @@
 @code { 
     [Parameter] public EventCallback<List<Filter>> OnSubmitCallback { get; set; } 
     
-    private InventorySearchModel _searchModel = new InventorySearchModel(); 
-    private List<Filter> _searchFilters = new List<Filter>(); 
+    private InventorySearchModel _searchModel = new(); 
+    private List<Filter> _searchFilters = new(); 
     
     [Parameter] public List<Entities.Branch> BranchList { get; set; } = new();
     

@@ -1,7 +1,8 @@
-@page "/editMedia/{MediaId}"
+@page "/editMedia/{Branch}/{MediaId}"
 @using Blazor.Models
 @inject HttpClient HttpClient
 @inject NavigationManager Nav
+@inject IAuthService AuthState
 @attribute [Authorize(Policy = Policies.CanEditMedia)]
 @attribute [Authorize(Policy = Policies.CanDeleteMedia)]
 
@@ -125,14 +126,17 @@
         }
     </EditForm>
 </div>
-
+<StatusModal @ref="_statusModal" />
 @code {
     [Parameter] public string MediaId { get; set; }
+    [Parameter] public string Branch { get; set; }
     private Entities.MediaInfo _media;
     private MediaInfoEditModel _editModel = new();
     private readonly List<Filter> _filters = new();
     private string _genresInput = string.Empty;
     private bool _showDeleteConfirmation = false;
+    private string? _jwtToken;
+    private StatusModal? _statusModal;
 
     private string GetDetailsHeader()
     {
@@ -151,9 +155,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _filters.Add(new Filter("_id", MediaId, DbEnums.Equals));
+        int page = 1,count = 1;
+        _jwtToken = await AuthState.GetBearerToken();
+        _filters.Add(new Filter(DbFieldNames.Id, MediaId, DbEnums.Equals));
 
-        var response = await HttpClient.PostAsJsonAsync($"api/catalog/search?page={1}&count={1}", _filters);
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        var response = await HttpClient.PostAsJsonAsync($"api/catalog/search?page={page}&count={count}", _filters);
         if (response.IsSuccessStatusCode)
         {
             var searchResponse = await response.Content.ReadFromJsonAsync<Response<List<Entities.MediaInfo>>>();
@@ -200,7 +207,7 @@
             Isbn = _editModel.Isbn,
             ReleaseDate = _editModel.PublishDate,
             Type = _editModel.Type,
-            
+        
             // Type-specific fields based on media type
             Author = _editModel.Type == "Book" ? _editModel.Author : string.Empty,
             Publisher = _editModel.Type == "Book" ? _editModel.Publisher : string.Empty,
@@ -210,16 +217,16 @@
             Network = _editModel.Type == "TV Series" ? _editModel.Network : string.Empty,
             Season = _editModel.Type == "TV Series" ? _editModel.Season : 0,
             Episodes = _editModel.Type == "TV Series" ? _editModel.Episodes : 0,
-            
-            Genres = _genresInput.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                              .Select(g => g.Trim())
-                              .ToArray()
+        
+            Genres = _genresInput.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(g => g.Trim()).ToArray()
         };
 
-        var response = await HttpClient.PutAsJsonAsync($"api/media/{MediaId}", updateModel);
-        if (response.IsSuccessStatusCode)
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        var response = await HttpClient.PutAsJsonAsync($"api/inventory/{Branch}/edit", updateModel);
+        var result = await response.Content.ReadFromJsonAsync<Response<string>>();
+        if (result != null && _statusModal != null)
         {
-            Nav.NavigateTo("/inventory");
+            await _statusModal.ShowStatusModal(result, result.Success ? "/inventory" : null);
         }
     }
 
@@ -242,10 +249,11 @@
 
     private async Task DeleteMedia()
     {
-        var response = await HttpClient.DeleteAsync($"api/inventory/{MediaId}/delete");
-        if (response.IsSuccessStatusCode)
+        var response = await HttpClient.DeleteAsync($"api/inventory/{Branch}/delete/{MediaId}");
+        var result = await response.Content.ReadFromJsonAsync<Response<string>>();
+        if (result != null && _statusModal != null)
         {
-            Nav.NavigateTo("/inventory");
+            await _statusModal.ShowStatusModal(result, result.Success ? "/inventory" : null);
         }
     }
 }

@@ -126,23 +126,6 @@ public class InventoryController : ControllerBase
     }
     
     /// <summary>
-    /// Creates a new media item in specified branch
-    /// </summary>
-    /// <param name="branchId">ID of the branch where media will be created</param>
-    /// <param name="item">Media item details</param>
-    /// <returns>Response indicating creation success</returns>
-    [Authorize(Policy = Policies.CanCreateMedia)]
-    [HttpPost("{branchId}/create")]
-    public async Task<ActionResult<Response<string>>> Create(string branchId, [FromBody] Request<PhysicalInventory> item)
-    {
-        if (!HasBranchAccess(branchId))
-        {
-            return Forbid("User does not have permission to create items within this branch.");
-        }
-        return await _inventoryManager.CreateMedia(item);
-    }
-    
-    /// <summary>
     /// Updates an existing media item in specified branch
     /// </summary>
     /// <param name="branchId">ID of the branch containing the media</param>
@@ -150,30 +133,31 @@ public class InventoryController : ControllerBase
     /// <returns>Response indicating update success</returns>
     [Authorize(Policy = Policies.CanEditMedia)]
     [HttpPut("{branchId}/edit")]
-    public async Task<ActionResult<Response<string>>> Update(string branchId, [FromBody] Request<PhysicalInventory> item)
+    public async Task<ActionResult<Response<string>>> Update(string branchId, [FromBody] MediaInfo mediaInfo)
     {
         if (!HasBranchAccess(branchId))
         {
             return Forbid("User does not have permission to edit items from this branch.");
         }
-        return await _inventoryManager.EditExistingMedia(item);
+        return await _inventoryManager.EditExistingMedia(mediaInfo);
     }
     
     /// <summary>
     /// Deletes an existing media item from specified branch
     /// </summary>
     /// <param name="branchId">ID of the branch containing the media</param>
-    /// <param name="item">Media item to delete</param>
+    /// <param name="mediaId">ID of the Media item to delete</param>
     /// <returns>Response indicating deletion success</returns>
     [Authorize(Policy = Policies.CanDeleteMedia)]
-    [HttpDelete("{branchId}/delete")]
-    public async Task<ActionResult<Response<string>>> Delete(string branchId, [FromBody] Request<PhysicalInventory> item)
+    [Authorize(Policy = Policies.CanDeleteMedia)]
+    [HttpDelete("{branchId}/delete/{mediaId}")]
+    public async Task<ActionResult<Response<string>>> Delete(string branchId, string mediaId)
     {
         if (!HasBranchAccess(branchId))
         {
             return Forbid("User does not have permission to delete items from this branch.");
         }
-        return await _inventoryManager.DeleteExistingMedia(item);
+        return await _inventoryManager.DeleteMediaItem(mediaId);
     }
 
     /// <summary>
