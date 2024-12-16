@@ -59,6 +59,7 @@ builder.Services.AddScoped<IFilterBuilder<BsonDocument>, BsonFilterBuilder>();
 builder.Services.AddScoped<ISearchRepository<Staff>, SearchRepository<Staff>>();
 builder.Services.AddScoped<ISearchRepository<Branch>, SearchRepository<Branch>>();
 builder.Services.AddScoped<ISearchRepository<Members>, SearchRepository<Members>>();
+builder.Services.AddScoped<IUserManager, UserManager>();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddAuthorization();

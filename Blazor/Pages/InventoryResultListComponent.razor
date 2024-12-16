@@ -111,7 +111,7 @@
 
     private async Task OnEdit(Entities.PhysicalInventory item)
     {
-        Nav.NavigateTo($"/editMedia/{Media.MediaInfo.ObjectId}");
+        Nav.NavigateTo($"/editMedia/{Media.Branch}/{Media.MediaInfo.ObjectId}");
     }
 
     protected override void OnInitialized()

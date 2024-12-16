@@ -84,9 +84,8 @@
     {
         HttpClient.DefaultRequestHeaders.Authorization = 
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken); 
-        var response = await HttpClient.PostAsJsonAsync(
-            $"api/inventory/search?page={_currentPage}&count={_pageSize}", 
-            filters);
+        var response = await HttpClient.PostAsJsonAsync($"api/inventory/search?page={_currentPage}&count={_pageSize}", filters);
+        
         if (response.IsSuccessStatusCode)
         {
             var searchResponse = await response.Content.ReadFromJsonAsync<PaginatedResponse<List<Entities.PhysicalInventory>>>();

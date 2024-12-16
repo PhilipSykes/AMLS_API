@@ -1,5 +1,7 @@
-
-<tr>
+@inject HttpClient HttpClient
+@inject NavigationManager Nav
+@inject IAuthService AuthState
+<tr class="@(IsExpanded ? "expanded" : null)">
     <td>@user.ObjectId</td>
     <td>@user.FirstName</td>
     <td>@user.LastName</td>
@@ -7,31 +9,119 @@
     <td class="role">@user.Role</td>
     <td>@GetBranchNames()</td>
     <td>
-    <div class="action-buttons">
-        <button class="action-btn" @onclick="EditRole">
-            <svg class="action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-            </svg>
-        </button>
-        <button class="action-btn" @onclick="EditBranchAccess">
-            <svg class="action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-            </svg>
-        </button>
-        <button class="action-btn" @onclick="DeleteUser">
-            <svg class="action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-            </svg>
-        </button>
-    </div>
+        <div class="action-buttons">
+            <button class="action-btn @(IsExpanded ? "active" : null)" @onclick="EditRoleAndBranch">
+                <svg class="action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+            </button>
+            <button class="action-btn" @onclick="ShowDeleteConfirmation">
+                <svg class="action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </button>
+        </div>
     </td>
 </tr>
+@if (IsExpanded)
+{
+    <tr class="details-row">
+        <td colspan="7">
+            <div class="details-content">
+                <div class="edit-section">
+                    <div class="label-input-pair">
+                        <label>Role</label>
+                        <select class="text-field" @bind="editUser.Role">
+                            <option value="@editUser.Role">@editUser.Role</option>
+                            <option value="BranchLibrarian">Branch Librarian</option>
+                            <option value="BranchManager">Branch Manager</option>
+                            <option value="SystemAdmin">System Admin</option>
+                        </select>
+                    </div>
 
+                    <div class="label-input-pair">
+                        <label>Branches</label>
+                        <div class="tag-section">
+                            @if (editUser.Branches.Any())
+                            {
+                                <div class="tag-lists">
+                                    @foreach (var branch in editUser.Branches)
+                                    {
+                                        var branchName = branchList.FirstOrDefault(b => b.ObjectId == branch)?.Name ?? "Unknown Branch";
+                                        <div class="selected-tag tag-hover">
+                                            <div title="@branchName" class="tag-wrap">
+                                                @branchName
+                                            </div>
+                                            <svg class="close-btn" @onclick="() => RemoveBranch(branch)" fill="#FAFAF9"
+                                                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                                                <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/>
+                                            </svg>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            <div class="add-branch">
+                                <select class="text-field" @bind="selectedBranch">
+                                    <option value="">Select branch to add...</option>
+                                    @foreach (var branch in AvailableBranches)
+                                    {
+                                        <option value="@branch.ObjectId">@branch.Name</option>
+                                    }
+                                </select>
+                                <button class="button-primary" @onclick="AddBranch">Add</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="button-secondary" @onclick="CancelEdit">Cancel</button>
+                        <button class="button-primary" @onclick="SaveChanges">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+}
+
+@if (_showDeleteConfirmation)
+{
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <h3>Confirm Deletion</h3>
+            <p>Are you sure you want to delete this user's account? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="modal-button secondary-button" @onclick="CancelDelete">Cancel</button>
+                <button class="modal-button danger-button" @onclick="DeleteUser">Delete</button>
+            </div>
+        </div>
+    </div>
+}
+<StatusModal @ref="_statusModal" />
 
 @code {
     [Parameter] public Entities.Staff user { get; set; } = new();
     [Parameter] public List<Entities.Branch> branchList { get; set; } = new();
+    private bool _showDeleteConfirmation = false;
+    private bool IsExpanded = false;
+    private string selectedBranch = "";
+    private Entities.Staff editUser = new() { Branches = Array.Empty<string>() };
+    private string? _jwtToken;
+    private StatusModal? _statusModal;
     
+    private IEnumerable<Entities.Branch> AvailableBranches => branchList
+        .Where(b => !editUser.Branches.Contains(b.ObjectId));
+
+    protected override async Task OnInitializedAsync()
+    {
+        _jwtToken = await AuthState.GetBearerToken();
+        editUser = new Entities.Staff
+        {
+            ObjectId = user.ObjectId,
+            Role = user.Role,
+            Branches = user.Branches
+        };
+    }
+
     private MarkupString GetBranchNames()
     {
         if (user.Branches == null || !user.Branches.Any())
@@ -39,23 +129,73 @@
 
         var branchNames = user.Branches
             .Select(branchId => branchList
-                .FirstOrDefault(b => b.ObjectId == branchId)?.Name ?? "Unknown Branch")
-            .ToList();
+                .FirstOrDefault(b => b.ObjectId == branchId)?.Name ?? "Unknown Branch").ToList();
 
         return new MarkupString(string.Join("<br>", branchNames));
     }
-    private async Task EditRole()
+
+    private void EditRoleAndBranch()
     {
-        //TODO implement 
+        IsExpanded = !IsExpanded;
     }
-    
-    private async Task EditBranchAccess()
+
+    private void RemoveBranch(string branchId)
     {
-        //TODO implement 
+        editUser.Branches = editUser.Branches.Where(b => b != branchId).ToArray();
     }
+
+    private void AddBranch()
+    {
+        if (!string.IsNullOrEmpty(selectedBranch) && !editUser.Branches.Contains(selectedBranch))
+        {
+            editUser.Branches = editUser.Branches.Append(selectedBranch).ToArray();
+            selectedBranch = "";
+        }
+    }
+
+    private async Task SaveChanges()
+    {
+        var request = new Request<PayLoads.StaffUser>
+        {
+            Data = new PayLoads.StaffUser 
+            { 
+                User = editUser 
+            }
+        };
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        var response = await HttpClient.PutAsJsonAsync("api/usermanagement/staff/edit", request);
+        var result = await response.Content.ReadFromJsonAsync<Response<string>>();
+        if (result != null)
+        {
+            if (result.Success)
+            {
+                user.Role = editUser.Role;
+                user.Branches = editUser.Branches;
+                IsExpanded = false;
+            }
+            await _statusModal.ShowStatusModal(result);
+        }
+        
+    }
+
+    private void CancelEdit()
+    {
+        editUser.Role = user.Role;
+        editUser.Branches = user.Branches.ToArray();
+        IsExpanded = false;
+    }
+
+    private void ShowDeleteConfirmation() => _showDeleteConfirmation = true;
+    private void CancelDelete() => _showDeleteConfirmation = false;
 
     private async Task DeleteUser()
     {
-        //TODO implement 
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        var response = await HttpClient.DeleteAsync($"api/usermanagement/staff/delete/{user.ObjectId}");
+        var result = await response.Content.ReadFromJsonAsync<Response<string>>();
+        if (result != null && _statusModal != null)
+        {
+            await _statusModal.ShowStatusModal(result, result.Success ? "/managestaff" : null);
+        }
     }
 }

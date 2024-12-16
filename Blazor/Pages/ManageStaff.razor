@@ -1,7 +1,7 @@
 @page "/ManageStaff"
 @inject HttpClient HttpClient
 @inject IAuthService AuthState
-@attribute [Authorize(Policy = Policies.CanViewUsers)]
+@attribute [Authorize(Policy = Policies.CanViewStaff)]
 
 <PageTitle>Staff Management</PageTitle>
 

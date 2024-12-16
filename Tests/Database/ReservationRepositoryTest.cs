@@ -45,7 +45,7 @@ public class ReservationRepositoryTest
         
         Entities.Reservation res3 = new Entities.Reservation
         {
-            Id = ObjectId.GenerateNewId().ToString(),
+            ObjectId = ObjectId.GenerateNewId().ToString(),
             Item = "673f6d28e580ac7f9f4fa9b3",
             Member = "67236480b4d08aab049740aa",
             StartDate = DateTime.Today.AddDays(60),

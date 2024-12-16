@@ -19,6 +19,16 @@ public static class PayLoads
         public required string UserId { get; init; }
     }
 
+    public record StaffUser
+    {
+        public Entities.Staff User { get; set; }
+    }
+    
+    public record MemberUser
+    {
+        public Entities.Members User { get; set; }
+    }
+
     public record Inventory
     {
         public required List<Entities.PhysicalInventory> PhysicalMediaList { get; set; }

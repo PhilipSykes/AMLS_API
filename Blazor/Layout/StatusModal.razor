@@ -1,0 +1,50 @@
+@inject NavigationManager Nav
+
+@if (_showStatusModal)
+{
+<div class="modal-overlay status-modal">
+    <div class="modal-content">
+        @if (_isError)
+        {
+            <h3 class="error-display">Error</h3>
+            <p>@_statusMessage</p>
+        }
+        else
+        {
+            <h3 class="success-display">Success</h3>
+            <p>@_statusMessage</p>
+        }
+        
+    </div>
+</div>
+}
+
+@code {
+    
+    private bool _showStatusModal = false;
+    private string? _statusMessage;
+    private bool _isError;
+    private bool _shouldNavigate = false;
+    private string? _navigationPath;
+    
+    public async Task ShowStatusModal(Response<string> response, string? navigateTo = null)
+    {
+        Console.WriteLine($"ShowStatusModal called - Message: {response.Message}");
+        _statusMessage = response.Message;
+        _isError = !response.Success;
+        _shouldNavigate = response.Success && navigateTo != null;
+        _navigationPath = navigateTo;
+        _showStatusModal = true;
+        StateHasChanged();
+
+        //Auto-dismiss after 2 seconds
+        await Task.Delay(2000);
+        _showStatusModal = false;
+        StateHasChanged();
+    
+        if (_shouldNavigate && _navigationPath != null)
+        {
+            Nav.NavigateTo(_navigationPath);
+        }
+    }
+}
