@@ -41,6 +41,7 @@ public class ReservationsController : ControllerBase
     /// </summary>
     /// <param name="request">Reservation details including email recipients</param>
     /// <returns>ActionResult indicating success or failure</returns>
+    [Authorize(Policy = Policies.CanReserveMedia)]
     [HttpPost("create")]
     public async Task<ActionResult> Create(Reservation reservation)
     {
@@ -59,6 +60,7 @@ public class ReservationsController : ControllerBase
         return Ok(new { message = result.StatusCode });
     }
 
+    [Authorize(Policy = Policies.CanCancelMedia)]
     [HttpPost("cancel")]
     public async Task<ActionResult> Cancel(string id)
     {
@@ -67,6 +69,7 @@ public class ReservationsController : ControllerBase
         return Ok(new { message = result.StatusCode });
     }
 
+    [Authorize(Policy = Policies.CanExtendReservation)]
     [HttpPost("extend")]
     public async Task<ActionResult> Extend(ReservationExtension request)
     {
@@ -77,6 +80,7 @@ public class ReservationsController : ControllerBase
         return Ok(new { message = result.StatusCode });
     }
 
+    [Authorize(Policy = Policies.CanReserveMedia)]
     [HttpPost("getReservable")]
     public async Task<ActionResult<Operations.Response<List<ReservableItem>>>> GetReservableItems(string media, string[] branches, int minimumDays)
     {

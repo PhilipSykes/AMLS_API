@@ -54,3 +54,10 @@ p{
     gap: 10px;
     margin-top: 15px;
 }
+
+.red{
+    color: red;
+}
+.amber{
+    color: yellow;
+}
