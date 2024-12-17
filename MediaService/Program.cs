@@ -69,7 +69,7 @@ var app = builder.Build();
 var exchange = app.Services.GetRequiredService<Exchange>();
 await exchange.EnsureInitialized();
 app.UseRouting();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

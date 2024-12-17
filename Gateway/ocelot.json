@@ -45,10 +45,10 @@
       "UpstreamPathTemplate": "/api/catalog/{everything}",
       "UpstreamHttpMethod": [ "POST", "GET" ],
       "DownstreamPathTemplate": "/catalog/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
-        {"Host": "localhost", "Port": 7006}
+        {"Host": "localhost", "Port": 6804}
       ]
     },
 

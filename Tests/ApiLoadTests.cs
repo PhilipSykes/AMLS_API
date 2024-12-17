@@ -12,8 +12,9 @@ public class ApiLoadTests
     [OneTimeSetUp]
     public void Setup()
     {
+        
         _client = new HttpClient();
-        _client.BaseAddress = new Uri("http://localhost:7500");
+        _client.BaseAddress = new Uri("http://localhost:7000");
     }
 
     [Test]
@@ -28,7 +29,7 @@ public class ApiLoadTests
         stopwatch.Start();
         for (int i = 0; i < ConcurrentRequests; i++)
         {
-            tasks.Add(_client.GetAsync("/api/Catalog?page=1&count=10"));
+            tasks.Add(_client.GetAsync("/api/catalog?page=1&count=10"));
         }
         var responses = await Task.WhenAll(tasks);
         stopwatch.Stop();
