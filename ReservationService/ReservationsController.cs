@@ -78,9 +78,9 @@ public class ReservationsController : ControllerBase
     }
 
     [HttpPost("getReservable")]
-    public async Task<ActionResult<Operations.Response<List<ReservableItem>>>> GetReservableItems(string media, string[] branches, int minimumDays)
+    public async Task<ActionResult<Operations.Response<List<ReservableItem>>>> GetReservableItems(Shared.GetReservablesRequest request)
     {
-        var result = await _reservationRepository.GetReservableItems(media, branches, minimumDays);
+        var result = await _reservationRepository.GetReservableItems(request.Media, request.Branches, request.MinimumDays);
 
         return result;
     }

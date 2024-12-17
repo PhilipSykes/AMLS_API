@@ -2,6 +2,9 @@
 @inject HttpClient HttpClient
 @inject NavigationManager Nav
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+@using System.Security.Claims
+@attribute [Authorize]
+@inject AuthenticationStateProvider AuthStateProvider
 
 
 
@@ -68,7 +71,10 @@
     private List<Entities.MediaInfo> _mediaResults = new();
     private Entities.MediaInfo _result = new();
     private readonly List<Filter> _filters = new();
-
+    AuthenticationState state;
+    private string? userEmail;
+    private string? userRole;
+    private IEnumerable<string>? branches;
 
     protected override async Task OnInitializedAsync()
     {
@@ -85,6 +91,11 @@
                 Console.WriteLine(_result);
             }
         }
+        
+        state = await AuthStateProvider.GetAuthenticationStateAsync();
+        userEmail = state.User.FindFirst(ClaimTypes.Email)?.Value;
+        userRole = state.User.FindFirst(ClaimTypes.Role)?.Value;
+        branches = state.User.FindAll("BranchAccess").Select(c => c.Value);
 
         StateHasChanged();
     }
@@ -97,41 +108,18 @@
         }
         return "#D6D3D1";
     }
-    public async Task<HttpResponseMessage> TestCreateReservation()
+   
+    private async Task<HttpResponseMessage> GetReservableItems(string media, string[] branches, int minumumLength)
     {
-        Entities.Reservation reservation = new Entities.Reservation
+        var request = new GetReservablesRequest
         {
-            ObjectId = ObjectId.GenerateNewId().ToString(),
-            StartDate = DateTime.UtcNow,
-            EndDate = DateTime.UtcNow.AddDays(1),
-            Item = "673f6d28e580ac7f9f4fa9b3",
-            Member = "67236480b4d08aab049740aa"
-
+            Media = media,
+            Branches = branches,
+            MinimumDays = minumumLength
         };
-        var response = await HttpClient.PostAsJsonAsync("api/reservations/create", reservation);
-        Console.WriteLine(await response.Content.ReadAsStringAsync());
-        
-        return response;
-    } 
-    public async Task<HttpResponseMessage> TestCancelReservation()
-    {
-        string reservationId = "67586896360a7f5735c67352";
-        var response = await HttpClient.PostAsJsonAsync("api/reservations/cancel", reservationId);
-        Console.WriteLine(await response.Content.ReadAsStringAsync());
-        
-        return response;
+        var reservablesResponse = await HttpClient.PostAsJsonAsync("api/reservations/getReservable", request);
+        return reservablesResponse;
     }
-
-    public async Task<HttpResponseMessage> TestExtendReservation()
-    {
-        var request = new PayLoads.ReservationExtension
-        {
-            ReservationId = "67586896360a7f5735c67352",
-            NewEndDate = DateTime.Now.AddDays(7)
-        };
-        var response = await HttpClient.PostAsJsonAsync("api/reservations/extend", request);
-        Console.WriteLine(await response.Content.ReadAsStringAsync());
-        
-        return response;
-    }
+    
+    
 }
