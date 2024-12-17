@@ -1,8 +1,12 @@
-@page "/media/{MediaId}"
+@page "/media/book/{MediaId}"
 @inject HttpClient HttpClient
 @inject NavigationManager Nav
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 
 
+
+
+<link rel="stylesheet" href="/css/media.css">
 <div class="media-info-container">
     <div class="media-container">
         <div class="media-title-rating">
@@ -50,11 +54,9 @@
                     </div>
                 </div>
             </div>
-            
-            @foreach (var copy in _result.PhysicalCopies)
-            {
+            <div>
                 
-            }
+            </div>
         </div>
     </div>
 </div>

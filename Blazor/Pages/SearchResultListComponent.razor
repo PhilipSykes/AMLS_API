@@ -73,6 +73,20 @@
 
     private async Task UpdateRouteParamAndNavigate()
     {
-        Nav.NavigateTo($"/media/{Media.ObjectId}");
+        string path = "";
+        
+        switch (Media.Type)
+        {
+            case "Book":
+                path = "/media/book/";
+                break;
+            case "TV Series":
+                path = "/media/tv/";
+                break;
+            case "Film":
+                path = "/media/film/";
+                break;
+        }
+        Nav.NavigateTo(path+Media.ObjectId);
     }
 }

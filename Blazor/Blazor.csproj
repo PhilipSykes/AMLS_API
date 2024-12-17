@@ -67,4 +67,8 @@
       <AdditionalFiles Include="Pages\RatingStar.razor" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="wwwroot\css\media.css" />
+    </ItemGroup>
+
 </Project>
