@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Common;
 using Common.Database;
+using ReservationService;
 using Common.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;

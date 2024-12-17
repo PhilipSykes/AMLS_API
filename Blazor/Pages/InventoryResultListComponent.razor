@@ -23,7 +23,7 @@
                 </svg>
             </button>
 
-            <AuthorizeView Policy="CanEditBranchMedia">
+            <AuthorizeView Policy="Policies.CanEditBranchMedia">
                 <Authorized Context="auth">
                     <button class="action-btn edit @(HasBranchAccess(auth.User, Media.BranchDetails?.ObjectId) ? "" : "disabled")"@onclick="() => HandleEditClick(auth.User)">
                         <svg class="action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">

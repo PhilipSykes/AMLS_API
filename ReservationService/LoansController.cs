@@ -1,4 +1,5 @@
 using Common.Constants;
+using Common.Database;
 using Common.MessageBroker;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,24 +12,24 @@ namespace ReservationService;
 public class LoansController : ControllerBase
 {
     private readonly Exchange _exchange;
-    private readonly ILoanManager _loanManager;
+    private readonly IReservationRepository _reservationRepository;
     
     /// <summary>
     /// Initializes a new instance of the LoansController
     /// </summary>
     /// <param name="exchange">Message broker exchange service</param>
     /// <param name="loanManager">Loan manager service</param>
-    public LoansController(Exchange exchange, ILoanManager loanManager)
+    public LoansController(Exchange exchange, IReservationRepository reservationRepository)
     {
         _exchange = exchange;
-        _loanManager = loanManager;
+        _reservationRepository = reservationRepository;
     }
     
     [HttpPost("check-in")]
     public async Task<ActionResult> CheckIn(string physicalId)
     {
         
-        var result = await _loanManager.CheckIn(physicalId);
+        var result = await _reservationRepository.CheckIn(physicalId);
     
         return Ok(new { message = result.StatusCode });
     }
@@ -37,7 +38,7 @@ public class LoansController : ControllerBase
     public async Task<ActionResult> CheckOut(string physicalId, string memberId)
     {
         
-        var result = await _loanManager.CheckOut(physicalId, memberId);
+        var result = await _reservationRepository.CheckOut(physicalId, memberId);
     
         return Ok(new { message = result.StatusCode });
     }

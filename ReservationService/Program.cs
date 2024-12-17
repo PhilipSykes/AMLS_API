@@ -58,7 +58,6 @@ builder.Services.AddScoped<IDatabaseConnection, DatabaseConnection>();
 builder.Services.AddScoped<IFilterBuilder<BsonDocument>, BsonFilterBuilder>();
 builder.Services.AddScoped<ISearchRepository<Reservation>, SearchRepository<Reservation>>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
-builder.Services.AddScoped<IReservationCreator, ReservationCreator>();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddAuthorization();

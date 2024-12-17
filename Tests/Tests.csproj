@@ -21,7 +21,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\AuthService\AuthService.csproj" />
       <ProjectReference Include="..\Common\Common.csproj" />
+      <ProjectReference Include="..\MediaService\MediaService.csproj" />
+      <ProjectReference Include="..\MetricService\MetricService.csproj" />
+      <ProjectReference Include="..\ReservationService\ReservationService.csproj" />
+      <ProjectReference Include="..\UserService\UserService.csproj" />
     </ItemGroup>
 
 </Project>
