@@ -118,6 +118,7 @@ public class InventoryController : ControllerBase
     /// <param name="page">Page number</param>
     /// <param name="count">Items per page</param>
     /// <returns>Filtered inventory list of media items</returns>
+    [Authorize(Policy = Policies.CanViewInventory)]
     [HttpPost("search")]
     public async Task<ActionResult<PaginatedResponse<List<PhysicalInventory>>>> SearchMedia(List<Filter> filters, int page, int count)
     {

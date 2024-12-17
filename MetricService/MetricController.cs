@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Common.Constants;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MetricService;
 
@@ -14,6 +16,7 @@ public class MetricController : ControllerBase
     /// </summary>
     /// <returns>List of container metrics including CPU, memory, and container details</returns>
     [HttpGet]
+    [Authorize(Policy = Policies.CanViewMetricsReports)]
     public async Task<List<DockerMetrics.Metrics>> GetSnapshot()
     { 
         DockerMetrics _metricsService = new();
