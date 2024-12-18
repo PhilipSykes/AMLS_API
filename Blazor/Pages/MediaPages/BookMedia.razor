@@ -1,10 +1,6 @@
 @page "/media/book/{MediaId}"
 @inject HttpClient HttpClient
-@inject NavigationManager Nav
-@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
-@using System.Security.Claims
 @attribute [Authorize]
-@inject AuthenticationStateProvider AuthStateProvider
 
 
 <link rel="stylesheet" href="/css/media.css">
@@ -58,7 +54,7 @@
             <div class="info">
                 <AuthorizeView Policy="CanReserveMedia">
                     <Authorized Context="auth">
-                        
+                        @GetReservableItems(auth.User)
                     </Authorized>
                     <NotAuthorized>
                         <p class="borrow"><a href="/login">Sign in</a> to borrow media</p>
@@ -99,11 +95,6 @@
                 Console.WriteLine(_result);
             }
         }
-        
-        state = await AuthStateProvider.GetAuthenticationStateAsync();
-        userEmail = state.User.FindFirst(ClaimTypes.Email)?.Value;
-        userRole = state.User.FindFirst(ClaimTypes.Role)?.Value;
-        branches = state.User.FindAll("BranchAccess").Select(c => c.Value);
 
         StateHasChanged();
     }
@@ -119,13 +110,14 @@
    
     
     // Gets list of ReservableItem, each has timeslots where reservations can be made
-    private async Task<List<Entities.ReservableItem>> GetReservableItems(string media, string[] branches, int minumumLength)
+    private async Task<List<Entities.ReservableItem>> GetReservableItems(ClaimsPrincipal user)
     {
+
         var request = new GetReservablesRequest
         {
-            Media = media,
-            Branches = branches,
-            MinimumDays = minumumLength
+            Media = _result.ObjectId,
+            Branches = user.FindAll(PolicyClaims.BranchAccess).Select(c => c.Value).ToArray(),
+            MinimumDays = 7
         };
         var reservablesResponse = await HttpClient.PostAsJsonAsync("api/reservations/getReservable", request);
         var reservables = await reservablesResponse.Content.ReadFromJsonAsync<Response<List<Entities.ReservableItem>>>();
