@@ -22,8 +22,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                 </svg>
             </button>
-
-            <AuthorizeView Policy="Policies.CanEditBranchMedia">
+            <AuthorizeView Policy="EditBranchMedia">
                 <Authorized Context="auth">
                     <button class="action-btn edit @(HasBranchAccess(auth.User, Media.BranchDetails?.ObjectId) ? "" : "disabled")"@onclick="() => HandleEditClick(auth.User)">
                         <svg class="action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -103,12 +102,12 @@
     private bool IsExpanded { get; set; }
     private bool showModal; 
     private string _unauthorizedMessage = "";
-
+    
     private void ToggleDetails()
     {
         IsExpanded = !IsExpanded;
     }
-
+    
     private async Task OnEdit(Entities.PhysicalInventory item)
     {
         Nav.NavigateTo($"/editMedia/{Media.Branch}/{Media.MediaInfo.ObjectId}");
@@ -146,11 +145,15 @@
     private void CloseModal()
     {
         showModal = false; _unauthorizedMessage = "";
+        Console.WriteLine();
     }
 
     private bool HasBranchAccess(ClaimsPrincipal user, string? branchId)
     {
-        if (string.IsNullOrEmpty(branchId)) return false; 
+        if (string.IsNullOrEmpty(branchId))
+        {
+            return false;
+        } 
         var branchClaims = user.FindAll(PolicyClaims.BranchAccess).Select(c => c.Value); 
         return branchClaims.Contains(branchId);
     }

@@ -31,6 +31,13 @@ builder.Services.AddAuthorizationCore(options =>
     options.AddPolicy(Policies.CanExtendReservation, policy => 
         policy.RequireRole(PolicyRoles.Member));
     
+    options.AddPolicy(Policies.HasBranchAccess, policy => 
+        policy.RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));
+    
+    options.AddPolicy("EditBranchMedia", policy => policy
+        .RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager)
+        .RequireClaim(PolicyClaims.BranchAccess));
+    
     options.AddPolicy(Policies.CanEditMedia, policy => 
         policy.RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));
     
@@ -39,10 +46,6 @@ builder.Services.AddAuthorizationCore(options =>
     
     options.AddPolicy(Policies.CanViewInventory, policy => 
         policy.RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));
-    
-    options.AddPolicy(Policies.CanEditBranchMedia, policy => policy
-        .RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager)
-        .RequireClaim(PolicyClaims.BranchAccess));
     
     options.AddPolicy(Policies.CanViewStaff, policy => 
         policy.RequireRole(PolicyRoles.SystemAdmin, PolicyRoles.BranchManager));

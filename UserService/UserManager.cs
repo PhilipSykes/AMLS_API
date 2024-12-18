@@ -62,10 +62,11 @@ public class UserManager : IUserManager
                 };
             }
 
-            // Update role in login table
+            // Update user in login table
             await _logins.UpdateOneAsync(session, l => l.UserID == user.ObjectId,
-                Builders<Entities.Login>.Update.Set(l => l.Role, user.Role));
-
+                Builders<Entities.Login>.Update
+                    .Set(l => l.Role, user.Role)
+                    .Set(l => l.Branches, user.Branches));
             await session.CommitTransactionAsync();
             return new Response<string>
             {
