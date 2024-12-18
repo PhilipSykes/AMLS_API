@@ -23,10 +23,11 @@
                 </svg>
             </button>
 
-            <AuthorizeView Policy="Policies.CanEditBranchMedia">
+            <AuthorizeView Policy="EditBranchMedia">
                 <Authorized Context="auth">
                     <button class="action-btn edit @(HasBranchAccess(auth.User, Media.BranchDetails?.ObjectId) ? "" : "disabled")"@onclick="() => HandleEditClick(auth.User)">
                         <svg class="action-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <p>@auth.User</p>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                         </svg>
                     </button>
@@ -103,12 +104,12 @@
     private bool IsExpanded { get; set; }
     private bool showModal; 
     private string _unauthorizedMessage = "";
-
+    
     private void ToggleDetails()
     {
         IsExpanded = !IsExpanded;
     }
-
+    
     private async Task OnEdit(Entities.PhysicalInventory item)
     {
         Nav.NavigateTo($"/editMedia/{Media.Branch}/{Media.MediaInfo.ObjectId}");
@@ -146,12 +147,20 @@
     private void CloseModal()
     {
         showModal = false; _unauthorizedMessage = "";
+        Console.WriteLine();
     }
 
     private bool HasBranchAccess(ClaimsPrincipal user, string? branchId)
     {
-        if (string.IsNullOrEmpty(branchId)) return false; 
+        if (string.IsNullOrEmpty(branchId))
+        {
+            Console.WriteLine($"BranchId is null or empty for media item: {Media.ObjectId}");
+            return false;
+        } 
         var branchClaims = user.FindAll(PolicyClaims.BranchAccess).Select(c => c.Value); 
+        Console.WriteLine($"User branch claims: {string.Join(", ", branchClaims)}");
+        Console.WriteLine($"Media branch ID: {branchId}");
+        Console.WriteLine($"Has access: {branchClaims.Contains(branchId)}");
         return branchClaims.Contains(branchId);
     }
     
