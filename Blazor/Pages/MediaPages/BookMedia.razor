@@ -60,9 +60,8 @@
                         {
                             @foreach (var item in _reservables)
                             {
-                                <h1>@item.Item</h1>
-                                <h1>@item.BranchName</h1>
-                                <h1>@item.LastEnd</h1>
+                                <p>@item.BranchName</p>
+                                <p>@item.LastEnd</p>
                             }
                         }
                     </Authorized>
@@ -107,7 +106,7 @@
             {
                 _mediaResults = searchResponse.Data;
                 _result = _mediaResults[0];
-                _reservables = await GetReservableItems(user);
+                _reservables = await GetReservableItems(user); // note await might be causing problems when page loads strangely
                 Console.WriteLine(_result);
             }
         }

@@ -215,7 +215,7 @@ namespace Common.Database
                     .Lookup(DocumentTypes.Branches, DbFieldNames.PhysicalMedia.Branch, DbFieldNames.Id, lookupField2)
                     .Project(new BsonDocument
                     {
-                        { "branch", "$branch" },
+                        { "branch", new BsonDocument("$first", "$branchInfo.name")},
                         {
                             lookupField, new BsonDocument
                             {
