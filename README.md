@@ -32,3 +32,4 @@ Code for this system was inspired from
 **Sources:**
 https://auth0.com/blog/how-to-validate-jwt-dotnet/
 https://dotnetfullstackdev.medium.com/jwt-token-authentication-in-c-a-beginners-guide-with-code-snippets-7545f4c7c597
+https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-9.0&tabs=windows

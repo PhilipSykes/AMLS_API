@@ -10,6 +10,8 @@ namespace Common.Notification.Email;
 public interface IEmailService
 {
     Task SendReserveEmailAsync(EmailDetails data);
+    Task SendLoginEmailAsync(EmailDetails data);
+    Task SendBorrowEmailAsync(EmailDetails data);
 }
 
 
@@ -22,7 +24,26 @@ public class EmailService : IEmailService
     private readonly int _port = 587;
     private readonly string _senderEmail = "hallam.amls@gmail.com";
     private readonly string _smtpServer = "smtp.gmail.com";
+    private readonly EmailTemplateProvider _templateProvider;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="templateProvider">Provides html templates for emails</param>
+    public EmailService(EmailTemplateProvider templateProvider)
+    {
+        _templateProvider = templateProvider;
+    }
+    
+    private string ReplaceTemplateParameters(string template, Dictionary<string, string> parameters)
+    {
+        var result = template;
+        foreach (var param in parameters)
+        {
+            result = result.Replace($"{{{param.Key}}}", param.Value);
+        }
+        return result;
+    }
     /// <summary>
     /// Sends a reservation confirmation email using a template
     /// </summary>
@@ -31,23 +52,46 @@ public class EmailService : IEmailService
     /// <exception cref="Exception">Thrown when email sending fails</exception>
     public async Task SendReserveEmailAsync(EmailDetails data)
     {
-        var htmlBody =
-            "<!DOCTYPE html>\n<html>\n<head>\n    <style>\n        body { font-family: Arial, sans-serif; }\n    </style>\n</head>\n<body>\n\n<h1>Hello {UserName}!</h1>\n<h3>This is to confirm your booking of {Media}</h3>\n\n<p>You can pick up your item(s) at {Time} from {Location}</p>\n\n</body>\n</html>";
-
         try
         {
-            foreach (var item in data.EmailBody) htmlBody = htmlBody.Replace($"{{{item.Key}}}", item.Value);
-
-            await SendEmailAsync(data.RecipientAddresses, "Reserving subject line", htmlBody);
+            var template = _templateProvider.GetTemplate("reservation");
+            var htmlBody = ReplaceTemplateParameters(template, data.EmailBody);
+            await SendEmailAsync(data.RecipientAddresses, "Reservation Confirmation", htmlBody);
         }
         catch (Exception e)
         {
             throw new Exception($"Error sending reserve email: {e.Message}");
         }
     }
-
-    /*TODO: Remove inline HTML for E-mail Content*/
-
+    
+    public async Task SendLoginEmailAsync(EmailDetails data)
+    {
+        try
+        {
+            var template = _templateProvider.GetTemplate("login");
+            var htmlBody = ReplaceTemplateParameters(template, data.EmailBody);
+            await SendEmailAsync(data.RecipientAddresses, "New Login Detected", htmlBody);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Error sending login email: {e.Message}");
+        }
+    }
+    
+    public async Task SendBorrowEmailAsync(EmailDetails data)
+    {
+        try
+        {
+            var template = _templateProvider.GetTemplate("borrow");
+            var htmlBody = ReplaceTemplateParameters(template, data.EmailBody);
+            await SendEmailAsync(data.RecipientAddresses, "Borrow Confirmation", htmlBody);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Error sending borrow email: {e.Message}");
+        }
+    }
+    
     /// <summary>
     /// Sends an email to multiple recipients using SMTP
     /// </summary>

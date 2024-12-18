@@ -72,9 +72,9 @@ public class AuthController : ControllerBase
                     Message = "Invalid Credentials",
                 });
             }
-            // await _exchange.PublishNotification(
-            //     MessageTypes.EmailNotifications.Login, 
-            //     request.EmailDetails);
+            await _exchange.PublishNotification(
+                MessageTypes.EmailNotifications.Login, 
+                request.EmailDetails);
             string token = _tokenAuthService.GenerateJwtToken(result[0]);
             Console.WriteLine($"token: {token}");
             foreach (string branch in result[0].Branches)
