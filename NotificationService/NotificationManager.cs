@@ -13,8 +13,6 @@ public class NotificationManager : BaseMessageReceiver<EmailDetails>
     private static readonly string[] NotificationTypes =
     [
         MessageTypes.EmailNotifications.Login,
-        MessageTypes.EmailNotifications.PasswordReset,
-        MessageTypes.EmailNotifications.ProfileUpdate,
         MessageTypes.EmailNotifications.BorrowMedia,
         MessageTypes.EmailNotifications.ReserveMedia,
     ];

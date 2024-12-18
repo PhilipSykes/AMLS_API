@@ -24,16 +24,6 @@ public class EmailService : IEmailService
     private readonly int _port = 587;
     private readonly string _senderEmail = "hallam.amls@gmail.com";
     private readonly string _smtpServer = "smtp.gmail.com";
-    private readonly EmailTemplateProvider _templateProvider;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="templateProvider">Provides html templates for emails</param>
-    public EmailService(EmailTemplateProvider templateProvider)
-    {
-        _templateProvider = templateProvider;
-    }
     
     private string ReplaceTemplateParameters(string template, Dictionary<string, string> parameters)
     {
@@ -54,8 +44,7 @@ public class EmailService : IEmailService
     {
         try
         {
-            var template = _templateProvider.GetTemplate("reservation");
-            var htmlBody = ReplaceTemplateParameters(template, data.EmailBody);
+            var htmlBody = ReplaceTemplateParameters(EmailTemplates.Reservation, data.EmailBody);
             await SendEmailAsync(data.RecipientAddresses, "Reservation Confirmation", htmlBody);
         }
         catch (Exception e)
@@ -68,8 +57,7 @@ public class EmailService : IEmailService
     {
         try
         {
-            var template = _templateProvider.GetTemplate("login");
-            var htmlBody = ReplaceTemplateParameters(template, data.EmailBody);
+            var htmlBody = ReplaceTemplateParameters(EmailTemplates.Login, data.EmailBody);
             await SendEmailAsync(data.RecipientAddresses, "New Login Detected", htmlBody);
         }
         catch (Exception e)
@@ -82,8 +70,7 @@ public class EmailService : IEmailService
     {
         try
         {
-            var template = _templateProvider.GetTemplate("borrow");
-            var htmlBody = ReplaceTemplateParameters(template, data.EmailBody);
+            var htmlBody = ReplaceTemplateParameters(EmailTemplates.Borrow, data.EmailBody);
             await SendEmailAsync(data.RecipientAddresses, "Borrow Confirmation", htmlBody);
         }
         catch (Exception e)

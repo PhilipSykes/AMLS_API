@@ -61,9 +61,8 @@ public class AuthController : ControllerBase
                 Message = "No Results Found",
             });
         }
-
-        var passwordService = new PasswordService();
-            if (!passwordService.VerifyPassword(result[0].PasswordHash, request.Data.Password))
+        
+            if (!PasswordService.VerifyPassword(result[0].PasswordHash, request.Data.Password))
             {
                 return Unauthorized(new Response<LoginDetails>
                 {
@@ -72,27 +71,26 @@ public class AuthController : ControllerBase
                     Message = "Invalid Credentials",
                 });
             }
-            // await _exchange.PublishNotification(
-            //     MessageTypes.EmailNotifications.Login, 
-            //     request.EmailDetails);
-            string token = _tokenAuthService.GenerateJwtToken(result[0]);
-            Console.WriteLine($"token: {token}");
-            foreach (string branch in result[0].Branches)
+        
+        string token = _tokenAuthService.GenerateJwtToken(result[0]);
+        
+        //Runs publish message in background
+        _ = _exchange.PublishNotification(
+            MessageTypes.EmailNotifications.Login, 
+            request.EmailDetails);
+            
+        return Ok(new Response<LoginDetails>
+        {
+            Success = true,
+            Message = "Login successful",
+            StatusCode = QueryResultCode.Ok,
+            Data = new LoginDetails()
             {
-                Console.WriteLine($"branch access: {branch}");
+                UserID = result[0].UserID,
+                Branches = result[0].Branches,
+                Token = token
             }
-            return Ok(new Response<LoginDetails>
-            {
-                Success = true,
-                Message = "Login successful",
-                StatusCode = QueryResultCode.Ok,
-                Data = new LoginDetails()
-                {
-                    UserID = result[0].UserID,
-                    Branches = result[0].Branches,
-                    Token = token
-                }
-            });
+        });
     }
     [Authorize]
     [HttpPost("refresh-token")]
