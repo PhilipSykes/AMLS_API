@@ -3,7 +3,6 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using static Common.Models.Shared;
-using Common;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.MessageBroker;
@@ -76,19 +75,6 @@ public class Exchange
         Console.WriteLine($"Published {type} notification: {emailDetails}");
     }
     
-    public async Task PublishSearch(string type, string message)
-    {
-        if (!_initialized)
-        {
-            await EnsureInitialized();
-        }
-
-        var channel = await _connection.CreateChannelAsync();
-        var body = Encoding.UTF8.GetBytes(message);
-        await channel.BasicPublishAsync(_config.ExchangeName,type,body);
-        Console.WriteLine($"Published {type} value: {message}");
-    }
-
     ~Exchange()
     {
         _connection?.Dispose();
