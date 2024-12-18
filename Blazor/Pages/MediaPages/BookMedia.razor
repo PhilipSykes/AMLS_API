@@ -1,5 +1,10 @@
 @page "/media/book/{MediaId}"
 @inject HttpClient HttpClient
+@inject NavigationManager Nav
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+@using System.Security.Claims
+@attribute [Authorize]
+
 
 
 <link rel="stylesheet" href="/css/media.css">
@@ -74,6 +79,10 @@
     private List<Entities.MediaInfo> _mediaResults = new();
     private Entities.MediaInfo _result = new();
     private readonly List<Filter> _filters = new();
+    AuthenticationState state;
+    private string? userEmail;
+    private string? userRole;
+    private IEnumerable<string>? branches;
 
     protected override async Task OnInitializedAsync()
     {
@@ -90,6 +99,11 @@
                 Console.WriteLine(_result);
             }
         }
+        
+        state = await AuthStateProvider.GetAuthenticationStateAsync();
+        userEmail = state.User.FindFirst(ClaimTypes.Email)?.Value;
+        userRole = state.User.FindFirst(ClaimTypes.Role)?.Value;
+        branches = state.User.FindAll("BranchAccess").Select(c => c.Value);
 
         StateHasChanged();
     }
@@ -102,41 +116,49 @@
         }
         return "#D6D3D1";
     }
-    public async Task<HttpResponseMessage> TestCreateReservation()
+   
+    
+    // Gets list of ReservableItem, each has timeslots where reservations can be made
+    private async Task<List<Entities.ReservableItem>> GetReservableItems(string media, string[] branches, int minumumLength)
     {
-        Entities.Reservation reservation = new Entities.Reservation
+        var request = new GetReservablesRequest
         {
-            ObjectId = ObjectId.GenerateNewId().ToString(),
-            StartDate = DateTime.UtcNow,
-            EndDate = DateTime.UtcNow.AddDays(1),
-            Item = "673f6d28e580ac7f9f4fa9b3",
-            Member = "67236480b4d08aab049740aa"
-
+            Media = media,
+            Branches = branches,
+            MinimumDays = minumumLength
         };
-        var response = await HttpClient.PostAsJsonAsync("api/reservations/create", reservation);
-        Console.WriteLine(await response.Content.ReadAsStringAsync());
+        var reservablesResponse = await HttpClient.PostAsJsonAsync("api/reservations/getReservable", request);
+        var reservables = await reservablesResponse.Content.ReadFromJsonAsync<Response<List<Entities.ReservableItem>>>();
+        if (reservables is null)
+        {
+            return new List<Entities.ReservableItem>();
+        }
+        return reservables.Data ?? new List<Entities.ReservableItem>();
         
-        return response;
-    } 
-    public async Task<HttpResponseMessage> TestCancelReservation()
-    {
-        string reservationId = "67586896360a7f5735c67352";
-        var response = await HttpClient.PostAsJsonAsync("api/reservations/cancel", reservationId);
-        Console.WriteLine(await response.Content.ReadAsStringAsync());
-        
-        return response;
     }
 
-    public async Task<HttpResponseMessage> TestExtendReservation()
+    private Entities.ReservableItem FindSoonestReservableItem(List<Entities.ReservableItem> reservables)
     {
-        var request = new PayLoads.ReservationExtension
+        // check if last date is now,
+        // then sort timeslots
+        Entities.ReservableItem? result = null;
+        DateTime earliest = DateTime.MaxValue;
+        foreach (var item in reservables)
         {
-            ReservationId = "67586896360a7f5735c67352",
-            NewEndDate = DateTime.Now.AddDays(7)
-        };
-        var response = await HttpClient.PostAsJsonAsync("api/reservations/extend", request);
-        Console.WriteLine(await response.Content.ReadAsStringAsync());
-        
-        return response;
+            if (item.LastEnd < earliest)
+            {
+                earliest = item.LastEnd;
+                result = item;
+            }
+
+            foreach (var timeslot in item.Timeslots)
+            {
+                
+            }
+        }
+
+        return result;
     }
+    
+    
 }

@@ -48,6 +48,13 @@ namespace Common.Models
             public List<string> OutputFields { get; set; } = new(); 
             public string ProjectionString { get; set; }
         }
+
+        public class GetReservablesRequest
+        {
+            public string Media;
+            public string[] Branches;
+            public int MinimumDays;
+        }
         
     }
 }
