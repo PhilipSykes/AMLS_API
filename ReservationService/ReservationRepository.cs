@@ -197,8 +197,10 @@ namespace Common.Database
 
         public async Task<Response<List<ReservableItem>>> GetReservableItems(string media, string[] branches, int minimumLengthDays)
         {
+            Console.WriteLine(media, branches[0], minimumLengthDays);
             List<ReservableItem> reservables = new List<ReservableItem>();
             const string lookupField = "reservations";
+            const string lookupField2 = "branchInfo";
             try
             {
                 // aggregate physicalmedia with reservations
@@ -210,6 +212,7 @@ namespace Common.Database
                 var items = await _physical.Aggregate()
                     .Match(i => i.InfoRef == media && branches.Contains(i.Location))
                     .Lookup(DocumentTypes.Reservations, DbFieldNames.Id, DbFieldNames.Reservations.Item, lookupField)
+                    .Lookup(DocumentTypes.Branches, DbFieldNames.PhysicalMedia.Branch, DbFieldNames.Id, lookupField2)
                     .Project(new BsonDocument
                     {
                         { "branch", "$branch" },
@@ -267,7 +270,7 @@ namespace Common.Database
                 return new Response<List<ReservableItem>>
                 {
                     Success = false,
-                    Message = "Couldn't return reservable media due to an error",
+                    Message = ex.StackTrace, //"Couldn't return reservable media due to an error",
                     StatusCode = QueryResultCode.InternalServerError
                 };
             }

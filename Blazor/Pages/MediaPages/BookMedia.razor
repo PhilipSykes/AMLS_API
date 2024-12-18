@@ -1,5 +1,7 @@
 @page "/media/book/{MediaId}"
 @inject HttpClient HttpClient
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IAuthService AuthService
 @attribute [Authorize]
 
 
@@ -54,7 +56,15 @@
             <div class="info">
                 <AuthorizeView Policy="CanReserveMedia">
                     <Authorized Context="auth">
-                        @GetReservableItems(auth.User)
+                        @if (_reservables !=  null && _reservables.Any())
+                        {
+                            @foreach (var item in _reservables)
+                            {
+                                <h1>@item.Item</h1>
+                                <h1>@item.BranchName</h1>
+                                <h1>@item.LastEnd</h1>
+                            }
+                        }
                     </Authorized>
                     <NotAuthorized>
                         <p class="borrow"><a href="/login">Sign in</a> to borrow media</p>
@@ -75,15 +85,20 @@
     private List<Entities.MediaInfo> _mediaResults = new();
     private Entities.MediaInfo _result = new();
     private readonly List<Filter> _filters = new();
-    AuthenticationState state;
+    AuthenticationState authState;
     private string? userEmail;
     private string? userRole;
     private IEnumerable<string>? branches;
+    private List<Entities.ReservableItem>? _reservables;
+    private string? _jwtToken;
 
     protected override async Task OnInitializedAsync()
     {
+        _jwtToken = await AuthService.GetBearerToken();
         _filters.Add(new Filter("_id", MediaId, DbEnums.Equals));
-
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        
         var response = await HttpClient.PostAsJsonAsync($"api/catalog/search?page={1}&count={1}", _filters);
         if (response.IsSuccessStatusCode)
         {
@@ -92,6 +107,7 @@
             {
                 _mediaResults = searchResponse.Data;
                 _result = _mediaResults[0];
+                _reservables = await GetReservableItems(user);
                 Console.WriteLine(_result);
             }
         }
@@ -115,10 +131,11 @@
 
         var request = new GetReservablesRequest
         {
-            Media = _result.ObjectId,
-            Branches = user.FindAll(PolicyClaims.BranchAccess).Select(c => c.Value).ToArray(),
+            Media = "673f6cfbe27bd6488d0ab1a7", //_result.ObjectId,
+            Branches = ["67236fc4b4d08aab049740ca", "673348f4a1ed2d02eef46a41"],//user.FindAll(PolicyClaims.BranchAccess).Select(c => c.Value).ToArray(),
             MinimumDays = 7
         };
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
         var reservablesResponse = await HttpClient.PostAsJsonAsync("api/reservations/getReservable", request);
         var reservables = await reservablesResponse.Content.ReadFromJsonAsync<Response<List<Entities.ReservableItem>>>();
         if (reservables is null)
