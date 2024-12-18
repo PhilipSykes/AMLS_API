@@ -1,3 +1,8 @@
+## Documentation
+[API Documentation](https://github.com/PhilipSykes/AMLS_API/blob/main/api-specs/AMLS%20Docs.md) *.md version*
+
+[Notion Version](https://superb-afternoon-158.notion.site/API-Documentation-15bcafa665ed80a3b524e8dd5d7eb042?pvs=73) *more readable*
+
 ## References
 
 ### 1. Custom Authentication State Provider
@@ -32,3 +37,4 @@ Code for this system was inspired from
 **Sources:**
 https://auth0.com/blog/how-to-validate-jwt-dotnet/
 https://dotnetfullstackdev.medium.com/jwt-token-authentication-in-c-a-beginners-guide-with-code-snippets-7545f4c7c597
+https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-9.0&tabs=windows

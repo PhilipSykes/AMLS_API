@@ -31,16 +31,10 @@ public class NotificationManager : BaseMessageReceiver<EmailDetails>
         switch (messageType)
         {
             case MessageTypes.EmailNotifications.Login:
-                //TODO create new login email 
-                break;
-            case MessageTypes.EmailNotifications.PasswordReset:
-                //TODO create password reset email 
-                break;
-            case MessageTypes.EmailNotifications.ProfileUpdate:
-                //TODO create profile update email 
+                await _emailService.SendLoginEmailAsync(data); 
                 break;
             case MessageTypes.EmailNotifications.BorrowMedia:
-                //TODO create borrow media email 
+                await _emailService.SendBorrowEmailAsync(data); 
                 break;
             case MessageTypes.EmailNotifications.ReserveMedia:
                 await _emailService.SendReserveEmailAsync(data);

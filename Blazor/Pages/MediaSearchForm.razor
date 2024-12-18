@@ -1,7 +1,7 @@
 @using Blazor.Models
+
 <div id="sidebar">
     <EditForm Model="@_searchModel" OnValidSubmit="@OnSubmit">
-
         <DataAnnotationsValidator/>
         <div class="search-container">
             <input type="text" class="text-field" placeholder="Search by Title" @bind="_searchModel.MediaTitle"/>
@@ -9,6 +9,7 @@
                 <input type="text" class="text-field glow" placeholder="Search by @_currentPlaceholderText"
                        @bind="ActiveTagInput" @oninput="OnInputTagChange"/>
 
+                @* Genre Tags *@
                 @if (FilteredGenreList.Any())
                 {
                     <div class="label-input-pair tag-group-divider">
@@ -16,7 +17,8 @@
                         <div class="tag-lists">
                             @foreach (var genre in FilteredGenreList.Take(5))
                             {
-                                <div class="tag-suggestion tag-hover fade-in" @onclick="() => AddTag(genre)"
+                                <div class="tag-suggestion tag-hover fade-in"
+                                     @onclick="() => AddTag(genre, TagType.Genre)"
                                      title="@genre">
                                     <div class="tag-wrap">@genre</div>
                                 </div>
@@ -25,7 +27,63 @@
                     </div>
                 }
 
-                @if (_searchModel.MediaGenres.Any())
+                @* Author Tags *@
+                @if (FilteredAuthorList.Any())
+                {
+                    <div class="label-input-pair tag-group-divider">
+                        <label>author</label>
+                        <div class="tag-lists">
+                            @foreach (var author in FilteredAuthorList.Take(5))
+                            {
+                                <div class="tag-suggestion tag-hover fade-in"
+                                     @onclick="() => AddTag(author, TagType.Author)"
+                                     title="@author">
+                                    <div class="tag-wrap">@author</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @* Studio Tags *@
+                @if (FilteredStudioList.Any())
+                {
+                    <div class="label-input-pair tag-group-divider">
+                        <label>studio</label>
+                        <div class="tag-lists">
+                            @foreach (var studio in FilteredStudioList.Take(5))
+                            {
+                                <div class="tag-suggestion tag-hover fade-in"
+                                     @onclick="() => AddTag(studio, TagType.Studio)"
+                                     title="@studio">
+                                    <div class="tag-wrap">@studio</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @* Director Tags *@
+                @if (FilteredDirectorList.Any())
+                {
+                    <div class="label-input-pair tag-group-divider">
+                        <label>director</label>
+                        <div class="tag-lists">
+                            @foreach (var director in FilteredDirectorList.Take(5))
+                            {
+                                <div class="tag-suggestion tag-hover fade-in"
+                                     @onclick="() => AddTag(director, TagType.Director)"
+                                     title="@director">
+                                    <div class="tag-wrap">@director</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @* Selected Tags Display *@
+                @if (_searchModel.MediaGenres.Any() || _searchModel.MediaAuthors.Any() ||
+                     _searchModel.MediaDirectors.Any() || _searchModel.MediaStudios.Any())
                 {
                     <div class="tag-lists tag-group-divider">
                         @foreach (var selectedGenre in _searchModel.MediaGenres)
@@ -34,9 +92,51 @@
                                 <div title="@selectedGenre" class="selected-tag-title tag-wrap">
                                     @selectedGenre
                                 </div>
-                                <svg class="close-btn" @onclick="() => RemoveTag(selectedGenre)" fill="#FAFAF9"
+                                <svg class="close-btn" @onclick="() => RemoveTag(selectedGenre, TagType.Genre)"
+                                     fill="#FAFAF9"
                                      xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                                    <!--! Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. -->
+                                    <path
+                                        d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/>
+                                </svg>
+                            </div>
+                        }
+                        @foreach (var selectedAuthor in _searchModel.MediaAuthors)
+                        {
+                            <div class="selected-tag tag-hover">
+                                <div title="@selectedAuthor" class="selected-tag-title tag-wrap">
+                                    @selectedAuthor
+                                </div>
+                                <svg class="close-btn" @onclick="() => RemoveTag(selectedAuthor, TagType.Author)"
+                                     fill="#FAFAF9"
+                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                                    <path
+                                        d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/>
+                                </svg>
+                            </div>
+                        }
+                        @foreach (var selectedDirector in _searchModel.MediaDirectors)
+                        {
+                            <div class="selected-tag tag-hover">
+                                <div title="@selectedDirector" class="selected-tag-title tag-wrap">
+                                    @selectedDirector
+                                </div>
+                                <svg class="close-btn" @onclick="() => RemoveTag(selectedDirector, TagType.Director)"
+                                     fill="#FAFAF9"
+                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+                                    <path
+                                        d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/>
+                                </svg>
+                            </div>
+                        }
+                        @foreach (var selectedStudio in _searchModel.MediaStudios)
+                        {
+                            <div class="selected-tag tag-hover">
+                                <div title="@selectedStudio" class="selected-tag-title tag-wrap">
+                                    @selectedStudio
+                                </div>
+                                <svg class="close-btn" @onclick="() => RemoveTag(selectedStudio, TagType.Studio)"
+                                     fill="#FAFAF9"
+                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
                                     <path
                                         d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z"/>
                                 </svg>
@@ -46,26 +146,36 @@
                 }
             </div>
             <button type="submit" class="search-button">
-                <span>Search</span></button>
+                <span>Search</span>
+            </button>
         </div>
         <ValidationSummary/>
     </EditForm>
 </div>
 
-
-@code
-{
+@code {
     [Parameter] public EventCallback<List<Filter>> OnSubmitCallback { get; set; }
 
     private MediaSearchModel _searchModel = new();
     private List<Filter> _searchFilters = new();
-
-
     private string? ActiveTagInput { get; set; }
 
     private List<string> FilteredGenreList { get; set; } = new();
+    private List<string> FilteredAuthorList { get; set; } = new();
+    private List<string> FilteredStudioList { get; set; } = new();
+    private List<string> FilteredDirectorList { get; set; } = new();
+
     private TagLists _tagLists = new();
 
+    private enum TagType
+    {
+        Genre,
+        Author,
+        Studio,
+        Director,
+        Creator,
+        Company
+    }
 
     public async Task OnSubmit()
     {
@@ -75,34 +185,103 @@
 
     private void OnInputTagChange(ChangeEventArgs e)
     {
-        FilteredGenreList.Clear();
+        ClearFilteredLists();
 
         ActiveTagInput = e.Value?.ToString() ?? string.Empty;
 
-        if (ActiveTagInput != "")
+        if (!string.IsNullOrEmpty(ActiveTagInput))
         {
             FilteredGenreList = _tagLists.GenreList
                 .Where(g => g.Contains(ActiveTagInput, StringComparison.OrdinalIgnoreCase))
-                //filter selected genres
                 .Where(g => !_searchModel.MediaGenres.Contains(g, StringComparer.OrdinalIgnoreCase))
                 .ToList();
+
+            FilteredAuthorList = _tagLists.AuthorList
+                .Where(a => a.Contains(ActiveTagInput, StringComparison.OrdinalIgnoreCase))
+                .Where(a => !_searchModel.MediaAuthors.Contains(a, StringComparer.OrdinalIgnoreCase))
+                .ToList();
+
+            FilteredStudioList = _tagLists.StudioList
+                .Where(s => s.Contains(ActiveTagInput, StringComparison.OrdinalIgnoreCase))
+                .Where(s => !_searchModel.MediaStudios.Contains(s, StringComparer.OrdinalIgnoreCase))
+                .ToList();
+
+            FilteredDirectorList = _tagLists.DirectorList
+                .Where(d => d.Contains(ActiveTagInput, StringComparison.OrdinalIgnoreCase))
+                .Where(d => !_searchModel.MediaDirectors.Contains(d, StringComparer.OrdinalIgnoreCase))
+                .ToList();
+
             StateHasChanged();
         }
     }
 
-    private void AddTag(string genre)
+    private void ClearFilteredLists()
     {
-        if (!_searchModel.MediaGenres.Any(entry => entry.Contains(genre)))
+        FilteredGenreList.Clear();
+        FilteredAuthorList.Clear();
+        FilteredStudioList.Clear();
+        FilteredDirectorList.Clear();
+    }
+
+    private void AddTag(string tag, TagType type)
+    {
+        switch (type)
         {
-            _searchModel.MediaGenres.Add(genre);
-            FilteredGenreList.Remove(genre);
-            StateHasChanged();
+            case TagType.Genre:
+                if (!_searchModel.MediaGenres.Contains(tag))
+                {
+                    _searchModel.MediaGenres.Add(tag);
+                    FilteredGenreList.Remove(tag);
+                }
+
+                break;
+            case TagType.Author:
+                if (!_searchModel.MediaAuthors.Contains(tag))
+                {
+                    _searchModel.MediaAuthors.Add(tag);
+                    FilteredAuthorList.Remove(tag);
+                }
+
+                break;
+            case TagType.Director:
+                if (!_searchModel.MediaDirectors.Contains(tag))
+                {
+                    _searchModel.MediaDirectors.Add(tag);
+                    FilteredDirectorList.Remove(tag);
+                }
+
+                break;
+            case TagType.Studio:
+                if (!_searchModel.MediaStudios.Contains(tag))
+                {
+                    _searchModel.MediaStudios.Add(tag);
+                    FilteredStudioList.Remove(tag);
+                }
+
+                break;
         }
+
+        StateHasChanged();
     }
 
-    private void RemoveTag(string genre)
+    private void RemoveTag(string tag, TagType type)
     {
-        _searchModel.MediaGenres.Remove(genre);
+        switch (type)
+        {
+            case TagType.Genre:
+                _searchModel.MediaGenres.Remove(tag);
+                break;
+            case TagType.Author:
+                _searchModel.MediaAuthors.Remove(tag);
+                break;
+            case TagType.Director:
+                _searchModel.MediaDirectors.Remove(tag);
+                break;
+            case TagType.Studio:
+                _searchModel.MediaStudios.Remove(tag);
+                break;
+        }
+
         StateHasChanged();
     }
 
@@ -116,24 +295,38 @@
             _searchFilters.Add(titleFilter);
         }
 
-
         foreach (var genre in model.MediaGenres)
         {
             var genreFilter = new Filter("genres", genre, DbEnums.Contains);
             _searchFilters.Add(genreFilter);
         }
+
+        foreach (var author in model.MediaAuthors)
+        {
+            var authorFilter = new Filter("author", author, DbEnums.Contains);
+            _searchFilters.Add(authorFilter);
+        }
+
+        foreach (var director in model.MediaDirectors)
+        {
+            var directorFilter = new Filter("director", director, DbEnums.Contains);
+            _searchFilters.Add(directorFilter);
+        }
+
+        foreach (var studio in model.MediaStudios)
+        {
+            var studioFilter = new Filter("studio", studio, DbEnums.Contains);
+            _searchFilters.Add(studioFilter);
+        }
     }
 
-    //Tag field Placeholder Text
+    // Placeholder Text Animation Code
     private string[] _placeholderText =
     {
         "Genre",
         "Author",
         "Director",
-        "Creator",
-        "Publisher",
-        "Studio",
-        "Network"
+        "Studio"
     };
 
     private string _currentPlaceholderText = "";
@@ -154,7 +347,7 @@
         {
             if (!_isDeleting && _currentPlaceholderText == _targetPlaceholderText)
             {
-                await Task.Delay(3500); // Pause at full text
+                await Task.Delay(3500);
                 _isDeleting = true;
             }
 
@@ -183,7 +376,8 @@
             }
 
             StateHasChanged();
-            await Task.Delay(80); // Typing speed
+            await Task.Delay(80);
         }
     }
+
 }

@@ -10,7 +10,7 @@ public static class PolicyConfig
         {
             options.AddPolicy(Policies.CanEditMedia, policy => 
                 policy.RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));
-            
+
             options.AddPolicy(Policies.CanCreateMedia, policy => 
                 policy.RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));
             

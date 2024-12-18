@@ -75,7 +75,7 @@
         var result = await response.Content.ReadFromJsonAsync<Response<string>>();
         if (result != null && _statusModal != null)
         {
-            await _statusModal.ShowStatusModal(result, result.Success ? "/managemember" : null);
+            await _statusModal.ShowStatusModal(result, result.Success ? "/managemembers" : null);
         }
         
     }

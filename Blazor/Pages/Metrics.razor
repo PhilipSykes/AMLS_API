@@ -18,6 +18,10 @@
     }
     else
     {
+        if (recommendScaling)
+        {
+            <p class="red">Reccomend Resource Scaling</p>
+        }
         <p class="last-update">Last Updated: @_lastUpdated.ToString("HH:mm:ss")</p>
 
         <div class="container-container">
@@ -29,9 +33,9 @@
                     <p class="container-id">@root.GetProperty("containerId").GetString()</p>
                     <p class="container-name"><strong>@root.GetProperty("containerName").GetString()</strong></p>
                     <div class="cpu-mem">
-                        <p class="cpu-percent"><strong>CPU: </strong> @Math.Round(root.GetProperty("cpuPercentage").GetDouble(), 2)%</p>
+                        <p class="cpu-percent @GetColorClass(root.GetProperty("cpuPercentage").GetDouble())"><strong>CPU: </strong> @Math.Round(root.GetProperty("cpuPercentage").GetDouble(), 2)%</p>
                         <p><strong>Memory Usage: </strong> @Math.Round(root.GetProperty("memoryUsage").GetDouble(), 0)MB/@Math.Round(root.GetProperty("memoryLimit").GetDouble() / 1000, 1)GB</p>
-                        <p><strong>Memory Percentage: </strong>@Math.Round(root.GetProperty("memoryPercentage").GetDouble(), 2)%</p>
+                        <p class="@GetColorClass(root.GetProperty("cpuPercentage").GetDouble())"><strong>Memory Percentage: </strong>@Math.Round(root.GetProperty("memoryPercentage").GetDouble(), 2)%</p>
                     </div>
                 </div>
             }
@@ -46,12 +50,25 @@
     private DateTime _lastUpdated;
     private List<JsonDocument>? _snapshot;
     private string _jwtToken;
+    private bool recommendScaling = false;
+    
+    private string GetColorClass(double percentage)
+    {
+        if (percentage >= 80) 
+        {
+            recommendScaling = true;
+            return "red";
+        }
+        if (percentage >= 50) return "amber";
+        return "";
+    }
+
 
     protected override async Task OnInitializedAsync()
     {
         _jwtToken = await AuthState.GetBearerToken();
         await RefreshMetrics();
-        _timer = new Timer(async _ => await RefreshMetrics(), null, 0, 5000);
+        _timer = new Timer(async _ => await RefreshMetrics(), null, 0, 60000);
     }
 
     private async Task RefreshMetrics()
