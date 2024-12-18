@@ -1,9 +1,5 @@
 @page "/media/book/{MediaId}"
 @inject HttpClient HttpClient
-@inject NavigationManager Nav
-@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
-
-
 
 
 <link rel="stylesheet" href="/css/media.css">
@@ -54,6 +50,16 @@
                     </div>
                 </div>
             </div>
+            <div class="info">
+                <AuthorizeView Policy="CanReserveMedia">
+                    <Authorized Context="auth">
+                        
+                    </Authorized>
+                    <NotAuthorized>
+                        <p class="borrow"><a href="/login">Sign in</a> to borrow media</p>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
             <div>
                 
             </div>
@@ -68,7 +74,6 @@
     private List<Entities.MediaInfo> _mediaResults = new();
     private Entities.MediaInfo _result = new();
     private readonly List<Filter> _filters = new();
-
 
     protected override async Task OnInitializedAsync()
     {
