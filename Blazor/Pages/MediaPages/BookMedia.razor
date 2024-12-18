@@ -4,8 +4,6 @@
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 @using System.Security.Claims
 @attribute [Authorize]
-@inject AuthenticationStateProvider AuthStateProvider
-
 
 
 
@@ -56,6 +54,16 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="info">
+                <AuthorizeView Policy="CanReserveMedia">
+                    <Authorized Context="auth">
+                        
+                    </Authorized>
+                    <NotAuthorized>
+                        <p class="borrow"><a href="/login">Sign in</a> to borrow media</p>
+                    </NotAuthorized>
+                </AuthorizeView>
             </div>
             <div>
                 
