@@ -4,7 +4,7 @@
 @inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 @using System.Security.Claims
 @attribute [Authorize]
-
+@inject AuthenticationStateProvider AuthStateProvider
 
 
 <link rel="stylesheet" href="/css/media.css">
