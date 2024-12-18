@@ -109,7 +109,9 @@
         return "#D6D3D1";
     }
    
-    private async Task<HttpResponseMessage> GetReservableItems(string media, string[] branches, int minumumLength)
+    
+    // Gets list of ReservableItem, each has timeslots where reservations can be made
+    private async Task<List<Entities.ReservableItem>> GetReservableItems(string media, string[] branches, int minumumLength)
     {
         var request = new GetReservablesRequest
         {
@@ -118,7 +120,36 @@
             MinimumDays = minumumLength
         };
         var reservablesResponse = await HttpClient.PostAsJsonAsync("api/reservations/getReservable", request);
-        return reservablesResponse;
+        var reservables = await reservablesResponse.Content.ReadFromJsonAsync<Response<List<Entities.ReservableItem>>>();
+        if (reservables is null)
+        {
+            return new List<Entities.ReservableItem>();
+        }
+        return reservables.Data ?? new List<Entities.ReservableItem>();
+        
+    }
+
+    private Entities.ReservableItem FindSoonestReservableItem(List<Entities.ReservableItem> reservables)
+    {
+        // check if last date is now,
+        // then sort timeslots
+        Entities.ReservableItem? result = null;
+        DateTime earliest = DateTime.MaxValue;
+        foreach (var item in reservables)
+        {
+            if (item.LastEnd < earliest)
+            {
+                earliest = item.LastEnd;
+                result = item;
+            }
+
+            foreach (var timeslot in item.Timeslots)
+            {
+                
+            }
+        }
+
+        return result;
     }
     
     
