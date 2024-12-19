@@ -1,4 +1,5 @@
 @page "/media/book/{MediaId}"
+@using System.Net
 @inject HttpClient HttpClient
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IAuthService AuthService
@@ -58,10 +59,28 @@
                     <Authorized Context="auth">
                         @if (_reservables !=  null && _reservables.Any())
                         {
+                            <p>@_reservationResultMessage</p>
                             @foreach (var item in _reservables)
                             {
                                 <p>@item.BranchName</p>
-                                <p>@item.LastEnd</p>
+                                @if (item.Timeslots.Any())
+                                {
+                                    <p>Reservable within ranges:</p>
+                                    <ul>
+                                        @foreach (var timeslot in item.Timeslots)
+                                        {
+                                            <li>@timeslot.Start - @timeslot.End</li>
+                                            <button @onclick="() => CreateReservation(item.Item, timeslot.Start)">
+                                                Reserve
+                                            </button>
+                                        }
+                                    </ul>
+                                    
+                                }
+                                <p>After: @item.LastEnd</p>
+                                <button @onclick="() => CreateReservation(item.Item, item.LastEnd)">
+                                    Reserve
+                                </button>
                             }
                         }
                     </Authorized>
@@ -89,6 +108,7 @@
     private string? userRole;
     private IEnumerable<string>? branches;
     private List<Entities.ReservableItem>? _reservables;
+    private string _reservationResultMessage = "";
     private string? _jwtToken;
 
     protected override async Task OnInitializedAsync()
@@ -130,8 +150,8 @@
 
         var request = new GetReservablesRequest
         {
-            Media = "673f6cfbe27bd6488d0ab1a7", //_result.ObjectId,
-            Branches = ["67236fc4b4d08aab049740ca", "673348f4a1ed2d02eef46a41"],//user.FindAll(PolicyClaims.BranchAccess).Select(c => c.Value).ToArray(),
+            Media = _result.ObjectId,
+            Branches = user.FindAll(PolicyClaims.BranchAccess).Select(c => c.Value).ToArray(),
             MinimumDays = 7
         };
         HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
@@ -145,28 +165,47 @@
         
     }
 
-    private Entities.ReservableItem FindSoonestReservableItem(List<Entities.ReservableItem> reservables)
+    private async Task CreateReservation(string item, DateTime start)
     {
-        // check if last date is now,
-        // then sort timeslots
-        Entities.ReservableItem? result = null;
-        DateTime earliest = DateTime.MaxValue;
-        foreach (var item in reservables)
+        start = start.AddDays(1);
+        Entities.Reservation reservation = new Entities.Reservation
         {
-            if (item.LastEnd < earliest)
-            {
-                earliest = item.LastEnd;
-                result = item;
-            }
-
-            foreach (var timeslot in item.Timeslots)
-            {
-                
-            }
+            ObjectId = ObjectId.GenerateNewId().ToString(),
+            Item = item,
+            Member = "67236480b4d08aab049740aa", // HARDCODED CHANGE LATER
+            StartDate = start,
+            EndDate = start.AddDays(7)
+        };
+        var reservationResponse = await HttpClient.PostAsJsonAsync("api/reservations/create", reservation);
+        if (reservationResponse.StatusCode == HttpStatusCode.Created)
+        {
+            _reservationResultMessage = "Reservation successfully created";
         }
-
-        return result;
+        else
+        {
+            _reservationResultMessage = "Reservation could not be created, please refresh and try again";
+        }
+        StateHasChanged();
     }
-    
-    
+
+    private async Task Borrow(string item)
+    {
+        string member = "67236480b4d08aab049740aa"; // HARDCODED CHANGE LATER
+        var reservationResponse = await HttpClient.PostAsJsonAsync("api/loans/check-out", (item, member));
+        if (reservationResponse.IsSuccessStatusCode)
+        {
+            _reservationResultMessage = "Borrowed Item";
+        }
+        else
+        {
+            _reservationResultMessage = "Not able to borrow";
+        }
+    }
+
+    // Done by librarian really
+    private async Task ReturnItem(string item)
+    {
+        var result = await HttpClient.PostAsJsonAsync("api/loans/check-in", item);
+    }
+
 }

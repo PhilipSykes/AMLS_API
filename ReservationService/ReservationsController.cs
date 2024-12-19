@@ -55,8 +55,9 @@ public class ReservationsController : ControllerBase
         //await _exchange.PublishNotification(
         //    MessageTypes.EmailNotifications.ReserveMedia, 
         //    request.EmailDetails);
+        if (!result.Success) return Conflict(new { message = "Reservation conflict occurred." });
     
-        return Ok(new { message = result.StatusCode });
+        return Created("",new {message = "Reservation created." });
     }
 
     [Authorize(Policy = Policies.CanCancelMedia)]
