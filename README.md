@@ -3,6 +3,20 @@
 
 [Notion Version](https://superb-afternoon-158.notion.site/API-Documentation-15bcafa665ed80a3b524e8dd5d7eb042?pvs=73) *more readable*
 
+### Build Project
+`docker build --no-cache`
+
+`docker compose up`
+
+`RUN Blazor: HTTPS`
+
+### Update Project
+`docker build down`
+
+`docker system prune -a`
+
+###### Follow build instructions to rebuild 
+
 ## References
 
 ### 1. Custom Authentication State Provider
