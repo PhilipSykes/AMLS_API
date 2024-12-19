@@ -9,13 +9,10 @@ public static class PolicyConfig
         services.AddAuthorization(options =>
         {
             options.AddPolicy(Policies.CanEditMedia, policy => 
-                policy.RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));
-
-            options.AddPolicy(Policies.CanCreateMedia, policy => 
-                policy.RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));
+                policy.RequireRole(PolicyRoles.BranchLibrarian));
             
             options.AddPolicy(Policies.CanDeleteMedia, policy => 
-                policy.RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));
+                policy.RequireRole(PolicyRoles.BranchLibrarian));
             
             options.AddPolicy(Policies.CanViewInventory, policy => 
                 policy.RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));

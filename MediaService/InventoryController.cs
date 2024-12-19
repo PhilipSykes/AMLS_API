@@ -138,7 +138,12 @@ public class InventoryController : ControllerBase
     {
         if (!HasBranchAccess(branchId))
         {
-            return Forbid("User does not have permission to edit items from this branch.");
+            return new Response<string>
+            {
+                Success = false,
+                StatusCode = QueryResultCode.Forbidden,
+                Message = "User does not have permission to edit items from this branch."
+            };
         }
         return await _inventoryManager.EditExistingMedia(mediaInfo);
     }
@@ -150,14 +155,19 @@ public class InventoryController : ControllerBase
     /// <param name="mediaId">ID of the Media item to delete</param>
     /// <returns>Response indicating deletion success</returns>
     [Authorize(Policy = Policies.CanDeleteMedia)]
-    [HttpDelete("{branchId}/delete/{mediaId}")]
-    public async Task<ActionResult<Response<string>>>Delete(string branchId, string mediaId)
+    [HttpDelete("{branchId}/delete/{itemId}")]
+    public async Task<ActionResult<Response<string>>>Delete(string branchId, string itemId)
     {
         if (!HasBranchAccess(branchId))
         {
-            return Forbid("User does not have permission to delete items from this branch.");
+            return new Response<string>
+            {
+                Success = false,
+                StatusCode = QueryResultCode.Forbidden,
+                Message = "User does not have permission to delete items from this branch."
+            };
         }
-        return await _inventoryManager.DeleteMediaItem(mediaId);
+        return await _inventoryManager.DeleteMediaItem(itemId);
     }
 
     /// <summary>

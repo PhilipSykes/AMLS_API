@@ -74,7 +74,19 @@
         error = null;
         success = null;
         loginModel.Email = loginModel.Email?.ToLowerInvariant();
-        var request = new Request<PayLoads.Login> { Data = loginModel };
+        var request = new Request<PayLoads.Login>
+        {
+            Data = loginModel,
+            EmailDetails = new()
+            {
+                RecipientAddresses = new List<string> { loginModel.Email },
+                EmailBody = new Dictionary<string, string>
+                {
+                    { "UserName", loginModel.Email },  
+                    { "time", DateTime.Now.ToString("g") }
+                }
+            }
+        };
 
         try
         {

@@ -8,6 +8,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Ocelot.Provider.Docker;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,7 +55,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOcelot(builder.Configuration);
+builder.Services.AddOcelot(builder.Configuration).AddDocker();
 builder.Services.AddControllers();
 
 var app = builder.Build();

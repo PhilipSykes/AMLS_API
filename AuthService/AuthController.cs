@@ -44,8 +44,6 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<ActionResult<Response<LoginDetails>>> Login([FromBody] Request<PayLoads.Login> request)
     {
-        Console.WriteLine($"Login request for user: {request.Data.Email}");
-
         var emailFilter = new List<Filter>
         {
             new Filter(DbFieldNames.Login.Email, request.Data.Email, DbEnums.Equals)
@@ -61,38 +59,36 @@ public class AuthController : ControllerBase
                 Message = "No Results Found",
             });
         }
-
-        var passwordService = new PasswordService();
-            if (!passwordService.VerifyPassword(result[0].PasswordHash, request.Data.Password))
+        
+        if (!PasswordService.VerifyPassword(result[0].PasswordHash, request.Data.Password))
+        {
+            return Unauthorized(new Response<LoginDetails>
             {
-                return Unauthorized(new Response<LoginDetails>
-                {
-                    Success = false,
-                    StatusCode = QueryResultCode.Unauthorized,
-                    Message = "Invalid Credentials",
-                });
-            }
-            // await _exchange.PublishNotification(
-            //     MessageTypes.EmailNotifications.Login, 
-            //     request.EmailDetails);
-            string token = _tokenAuthService.GenerateJwtToken(result[0]);
-            Console.WriteLine($"token: {token}");
-            foreach (string branch in result[0].Branches)
-            {
-                Console.WriteLine($"branch access: {branch}");
-            }
-            return Ok(new Response<LoginDetails>
-            {
-                Success = true,
-                Message = "Login successful",
-                StatusCode = QueryResultCode.Ok,
-                Data = new LoginDetails()
-                {
-                    UserID = result[0].UserID,
-                    Branches = result[0].Branches,
-                    Token = token
-                }
+                Success = false,
+                StatusCode = QueryResultCode.Unauthorized,
+                Message = "Invalid Credentials",
             });
+        }
+        
+        string token = _tokenAuthService.GenerateJwtToken(result[0]);
+        
+        //Runs publish message in background
+        _ = _exchange.PublishNotification(
+            MessageTypes.EmailNotifications.Login, 
+            request.EmailDetails);
+            
+        return Ok(new Response<LoginDetails>
+        {
+            Success = true,
+            Message = "Login successful",
+            StatusCode = QueryResultCode.Ok,
+            Data = new LoginDetails()
+            {
+                UserID = result[0].UserID,
+                Branches = result[0].Branches,
+                Token = token
+            }
+        });
     }
     [Authorize]
     [HttpPost("refresh-token")]
