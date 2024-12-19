@@ -20,7 +20,7 @@ public interface IEmailService
 /// </summary>
 public class EmailService : IEmailService
 {
-    private readonly string _appPassword = "dktpdtqizcxwjerg";
+    private readonly string _appPassword = "app-password";
     private readonly int _port = 587;
     private readonly string _senderEmail = "hallam.amls@gmail.com";
     private readonly string _smtpServer = "smtp.gmail.com";
