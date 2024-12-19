@@ -22,6 +22,7 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 
+
 builder.Services.AddControllers();
 
 // Add RabbitMQ configuration

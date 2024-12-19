@@ -4,12 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using System.IO;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Ocelot.Provider.Docker;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,7 +50,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOcelot(builder.Configuration).AddDocker();
+builder.Services.AddOcelot(builder.Configuration);
 builder.Services.AddControllers();
 
 var app = builder.Build();

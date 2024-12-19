@@ -1,11 +1,6 @@
 ﻿{
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7500",
-    "ServiceDiscoveryProvider": {
-      "Host": "gateway",
-      "Port": 443,
-      "Type": "Docker"
-    }
+    "BaseUrl": "https://localhost:7500"
   },
   "Routes": [
     {
@@ -14,8 +9,12 @@
       "DownstreamPathTemplate": "/auth/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
-      "ServiceName": "media-service",
-      "LoadBalancerOptions": {"Type": "LeastConnection"}
+      "DownstreamHostAndPorts": [
+        {"Host": "auth-service", "Port": 6000}
+      ],
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
     },
     {
       "UpstreamPathTemplate": "/api/user/{everything}",
@@ -26,23 +25,31 @@
       "DownstreamHostAndPorts": [
         {"Host": "user-service", "Port": 6000}
       ],
-      "LoadBalancerOptions": {"Type": "LeastConnection"},
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
     },
     {
       "UpstreamPathTemplate": "/api/usermanagement/{everything}",
-      "UpstreamHttpMethod": [ "POST", "GET","PUT","DELETE" ],
+      "UpstreamHttpMethod": [ "POST", "GET", "PUT", "DELETE" ],
       "DownstreamPathTemplate": "/usermanagement/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {"Host": "user-service", "Port": 6000}
       ],
-      "LoadBalancerOptions": {"Type": "LeastConnection"},
-      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "SystemAdmin"}
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "SystemAdmin"
+      }
     },
     {
       "UpstreamPathTemplate": "/api/catalog/{everything}",
@@ -52,33 +59,48 @@
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {"Host": "media-service", "Port": 6000}
-      ]
+      ],
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      }
     },
-
     {
       "UpstreamPathTemplate": "/api/inventory/{everything}",
-      "UpstreamHttpMethod": [ "POST","GET","PUT","DELETE" ],
+      "UpstreamHttpMethod": [ "POST", "GET", "PUT", "DELETE" ],
       "DownstreamPathTemplate": "/inventory/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {"Host": "media-service", "Port": 6000}
       ],
-      "LoadBalancerOptions": {"Type": "LeastConnection"},
-      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": ["BranchLibrarian", "BranchManager"]}
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": ["BranchLibrarian", "BranchManager"]
+      }
     },
     {
       "UpstreamPathTemplate": "/api/reservations/{everything}",
-      "UpstreamHttpMethod": [ "POST","DELETE" ],
+      "UpstreamHttpMethod": [ "POST", "DELETE" ],
       "DownstreamPathTemplate": "/reservations/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {"Host": "reservation-service", "Port": 6000}
       ],
-      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"
+      }
     },
     {
       "UpstreamPathTemplate": "/api/loans/{everything}",
@@ -89,8 +111,15 @@
       "DownstreamHostAndPorts": [
         {"Host": "reservation-service", "Port": 6000}
       ],
-      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"
+      }
     },
     {
       "UpstreamPathTemplate": "/api/metric/{everything}",
@@ -101,9 +130,15 @@
       "DownstreamHostAndPorts": [
         {"Host": "metric-service", "Port": 6000}
       ],
-      "LoadBalancerOptions": {"Type": "LeastConnection"},
-      "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "SystemAdmin"}
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "SystemAdmin"
+      }
     }
   ]
 }
