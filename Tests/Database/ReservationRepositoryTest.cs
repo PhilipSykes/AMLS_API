@@ -24,7 +24,7 @@ public class ReservationRepositoryTest
             DatabaseName = "AdvancedMediaLibrary",
         });
         var repo = new ReservationRepository(settings);
-        string media = "673f6cfae27bd6488d0ab1a0";
+        string media = "673f6cfbe27bd6488d0ab1a7";
         string[] branches = ["67236fc4b4d08aab049740ca", "673348f4a1ed2d02eef46a41"];
         int days = 7;
 

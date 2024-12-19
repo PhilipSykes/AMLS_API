@@ -6,6 +6,7 @@ using static Common.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using static Common.Models.PayLoads;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 
 
 namespace ReservationService;
@@ -55,8 +56,9 @@ public class ReservationsController : ControllerBase
         //await _exchange.PublishNotification(
         //    MessageTypes.EmailNotifications.ReserveMedia, 
         //    request.EmailDetails);
+        if (!result.Success) return Conflict(new { message = "Reservation conflict occurred." });
     
-        return Ok(new { message = result.StatusCode });
+        return Created("",new {message = "Reservation created." });
     }
 
     [Authorize(Policy = Policies.CanCancelMedia)]
@@ -81,10 +83,16 @@ public class ReservationsController : ControllerBase
 
     [Authorize(Policy = Policies.CanReserveMedia)]
     [HttpPost("getReservable")]
-    public async Task<ActionResult<Operations.Response<List<ReservableItem>>>> GetReservableItems(Shared.GetReservablesRequest request)
+    public async Task<ActionResult<Operations.Response<List<ReservableItem>>>> GetReservableItems([FromBody] Shared.GetReservablesRequest request)
     {
-        var result = await _reservationRepository.GetReservableItems(request.Media, request.Branches, request.MinimumDays);
-
-        return result;
+        return await _reservationRepository.GetReservableItems(request.Media, request.Branches, request.MinimumDays);
+        
+    }
+    
+    [HttpPost("getMyReservations")]
+    public async Task<ActionResult<Operations.Response<List<BsonDocument>>>> GetMyReservations(string member)
+    {
+        return await _reservationRepository.GetMyReservations(member);
+        
     }
 }

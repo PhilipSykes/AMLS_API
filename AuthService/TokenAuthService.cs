@@ -79,11 +79,17 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
                 break;
 
             case PolicyRoles.BranchManager:
-                    foreach (string branch in user.Branches)
-                    {
-                        claims.Add(new Claim(PolicyClaims.BranchAccess,branch));
-                    }
-                    break;
+                foreach (string branch in user.Branches)
+                { 
+                    claims.Add(new Claim(PolicyClaims.BranchAccess,branch));
+                }
+                break;
+            case PolicyRoles.Member:
+                foreach (string branch in user.Branches)
+                {
+                    claims.Add(new Claim(PolicyClaims.BranchAccess,branch));
+                }
+                break;
         }
 
         return claims;

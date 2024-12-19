@@ -1,10 +1,9 @@
 @page "/media/book/{MediaId}"
+@using System.Net
 @inject HttpClient HttpClient
-@inject NavigationManager Nav
-@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
-@using System.Security.Claims
-@attribute [Authorize]
 @inject AuthenticationStateProvider AuthStateProvider
+@inject IAuthService AuthService
+@attribute [Authorize]
 
 
 <link rel="stylesheet" href="/css/media.css">
@@ -58,7 +57,35 @@
             <div class="info">
                 <AuthorizeView Policy="CanReserveMedia">
                     <Authorized Context="auth">
-                        
+                        @if (_reservables !=  null && _reservables.Any())
+                        {
+                            <p>@_reservationResultMessage</p>
+                            @foreach (var item in _reservables)
+                            {
+                                <p>@item.BranchName</p>
+                                <p>Reservable within ranges:</p>
+
+                                <ul>
+                                    @foreach (var timeslot in item.Timeslots)
+                                    {
+                                        <li>
+                                            <button @onclick="() => CreateReservation(item.Item, timeslot.Start)">
+                                                @(timeslot.Start == DateTime.Today ? "Borrow" : "Reserve")
+                                            </button>
+                                            @timeslot.Start
+                                        </li>
+
+                                    }
+
+                                    <li>
+                                        <button @onclick="() => CreateReservation(item.Item, item.LastEnd)">
+                                            @(item.LastEnd == DateTime.Today ? "Borrow" : "Reserve")
+                                        </button>
+                                        @item.LastEnd
+                                    </li>
+                                </ul>
+                            }
+                        }
                     </Authorized>
                     <NotAuthorized>
                         <p class="borrow"><a href="/login">Sign in</a> to borrow media</p>
@@ -79,15 +106,22 @@
     private List<Entities.MediaInfo> _mediaResults = new();
     private Entities.MediaInfo _result = new();
     private readonly List<Filter> _filters = new();
-    AuthenticationState state;
+    AuthenticationState authState;
     private string? userEmail;
     private string? userRole;
     private IEnumerable<string>? branches;
+    private List<Entities.ReservableItem>? _reservables;
+    private string _reservationResultMessage = "";
+    private string? _jwtToken;
+    private string? _member;
 
     protected override async Task OnInitializedAsync()
     {
+        _jwtToken = await AuthService.GetBearerToken();
         _filters.Add(new Filter("_id", MediaId, DbEnums.Equals));
-
+        authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        
         var response = await HttpClient.PostAsJsonAsync($"api/catalog/search?page={1}&count={1}", _filters);
         if (response.IsSuccessStatusCode)
         {
@@ -96,14 +130,10 @@
             {
                 _mediaResults = searchResponse.Data;
                 _result = _mediaResults[0];
+                _reservables = await GetReservableItems(user); // note await might be causing problems when page loads strangely
                 Console.WriteLine(_result);
             }
         }
-        
-        state = await AuthStateProvider.GetAuthenticationStateAsync();
-        userEmail = state.User.FindFirst(ClaimTypes.Email)?.Value;
-        userRole = state.User.FindFirst(ClaimTypes.Role)?.Value;
-        branches = state.User.FindAll("BranchAccess").Select(c => c.Value);
 
         StateHasChanged();
     }
@@ -119,14 +149,21 @@
    
     
     // Gets list of ReservableItem, each has timeslots where reservations can be made
-    private async Task<List<Entities.ReservableItem>> GetReservableItems(string media, string[] branches, int minumumLength)
+    private async Task<List<Entities.ReservableItem>> GetReservableItems(ClaimsPrincipal user)
     {
+
         var request = new GetReservablesRequest
         {
-            Media = media,
-            Branches = branches,
-            MinimumDays = minumumLength
+            Media = _result.ObjectId,
+            Branches = user.FindAll(PolicyClaims.BranchAccess).Select(c => c.Value).ToArray(),
+            MinimumDays = 7
         };
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        return await ReservableItems(request);
+    }
+
+    private async Task<List<Entities.ReservableItem>> ReservableItems(GetReservablesRequest request)
+    {
         var reservablesResponse = await HttpClient.PostAsJsonAsync("api/reservations/getReservable", request);
         var reservables = await reservablesResponse.Content.ReadFromJsonAsync<Response<List<Entities.ReservableItem>>>();
         if (reservables is null)
@@ -134,31 +171,51 @@
             return new List<Entities.ReservableItem>();
         }
         return reservables.Data ?? new List<Entities.ReservableItem>();
-        
     }
 
-    private Entities.ReservableItem FindSoonestReservableItem(List<Entities.ReservableItem> reservables)
+    private async Task CreateReservation(string item, DateTime start)
     {
-        // check if last date is now,
-        // then sort timeslots
-        Entities.ReservableItem? result = null;
-        DateTime earliest = DateTime.MaxValue;
-        foreach (var item in reservables)
+        var test = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        start = start.AddDays(1);
+        Entities.Reservation reservation = new Entities.Reservation
         {
-            if (item.LastEnd < earliest)
-            {
-                earliest = item.LastEnd;
-                result = item;
-            }
-
-            foreach (var timeslot in item.Timeslots)
-            {
-                
-            }
+            ObjectId = ObjectId.GenerateNewId().ToString(),
+            Item = item,
+            Member = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+            StartDate = start,
+            EndDate = start.AddDays(7)
+        };
+        var reservationResponse = await HttpClient.PostAsJsonAsync("api/reservations/create", reservation);
+        if (reservationResponse.StatusCode == HttpStatusCode.Created)
+        {
+            _reservationResultMessage = "Reservation successfully created";
         }
-
-        return result;
+        else
+        {
+            _reservationResultMessage = "Reservation could not be created, please refresh and try again";
+        }
+        
+        StateHasChanged();
     }
-    
-    
+
+    private async Task Borrow(string item)
+    {
+        string member = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var reservationResponse = await HttpClient.PostAsJsonAsync("api/loans/check-out", (item, member));
+        if (reservationResponse.IsSuccessStatusCode)
+        {
+            _reservationResultMessage = "Borrowed Item";
+        }
+        else
+        {
+            _reservationResultMessage = "Not able to borrow";
+        }
+    }
+
+    // Done by librarian really
+    private async Task ReturnItem(string item)
+    {
+        var result = await HttpClient.PostAsJsonAsync("api/loans/check-in", item);
+    }
+
 }

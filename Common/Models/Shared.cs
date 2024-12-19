@@ -51,9 +51,9 @@ namespace Common.Models
 
         public class GetReservablesRequest
         {
-            public string Media;
-            public string[] Branches;
-            public int MinimumDays;
+            public string Media { get; set; }
+            public string[] Branches { get; set; }
+            public int MinimumDays { get; set; }
         }
         
     }
