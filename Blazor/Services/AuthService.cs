@@ -29,17 +29,26 @@ public class AuthService : IAuthService
         _httpClient = httpClient;
         _authenticationStateProvider = authenticationStateProvider;
     }
-    
+    /// <summary>
+    /// Retrieves the authentication token from session storage
+    /// </summary>
+    /// <returns>The JWT token as a string</returns>
     public async Task<string> GetBearerToken()
     {
         return await _sessionStorage.GetItemAsync<string>("token");
     }
     /// <summary>
-    /// Logs a user in
+    /// Formally logs in the user 
     /// </summary>
     /// <param name="token">Token for authorisation</param>
     /// <param name="branches">(Optional) Array of branch codes for this user</param>
-    /// <summary>Formally logs the user in, and stores login details in session</summary>
+    ///<remarks>
+    /// This method:
+    /// - Stores the token and branches in session storage
+    /// - Sets up HTTP authentication headers
+    /// - Updates the authentication state
+    /// - Starts the token refresh timer
+    /// </remarks>
     public async Task Login(string token, string[]? branches = null)
     {
         try
@@ -56,7 +65,16 @@ public class AuthService : IAuthService
             throw;
         }
     }
-
+    /// <summary>
+    /// Logs out the current user and cleans up their session
+    /// </summary>
+    /// <remarks>
+    /// This method:
+    /// - Stops the token refresh timer
+    /// - Removes user data from session storage
+    /// - Clears HTTP authentication headers
+    /// - Updates the authentication state to logged out
+    /// </remarks>
     public async Task Logout()
     {
         StopRefreshTimer();
@@ -66,6 +84,9 @@ public class AuthService : IAuthService
         ((ClientAuthStateProvider)_authenticationStateProvider).SetUserAsLoggedOut();
         
     }
+    /// <summary>
+    /// Initializes a timer to refresh the JWT token before it expires
+    /// </summary>
     private async Task StartTokenRefreshTimer()
     {
         try 
@@ -83,10 +104,8 @@ public class AuthService : IAuthService
             if (timeUntilExpiry > TimeSpan.Zero)
             {
                 _tokenRefreshTimer?.Dispose();
-                _tokenRefreshTimer = new Timer(async _ =>
-                {
-                    await RefreshToken();
-                }, null, timeUntilExpiry, Timeout.InfiniteTimeSpan);
+                //Run new timer in background
+                _tokenRefreshTimer = new Timer(async _ => { await RefreshToken(); }, null, timeUntilExpiry, Timeout.InfiniteTimeSpan);
             }
             else
             {
@@ -98,6 +117,17 @@ public class AuthService : IAuthService
             Console.WriteLine($"Error in StartTokenRefreshTimer: {ex.Message}");
         }
     }
+    /// <summary>
+    /// Requests a new JWT token from the authentication server
+    /// </summary>
+    /// <remarks>
+    /// This method:
+    /// - Sends the current token to the server for refresh
+    /// - Updates session storage with the new token
+    /// - Updates HTTP authentication headers
+    /// - Resets the refresh timer
+    /// - Logs out the user if refresh fails
+    /// </remarks>
     private async Task RefreshToken()
     {
         try

@@ -44,8 +44,6 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<ActionResult<Response<LoginDetails>>> Login([FromBody] Request<PayLoads.Login> request)
     {
-        Console.WriteLine($"Login request for user: {request.Data.Email}");
-
         var emailFilter = new List<Filter>
         {
             new Filter(DbFieldNames.Login.Email, request.Data.Email, DbEnums.Equals)
@@ -62,15 +60,15 @@ public class AuthController : ControllerBase
             });
         }
         
-            if (!PasswordService.VerifyPassword(result[0].PasswordHash, request.Data.Password))
+        if (!PasswordService.VerifyPassword(result[0].PasswordHash, request.Data.Password))
+        {
+            return Unauthorized(new Response<LoginDetails>
             {
-                return Unauthorized(new Response<LoginDetails>
-                {
-                    Success = false,
-                    StatusCode = QueryResultCode.Unauthorized,
-                    Message = "Invalid Credentials",
-                });
-            }
+                Success = false,
+                StatusCode = QueryResultCode.Unauthorized,
+                Message = "Invalid Credentials",
+            });
+        }
         
         string token = _tokenAuthService.GenerateJwtToken(result[0]);
         

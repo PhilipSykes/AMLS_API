@@ -138,7 +138,12 @@ public class InventoryController : ControllerBase
     {
         if (!HasBranchAccess(branchId))
         {
-            return Forbid("User does not have permission to edit items from this branch.");
+            return new Response<string>
+            {
+                Success = false,
+                StatusCode = QueryResultCode.Forbidden,
+                Message = "User does not have permission to edit items from this branch."
+            };
         }
         return await _inventoryManager.EditExistingMedia(mediaInfo);
     }
@@ -155,7 +160,12 @@ public class InventoryController : ControllerBase
     {
         if (!HasBranchAccess(branchId))
         {
-            return Forbid("User does not have permission to delete items from this branch.");
+            return new Response<string>
+            {
+                Success = false,
+                StatusCode = QueryResultCode.Forbidden,
+                Message = "User does not have permission to delete items from this branch."
+            };
         }
         return await _inventoryManager.DeleteMediaItem(itemId);
     }

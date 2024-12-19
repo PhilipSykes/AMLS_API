@@ -1,6 +1,11 @@
 ﻿{
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7500"
+    "BaseUrl": "https://localhost:7500",
+    "ServiceDiscoveryProvider": {
+      "Host": "gateway",
+      "Port": 443,
+      "Type": "Docker"
+    }
   },
   "Routes": [
     {
@@ -9,9 +14,7 @@
       "DownstreamPathTemplate": "/auth/{everything}",
       "DownstreamScheme": "https",
       "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamHostAndPorts": [
-        {"Host": "auth-service", "Port": 6000}
-      ],
+      "ServiceName": "media-service",
       "LoadBalancerOptions": {"Type": "LeastConnection"}
     },
     {

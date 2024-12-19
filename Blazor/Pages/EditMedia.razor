@@ -2,7 +2,6 @@
 @using Blazor.Models
 @inject HttpClient HttpClient
 @inject NavigationManager Nav
-@inject IAuthService AuthState
 @attribute [Authorize(Policy = Policies.CanEditMedia)]
 @attribute [Authorize(Policy = Policies.CanDeleteMedia)]
 
@@ -135,7 +134,6 @@
     private readonly List<Filter> _filters = new();
     private string _genresInput = string.Empty;
     private bool _showDeleteConfirmation = false;
-    private string? _jwtToken;
     private StatusModal? _statusModal;
 
     private string GetDetailsHeader()
@@ -156,10 +154,8 @@
     protected override async Task OnInitializedAsync()
     {
         int page = 1,count = 1;
-        _jwtToken = await AuthState.GetBearerToken();
         _filters.Add(new Filter(DbFieldNames.Id, MediaInfoId, DbEnums.Equals));
 
-        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
         var response = await HttpClient.PostAsJsonAsync($"api/catalog/search?page={page}&count={count}", _filters);
         if (response.IsSuccessStatusCode)
         {
@@ -221,10 +217,8 @@
             Genres = _genresInput.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(g => g.Trim()).ToArray()
         };
 
-        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
         var response = await HttpClient.PutAsJsonAsync($"api/inventory/{Branch}/edit", updateModel);
         var result = await response.Content.ReadFromJsonAsync<Response<string>>();
-        Console.WriteLine($"Update Response: {result?.Message}, Success: {result?.Success}");
         if (result != null && _statusModal != null)
         {
             await _statusModal.ShowStatusModal(result, result.Success ? "/inventory" : null);
@@ -252,7 +246,6 @@
     {
         var response = await HttpClient.DeleteAsync($"api/inventory/{Branch}/delete/{ItemId}");
         var result = await response.Content.ReadFromJsonAsync<Response<string>>();
-        Console.WriteLine($"Delete Response: {result?.Message}, Success: {result?.Success}"); 
         if (result != null && _statusModal != null)
         {
             await _statusModal.ShowStatusModal(result, result.Success ? "/inventory" : null);

@@ -1,6 +1,5 @@
 @page "/Inventory"
 @inject HttpClient HttpClient
-@inject IAuthService AuthState
 @attribute [Authorize(Policy = Policies.CanViewInventory)]
 
 <PageTitle>Inventory</PageTitle>
@@ -46,12 +45,9 @@
     private int _pageSize = 20; 
     private long _totalItems;
     private List<Filter>? _currentFilters;
-    private string? _jwtToken;
 
     protected override async Task OnInitializedAsync()
     {
-        _jwtToken = await AuthState.GetBearerToken(); 
-        
         await GetInventory();
     }
     
@@ -70,7 +66,6 @@
 
     private async Task GetInventory()
     {
-        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken); 
         var response = await HttpClient.GetFromJsonAsync<PaginatedResponse<PayLoads.Inventory>>($"api/inventory/?page={_currentPage}&count={_pageSize}");
         
         if (response?.Success == true && response.Data != null)
@@ -82,8 +77,6 @@
 
     private async Task GetSearchResults(List<Filter> filters)
     {
-        HttpClient.DefaultRequestHeaders.Authorization = 
-            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken); 
         var response = await HttpClient.PostAsJsonAsync($"api/inventory/search?page={_currentPage}&count={_pageSize}", filters);
         
         if (response.IsSuccessStatusCode)
