@@ -6,6 +6,7 @@ using static Common.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using static Common.Models.PayLoads;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 
 
 namespace ReservationService;
@@ -85,6 +86,13 @@ public class ReservationsController : ControllerBase
     public async Task<ActionResult<Operations.Response<List<ReservableItem>>>> GetReservableItems([FromBody] Shared.GetReservablesRequest request)
     {
         return await _reservationRepository.GetReservableItems(request.Media, request.Branches, request.MinimumDays);
+        
+    }
+    
+    [HttpPost("getMyReservations")]
+    public async Task<ActionResult<Operations.Response<List<BsonDocument>>>> GetMyReservations(string member)
+    {
+        return await _reservationRepository.GetMyReservations(member);
         
     }
 }

@@ -11,7 +11,7 @@ namespace Blazor.Services;
 public interface IAuthService
 {
     Task<string> GetBearerToken();
-    Task Login(string token, string[]? branches = null);
+    Task Login(string token, string[]? branches = null, string memberId = null);
     Task Logout();
 }
 
@@ -39,13 +39,15 @@ public class AuthService : IAuthService
     /// </summary>
     /// <param name="token">Token for authorisation</param>
     /// <param name="branches">(Optional) Array of branch codes for this user</param>
+    /// <param name="memberId">(Optional) The member's id</param>
     /// <summary>Formally logs the user in, and stores login details in session</summary>
-    public async Task Login(string token, string[]? branches = null)
+    public async Task Login(string token, string[]? branches = null, string? memberId = null)
     {
         try
         {
             await _sessionStorage.SetItemAsync("token", token);
             await _sessionStorage.SetItemAsync("branches", branches);
+            await _sessionStorage.SetItemAsync("member", memberId);
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
             ((ClientAuthStateProvider)_authenticationStateProvider).SetUserAsAuthenticated(token);
             await StartTokenRefreshTimer();

@@ -63,24 +63,27 @@
                             @foreach (var item in _reservables)
                             {
                                 <p>@item.BranchName</p>
-                                @if (item.Timeslots.Any())
-                                {
-                                    <p>Reservable within ranges:</p>
-                                    <ul>
-                                        @foreach (var timeslot in item.Timeslots)
-                                        {
-                                            <li>@timeslot.Start - @timeslot.End</li>
+                                <p>Reservable within ranges:</p>
+
+                                <ul>
+                                    @foreach (var timeslot in item.Timeslots)
+                                    {
+                                        <li>
                                             <button @onclick="() => CreateReservation(item.Item, timeslot.Start)">
-                                                Reserve
+                                                @(timeslot.Start == DateTime.Today ? "Borrow" : "Reserve")
                                             </button>
-                                        }
-                                    </ul>
-                                    
-                                }
-                                <p>After: @item.LastEnd</p>
-                                <button @onclick="() => CreateReservation(item.Item, item.LastEnd)">
-                                    Reserve
-                                </button>
+                                            @timeslot.Start
+                                        </li>
+
+                                    }
+
+                                    <li>
+                                        <button @onclick="() => CreateReservation(item.Item, item.LastEnd)">
+                                            @(item.LastEnd == DateTime.Today ? "Borrow" : "Reserve")
+                                        </button>
+                                        @item.LastEnd
+                                    </li>
+                                </ul>
                             }
                         }
                     </Authorized>
@@ -110,12 +113,13 @@
     private List<Entities.ReservableItem>? _reservables;
     private string _reservationResultMessage = "";
     private string? _jwtToken;
+    private string? _member;
 
     protected override async Task OnInitializedAsync()
     {
         _jwtToken = await AuthService.GetBearerToken();
         _filters.Add(new Filter("_id", MediaId, DbEnums.Equals));
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         
         var response = await HttpClient.PostAsJsonAsync($"api/catalog/search?page={1}&count={1}", _filters);
@@ -155,6 +159,11 @@
             MinimumDays = 7
         };
         HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
+        return await ReservableItems(request);
+    }
+
+    private async Task<List<Entities.ReservableItem>> ReservableItems(GetReservablesRequest request)
+    {
         var reservablesResponse = await HttpClient.PostAsJsonAsync("api/reservations/getReservable", request);
         var reservables = await reservablesResponse.Content.ReadFromJsonAsync<Response<List<Entities.ReservableItem>>>();
         if (reservables is null)
@@ -162,17 +171,17 @@
             return new List<Entities.ReservableItem>();
         }
         return reservables.Data ?? new List<Entities.ReservableItem>();
-        
     }
 
     private async Task CreateReservation(string item, DateTime start)
     {
+        var test = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         start = start.AddDays(1);
         Entities.Reservation reservation = new Entities.Reservation
         {
             ObjectId = ObjectId.GenerateNewId().ToString(),
             Item = item,
-            Member = "67236480b4d08aab049740aa", // HARDCODED CHANGE LATER
+            Member = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
             StartDate = start,
             EndDate = start.AddDays(7)
         };
@@ -185,12 +194,13 @@
         {
             _reservationResultMessage = "Reservation could not be created, please refresh and try again";
         }
+        
         StateHasChanged();
     }
 
     private async Task Borrow(string item)
     {
-        string member = "67236480b4d08aab049740aa"; // HARDCODED CHANGE LATER
+        string member = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         var reservationResponse = await HttpClient.PostAsJsonAsync("api/loans/check-out", (item, member));
         if (reservationResponse.IsSuccessStatusCode)
         {

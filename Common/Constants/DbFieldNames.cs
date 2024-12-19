@@ -93,6 +93,7 @@ namespace Common.Constants
             public const string Item = "item";
             public const string StartDate = "startDate";
             public const string EndDate = "endDate";
+            public const string Status = "status";
         }
         
         public static class Aggregates

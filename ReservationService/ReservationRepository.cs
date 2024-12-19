@@ -16,6 +16,8 @@ namespace Common.Database
 
         public Task<Response<bool>> CheckIn(string reservationId);
         public Task<Response<bool>> CheckOut(string physicalId, string memberId, int reservationLength = 7);
+
+        public Task<Response<List<BsonDocument>>> GetMyReservations(string memberId);
     }
 
     
@@ -284,24 +286,53 @@ namespace Common.Database
         }
 
 
-        public async Task<Response<bool>> CheckIn(string physicalId)
+        public async Task<Response<bool>> CheckIn(string reservationId)
         {
-            var t = await _physical.UpdateOneAsync(p => p.Id == physicalId,
-                Builders<PhysicalMedia>.Update.Set(p => p.Status, "available"));
-            if (t is null)
+
+            using (var session = await _database.Client.StartSessionAsync())
             {
-                return new Response<bool>
+                try
                 {
-                    Success = false,
-                    Message = "Couldn't find item",
-                    StatusCode = QueryResultCode.NotFound
-                };
+                    session.StartTransaction();
+
+                    var reservation = await _reservations.FindOneAndUpdateAsync(session, r => r.ObjectId == reservationId,
+                        Builders<Reservation>.Update.Set(p => p.Status, "completed"));
+
+                    if (reservation is null)
+                    {
+                        await session.AbortTransactionAsync();
+                        throw new InvalidOperationException("Couldn't update the reservation status");
+                    }
+
+                    var physical = await _physical.UpdateOneAsync(session, p => p.Id == reservation.Item,
+                        Builders<PhysicalMedia>.Update.Set(p => p.Status, "available"));
+                    
+                    if (physical.ModifiedCount == 0)
+                    {
+                        await session.AbortTransactionAsync();
+                        throw new InvalidOperationException("Couldn't update the physical status");
+                    }
+
+                    await session.CommitTransactionAsync();
+                }
+                catch (Exception e)
+                {
+                    await session.AbortTransactionAsync();
+                    Console.WriteLine(e);
+                    return new Response<bool>
+                    {
+                        Success = false,
+                        Message = "Check-in failed: " + e.Message,
+                        StatusCode = QueryResultCode.InternalServerError
+                    };
+                }
+                
             }
 
             return new Response<bool>
             {
                 Success = true,
-                StatusCode = QueryResultCode.Ok
+                StatusCode = QueryResultCode.NoContent
             };
         }
 
@@ -330,7 +361,8 @@ namespace Common.Database
                 Item = physicalId,
                 Member = memberId,
                 StartDate = start,
-                EndDate = end
+                EndDate = end,
+                Status = "Ongoing"
             });
             if (result.Success)
             {
@@ -339,6 +371,30 @@ namespace Common.Database
 
             return result;
         }
+
+        public async Task<Response<List<BsonDocument>>> GetMyReservations(string memberId)
+        {
+            const string lookupField1 = "physicalRef";
+            const string lookupField2 = "mediaRef";
+            var result = await _reservations.Aggregate()
+                .Match(r => r.Member == memberId)
+                .Lookup(DocumentTypes.PhysicalMedia, DbFieldNames.Id, DbFieldNames.Reservations.Item, lookupField1)
+                .Unwind(lookupField1)
+                .Lookup(DocumentTypes.MediaInfo, DbFieldNames.PhysicalMedia.Info, DbFieldNames.Id ,lookupField2)
+                .Unwind(lookupField2)
+                .Project(new BsonDocument
+                {
+                    { DbFieldNames.Id, 1},
+                    { DbFieldNames.Reservations.StartDate, 1},
+                    { DbFieldNames.Reservations.EndDate, 1},
+                    { DbFieldNames.MediaInfo.Title, 1 }
+                })
+                .ToListAsync();
+            return new Response<List<BsonDocument>>
+            {
+                Data = result,
+            };
+        } 
 
 
         /// <summary>
