@@ -13,7 +13,7 @@ public static class PayLoads
         public required string Token { get; set; }
     }
 
-    public record Reserve
+    public record Borrow
     {
         public required string MediaId { get; init; }
         public required string UserId { get; init; }

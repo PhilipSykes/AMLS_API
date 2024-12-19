@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using static Common.Models.PayLoads;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
+using static Common.Models.Operations;
 
 
 namespace ReservationService;
@@ -43,54 +44,45 @@ public class ReservationsController : ControllerBase
     /// <returns>ActionResult indicating success or failure</returns>
     [Authorize(Policy = Policies.CanReserveMedia)]
     [HttpPost("create")]
-    public async Task<ActionResult> Create(Reservation reservation)
+    public async Task<ActionResult<Response<string>>> Create(Request<Reservation> reservation)
     {
-        //if (request.EmailDetails.RecipientAddresses.Count == 0)
-        //{
-        //    return BadRequest("Email recipients required");
-        //}
-        
-        
-        var result = await _reservationRepository.CreateReservation(reservation);
-        
-        //await _exchange.PublishNotification(
-        //    MessageTypes.EmailNotifications.ReserveMedia, 
-        //    request.EmailDetails);
-        if (!result.Success) return Conflict(new { message = "Reservation conflict occurred." });
-    
-        return Created("",new {message = "Reservation created." });
+        var result = await _reservationRepository.CreateReservation(reservation.Data);
+        if (result.Success)
+        {
+            //Runs publish message in background
+            _ = _exchange.PublishNotification(
+                MessageTypes.EmailNotifications.ReserveMedia, 
+                reservation.EmailDetails);
+        }
+        return result;
     }
 
     [Authorize(Policy = Policies.CanCancelMedia)]
     [HttpPost("cancel")]
-    public async Task<ActionResult> Cancel(string id)
+    public async Task<ActionResult<Response<string>>> Cancel(string id)
     {
-        var result = await _reservationRepository.CancelReservation(id);
-        
-        return Ok(new { message = result.StatusCode });
+        return await _reservationRepository.CancelReservation(id);
     }
 
     [Authorize(Policy = Policies.CanExtendReservation)]
     [HttpPost("extend")]
-    public async Task<ActionResult> Extend(ReservationExtension request)
+    public async Task<ActionResult<Response<string>>> Extend(ReservationExtension request)
     {
         string id = request.ReservationId;
         DateTime newEndDate = request.NewEndDate;
-        var result = await _reservationRepository.ExtendReservation(id, newEndDate);
-        
-        return Ok(new { message = result.StatusCode });
+        return await _reservationRepository.ExtendReservation(id, newEndDate);
     }
 
     [Authorize(Policy = Policies.CanReserveMedia)]
     [HttpPost("getReservable")]
-    public async Task<ActionResult<Operations.Response<List<ReservableItem>>>> GetReservableItems([FromBody] Shared.GetReservablesRequest request)
+    public async Task<ActionResult<Response<List<ReservableItem>>>> GetReservableItems([FromBody] Shared.GetReservablesRequest request)
     {
         return await _reservationRepository.GetReservableItems(request.Media, request.Branches, request.MinimumDays);
         
     }
     
     [HttpPost("getMyReservations")]
-    public async Task<ActionResult<Operations.Response<List<BsonDocument>>>> GetMyReservations(string member)
+    public async Task<ActionResult<Response<List<BsonDocument>>>> GetMyReservations(string member)
     {
         return await _reservationRepository.GetMyReservations(member);
         

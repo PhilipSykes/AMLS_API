@@ -3,6 +3,8 @@ using Common.Database;
 using Common.MessageBroker;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Common.Models.Operations;
+using static Common.Models.PayLoads;
 
 namespace ReservationService;
 
@@ -35,14 +37,22 @@ public class LoansController : ControllerBase
     }
     
     [HttpPost("check-out")]
-    public async Task<ActionResult> CheckOut((string, string) request)
+    public async Task<ActionResult> CheckOut(Request<Borrow> request)
     {
-        var physicalId = request.Item1;
-        var memberId = request.Item2;
+        var physicalId = request.Data.MediaId;
+        var memberId = request.Data.UserId;
         var result = await _reservationRepository.CheckOut(physicalId, memberId);
     
         if (!result.Success) return Conflict(new { message = "Media is reserved by another" });
     
+        if (result.Success)
+        {
+            //Runs publish message in background
+            _ = _exchange.PublishNotification(
+                MessageTypes.EmailNotifications.BorrowMedia, 
+                request.EmailDetails);
+        }
+        
         return Created("",new {message = "Reservation created and media is borrowed" });
     }
 }

@@ -9,13 +9,13 @@ namespace Common.Database
 {
     public interface IReservationRepository
     {
-        public Task<Response<bool>> CreateReservation(Reservation reservation);
-        public Task<Response<bool>> ExtendReservation(string reservationId, DateTime newEndDate);
-        public Task<Response<bool>> CancelReservation(string reservationId);
+        public Task<Response<string>> CreateReservation(Reservation reservation);
+        public Task<Response<string>> ExtendReservation(string reservationId, DateTime newEndDate);
+        public Task<Response<string>> CancelReservation(string reservationId);
         public Task<Response<List<ReservableItem>>> GetReservableItems(string media, string[] branches, int minimumLengthDays);
 
-        public Task<Response<bool>> CheckIn(string reservationId);
-        public Task<Response<bool>> CheckOut(string physicalId, string memberId, int reservationLength = 7);
+        public Task<Response<string>> CheckIn(string reservationId);
+        public Task<Response<string>> CheckOut(string physicalId, string memberId, int reservationLength = 7);
 
         public Task<Response<List<BsonDocument>>> GetMyReservations(string memberId);
     }
@@ -44,7 +44,7 @@ namespace Common.Database
         /// </summary>
         /// <param name="reservation">Reservation id of the reservation to extend</param>
         /// <returns>Response with a Success and Status code, as well as error message if applicable</returns>
-        public async Task<Response<bool>> CreateReservation(Reservation reservation)
+        public async Task<Response<string>> CreateReservation(Reservation reservation)
         {
             
             using (var session = await _database.Client.StartSessionAsync())
@@ -62,7 +62,7 @@ namespace Common.Database
                     {
                         await session.AbortTransactionAsync();
                         
-                        return new Response<bool>
+                        return new Response<string>
                         {
                             Success = false,
                             Message = "Reservation conflicts with others",
@@ -86,7 +86,7 @@ namespace Common.Database
                     Console.WriteLine(ex.Message);
                     await session.AbortTransactionAsync();
                     
-                    return new Response<bool>
+                    return new Response<string>
                     {
                         Success = false,
                         Message = ex.Message,
@@ -95,9 +95,10 @@ namespace Common.Database
                 }
             }
             
-            return new Response<bool>
+            return new Response<string>
             {
                 Success = true,
+                Message = "Reservation created.",
                 StatusCode = QueryResultCode.Created
             };
         }
@@ -108,7 +109,7 @@ namespace Common.Database
         /// <param name="reservationId">Reservation id of the reservation to extend</param>
         /// <param name="newEndDate">The new, requested end date</param>
         /// <returns>Response with a Success and Status code, as well as error message if applicable</returns>
-        public async Task<Response<bool>> ExtendReservation(string reservationId, DateTime newEndDate)
+        public async Task<Response<string>> ExtendReservation(string reservationId, DateTime newEndDate)
         {
             try
             {
@@ -118,7 +119,7 @@ namespace Common.Database
             
                 if (await CheckAvailability(originalReservation.Item, originalReservation.StartDate, newEndDate, reservationId) == false)
                 {
-                    return new Response<bool>
+                    return new Response<string>
                     {
                         Success = false,
                         Message = "Reservation conflicts with others",
@@ -130,7 +131,7 @@ namespace Common.Database
                     Builders<Reservation>.Update.Set(r => r.EndDate, newEndDate)
                 );
 
-                return new Response<bool>
+                return new Response<string>
                 {
                     Success = true,
                     StatusCode = QueryResultCode.NoContent
@@ -138,7 +139,7 @@ namespace Common.Database
             }
             catch (Exception ex)
             {
-                return new Response<bool>
+                return new Response<string>
                 {
                     Success = false,
                     Message = ex.Message,
@@ -152,7 +153,7 @@ namespace Common.Database
         /// </summary>
         /// <param name="reservationId">Reservation id of reservation being cancelled</param>
         /// <returns>Response with a Success and Status code, as well as error message if applicable</returns>
-        public async Task<Response<bool>> CancelReservation(string reservationId)
+        public async Task<Response<string>> CancelReservation(string reservationId)
         {
 
             try
@@ -168,7 +169,7 @@ namespace Common.Database
                     if (result is null)
                     {
                         await session.AbortTransactionAsync();
-                        return new Response<bool>
+                        return new Response<string>
                         {
                             Success = false,
                             Message = "Couldn't find the reservation to cancel",
@@ -178,7 +179,7 @@ namespace Common.Database
                     
                     await session.CommitTransactionAsync();
 
-                    return new Response<bool>
+                    return new Response<string>
                     {
                         Success = true,
                         StatusCode = QueryResultCode.NoContent
@@ -187,7 +188,7 @@ namespace Common.Database
             }
             catch (Exception ex)
             {
-                return new Response<bool>
+                return new Response<string>
                 {
                     Success = false,
                     Message = ex.Message,
@@ -286,7 +287,7 @@ namespace Common.Database
         }
 
 
-        public async Task<Response<bool>> CheckIn(string reservationId)
+        public async Task<Response<string>> CheckIn(string reservationId)
         {
 
             using (var session = await _database.Client.StartSessionAsync())
@@ -319,7 +320,7 @@ namespace Common.Database
                 {
                     await session.AbortTransactionAsync();
                     Console.WriteLine(e);
-                    return new Response<bool>
+                    return new Response<string>
                     {
                         Success = false,
                         Message = "Check-in failed: " + e.Message,
@@ -329,7 +330,7 @@ namespace Common.Database
                 
             }
 
-            return new Response<bool>
+            return new Response<string>
             {
                 Success = true,
                 StatusCode = QueryResultCode.NoContent
@@ -337,14 +338,14 @@ namespace Common.Database
         }
 
         
-        public async Task<Response<bool>> CheckOut(string physicalId, string memberId, int reservationLength = 7)
+        public async Task<Response<string>> CheckOut(string physicalId, string memberId, int reservationLength = 7)
         {
             
             // If reserved by current user, allow checkout
             if (await CheckReservationOwner(physicalId, DateTime.Now) == memberId)
             {
                 await _physical.UpdateOneAsync(p => p.Id == physicalId, Builders<PhysicalMedia>.Update.Set(p => p.Status, "borrowed"));
-                return new Response<bool>
+                return new Response<string>
                 {
                     Success = true,
                     StatusCode = QueryResultCode.Ok

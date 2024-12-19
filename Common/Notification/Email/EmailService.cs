@@ -52,7 +52,12 @@ public class EmailService : IEmailService
             throw new Exception($"Error sending reserve email: {e.Message}");
         }
     }
-    
+    /// <summary>
+    /// Sends a login confirmation email using a template
+    /// </summary>
+    /// <param name="data">Email details containing recipient addresses and template parameters</param>
+    /// <returns>A task representing the asynchronous email operation</returns>
+    /// <exception cref="Exception">Thrown when email sending fails</exception>
     public async Task SendLoginEmailAsync(EmailDetails data)
     {
         try
@@ -65,7 +70,12 @@ public class EmailService : IEmailService
             throw new Exception($"Error sending login email: {e.Message}");
         }
     }
-    
+    /// <summary>
+    /// Sends a borrow confirmation email using a template
+    /// </summary>
+    /// <param name="data">Email details containing recipient addresses and template parameters</param>
+    /// <returns>A task representing the asynchronous email operation</returns>
+    /// <exception cref="Exception">Thrown when email sending fails</exception>
     public async Task SendBorrowEmailAsync(EmailDetails data)
     {
         try
