@@ -35,14 +35,14 @@ builder.Services.AddAuthorizationCore(options =>
         policy.RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));
     
     options.AddPolicy("EditBranchMedia", policy => policy
-        .RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager)
+        .RequireRole(PolicyRoles.BranchLibrarian)
         .RequireClaim(PolicyClaims.BranchAccess));
     
     options.AddPolicy(Policies.CanEditMedia, policy => 
-        policy.RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));
+        policy.RequireRole(PolicyRoles.BranchLibrarian));
     
     options.AddPolicy(Policies.CanDeleteMedia, policy => 
-        policy.RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));
+        policy.RequireRole(PolicyRoles.BranchLibrarian));
     
     options.AddPolicy(Policies.CanViewInventory, policy => 
         policy.RequireRole(PolicyRoles.BranchLibrarian, PolicyRoles.BranchManager));

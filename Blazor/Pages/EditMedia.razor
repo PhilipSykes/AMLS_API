@@ -1,4 +1,4 @@
-@page "/editMedia/{Branch}/{MediaId}"
+@page "/editMedia/{Branch}/{MediaInfoId}/{ItemId}"
 @using Blazor.Models
 @inject HttpClient HttpClient
 @inject NavigationManager Nav
@@ -110,25 +110,25 @@
             <button type="submit" class="action-button primary-button">Save Changes</button>
             <button type="button" class="action-button secondary-button" @onclick="CancelEdit">Cancel</button>
         </div>
-        
-        @if (_showDeleteConfirmation)
-        {
-            <div class="modal-overlay">
-                <div class="modal-content">
-                    <h3>Confirm Deletion</h3>
-                    <p>Are you sure you want to delete "@_media.Title"? This action cannot be undone.</p>
-                    <div class="modal-actions">
-                        <button class="action-button secondary-button" @onclick="CancelDelete">Cancel</button>
-                        <button class="action-button danger-button" @onclick="DeleteMedia">Delete</button>
-                    </div>
+    </EditForm>
+    @if (_showDeleteConfirmation)
+    {
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <h3>Confirm Deletion</h3>
+                <p>Are you sure you want to delete "@_media.Title"? This action cannot be undone.</p>
+                <div class="modal-actions">
+                    <button class="action-button secondary-button" @onclick="CancelDelete">Cancel</button>
+                    <button class="action-button danger-button" @onclick="DeleteMedia">Delete</button>
                 </div>
             </div>
-        }
-    </EditForm>
+        </div>
+    }
 </div>
 <StatusModal @ref="_statusModal" />
 @code {
-    [Parameter] public string MediaId { get; set; }
+    [Parameter] public string MediaInfoId { get; set; }
+    [Parameter] public string ItemId { get; set; }
     [Parameter] public string Branch { get; set; }
     private Entities.MediaInfo _media;
     private MediaInfoEditModel _editModel = new();
@@ -157,7 +157,7 @@
     {
         int page = 1,count = 1;
         _jwtToken = await AuthState.GetBearerToken();
-        _filters.Add(new Filter(DbFieldNames.Id, MediaId, DbEnums.Equals));
+        _filters.Add(new Filter(DbFieldNames.Id, MediaInfoId, DbEnums.Equals));
 
         HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
         var response = await HttpClient.PostAsJsonAsync($"api/catalog/search?page={page}&count={count}", _filters);
@@ -200,7 +200,7 @@
     {
         var updateModel = new Entities.MediaInfo
         {
-            ObjectId = MediaId,
+            ObjectId = MediaInfoId,
             Title = _editModel.Title,
             Language = _editModel.Language,
             Description = _editModel.Description,
@@ -224,6 +224,7 @@
         HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _jwtToken);
         var response = await HttpClient.PutAsJsonAsync($"api/inventory/{Branch}/edit", updateModel);
         var result = await response.Content.ReadFromJsonAsync<Response<string>>();
+        Console.WriteLine($"Update Response: {result?.Message}, Success: {result?.Success}");
         if (result != null && _statusModal != null)
         {
             await _statusModal.ShowStatusModal(result, result.Success ? "/inventory" : null);
@@ -249,8 +250,9 @@
 
     private async Task DeleteMedia()
     {
-        var response = await HttpClient.DeleteAsync($"api/inventory/{Branch}/delete/{MediaId}");
+        var response = await HttpClient.DeleteAsync($"api/inventory/{Branch}/delete/{ItemId}");
         var result = await response.Content.ReadFromJsonAsync<Response<string>>();
+        Console.WriteLine($"Delete Response: {result?.Message}, Success: {result?.Success}"); 
         if (result != null && _statusModal != null)
         {
             await _statusModal.ShowStatusModal(result, result.Success ? "/inventory" : null);
