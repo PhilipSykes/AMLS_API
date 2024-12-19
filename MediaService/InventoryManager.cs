@@ -40,17 +40,34 @@ public class InventoryManager : IInventoryManager
             using var session = await _database.Client.StartSessionAsync();
             session.StartTransaction();
 
-            var result = await _mediaInfo.ReplaceOneAsync(session, 
-                m => m.ObjectId == item.ObjectId,
-                item);
+            // verify the record exists
+            var mediaInfo = await _mediaInfo.Find(session,
+                    m => m.ObjectId == item.ObjectId)
+                .FirstOrDefaultAsync();
 
-            if (result.ModifiedCount == 0)
+            if (mediaInfo == null)
             {
                 await session.AbortTransactionAsync();
                 return new Response<string>
                 {
                     Success = false,
                     Message = "Media item not found",
+                    StatusCode = QueryResultCode.NotFound
+                };
+            }
+
+            // Update MediaInfo collection
+            var mediaInfoResult = await _mediaInfo.ReplaceOneAsync(session, 
+                m => m.ObjectId == item.ObjectId,
+                item);
+
+            if (mediaInfoResult.ModifiedCount == 0)
+            {
+                await session.AbortTransactionAsync();
+                return new Response<string>
+                {
+                    Success = false,
+                    Message = "Failed to update document",
                     StatusCode = QueryResultCode.NotFound
                 };
             }

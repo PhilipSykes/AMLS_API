@@ -246,6 +246,9 @@ namespace Common.Models
             [BsonElement(DbFieldNames.Reservations.EndDate)]
             [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
             public DateTime EndDate { get; init; }
+            
+            [BsonElement(DbFieldNames.Reservations.Status)]
+            public string Status { get; init; } = "Pending";
         }
         
         

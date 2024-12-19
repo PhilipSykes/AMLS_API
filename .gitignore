@@ -35,3 +35,4 @@ appsettings.Development.json
 .idea/.idea.AMLS_API/.idea/workspace.xml
 /.idea/.idea.AMLS_API/.idea
 /.idea
+Gateway/Logs/ResponseLogs.json

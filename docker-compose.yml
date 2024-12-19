@@ -51,6 +51,8 @@
         condition: service_started
     volumes:
       - ./Common/certificates:/app/certificates
+    deploy:
+      replicas: 2
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=https://+:6000

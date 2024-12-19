@@ -35,11 +35,14 @@ public class LoansController : ControllerBase
     }
     
     [HttpPost("check-out")]
-    public async Task<ActionResult> CheckOut(string physicalId, string memberId)
+    public async Task<ActionResult> CheckOut((string, string) request)
     {
-        
+        var physicalId = request.Item1;
+        var memberId = request.Item2;
         var result = await _reservationRepository.CheckOut(physicalId, memberId);
     
-        return Ok(new { message = result.StatusCode });
+        if (!result.Success) return Conflict(new { message = "Media is reserved by another" });
+    
+        return Created("",new {message = "Reservation created and media is borrowed" });
     }
 }

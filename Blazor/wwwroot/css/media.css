@@ -30,11 +30,12 @@ p.borrow{
 }
 
 .media-container{
-    height: 100vh;
+    height: calc(100vh - 58px);
     display: flex;
     flex-direction: column;
     gap: 3px;
     border-inline: 1px solid var(--border-color);
+    overflow: scroll;
 }
 
 .media-title-rating{

@@ -13,7 +13,11 @@ namespace AuthService;
 public class TokenAuthService(IOptions<JWTTokenConfig> options)
 {
     private readonly JWTTokenConfig _config = options.Value;
-    
+    /// <summary>
+    /// Generate a JWT token with users claims embedded
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
     public string GenerateJwtToken(Entities.Login user)
     {
 
@@ -32,6 +36,11 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+    /// <summary>
+    /// Refresh JWT token when its close to expiry
+    /// </summary>
+    /// <param name="existingToken"></param>
+    /// <returns></returns>
     public string RefreshToken(string existingToken)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -49,7 +58,11 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
 
         return tokenHandler.WriteToken(token);
     }
-    
+    /// <summary>
+    /// Adds claims to the various users
+    /// </summary>
+    /// <param name="user">login credentials</param>
+    /// <returns></returns>
     private List<Claim> AddClaims(Entities.Login user)
     {
         List<Claim> claims = new List<Claim>
@@ -66,11 +79,17 @@ public class TokenAuthService(IOptions<JWTTokenConfig> options)
                 break;
 
             case PolicyRoles.BranchManager:
-                    foreach (string branch in user.Branches)
-                    {
-                        claims.Add(new Claim(PolicyClaims.BranchAccess,branch));
-                    }
-                    break;
+                foreach (string branch in user.Branches)
+                { 
+                    claims.Add(new Claim(PolicyClaims.BranchAccess,branch));
+                }
+                break;
+            case PolicyRoles.Member:
+                foreach (string branch in user.Branches)
+                {
+                    claims.Add(new Claim(PolicyClaims.BranchAccess,branch));
+                }
+                break;
         }
 
         return claims;
