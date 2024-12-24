@@ -57,7 +57,7 @@ namespace Common.Models
         {
             [BsonId]
             [BsonRepresentation(BsonType.ObjectId)]
-            public string ObjectId { get; init; } = string.Empty;
+            public string ObjectId { get; set; } = string.Empty;
 
             [BsonElement(DbFieldNames.MediaInfo.Title)]
             public string Title { get; init; } = string.Empty;
