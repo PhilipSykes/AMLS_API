@@ -15,16 +15,14 @@ namespace Tests;
 public class InventoryManagerTest
 {
     private InventoryManager _inventoryManager;
-    private string _testMediaId, _testMediaBadId;
-    private string _testMediaWithReservationsId;
-    private MediaInfo _testMediaItem,_testUpdatedMediaItem = new MediaInfo();
-    
+    private string _testMediaInfoId, _testMediaInfoBadId;
+    private string _testMediaItemId, _testMediaWithReservationsId;
+    private MediaInfo _testMediaItem = new();
     /// <summary>
-    /// Test Media States
-    /// Current state in database:
+    /// Current MediaInfo item state in database:
     /// <code>
     /// {
-    ///     "ObjectId": "673f6cfbe27bd6488d0ab1a7",
+    ///     "ObjectId": "676d95357f30b6d3411432d7",
     ///     "Title": "Test Title",
     ///     "Description": "Test description",
     ///     "ReleaseDate": "2024-01-01T00:00:00Z",
@@ -40,15 +38,15 @@ public class InventoryManagerTest
     /// Expected state after update:
     /// <code>
     /// {
-    ///     "ObjectId": "673f6cfbe27bd6488d0ab1a7",
+    ///     "ObjectId": "676d95357f30b6d3411432d7",
     ///     "Title": "Updated Test Title",
     ///     "Description": "Updated test description",
     ///     "ReleaseDate": "2024-01-01T00:00:00Z",
     ///     "Type": "Book",
-    ///     "Genres": ["Fiction"],
-    ///     "Author": "Test Author",
-    ///     "Isbn": "1234567890",
-    ///     "Publisher": "Test Publisher",
+    ///     "Genres": ["Fiction","New Genre"],
+    ///     "Author": "Updated Test Author",
+    ///     "Isbn": "12345",
+    ///     "Publisher": "Updated Test Publisher",
     ///     "Language": "English"
     /// }
     /// </code>
@@ -64,38 +62,26 @@ public class InventoryManagerTest
         _inventoryManager = new InventoryManager(settings);
         
         // Test media created in DB
-        _testMediaId = "673f6cfbe27bd6488d0ab1a7";
-        _testMediaWithReservationsId = "673f6d28e580ac7f9f4fa9b3";
+        _testMediaInfoId = "676d95357f30b6d3411432d7";
+        _testMediaWithReservationsId = "676d95ac7f30b6d3411432d8";
+        
+        //Physical Inventory IDs created in DB 
+        _testMediaItemId = "676d9b857f30b6d3411432df";
         
         // Generate bad ID
-        _testMediaBadId = ObjectId.GenerateNewId().ToString();
-        
-        //Current Media Item values 
-        _testMediaItem = new MediaInfo
-        {
-            ObjectId = _testMediaId,
-            Title = "Test Title",
-            Description = "Test description",
-            ReleaseDate = DateTime.UtcNow,
-            Type = "Book",
-            Genres = ["Fiction"],
-            Author = "Test Author",
-            Isbn = "1234567890",
-            Publisher = "Test Publisher",
-            Language = "English"
-        };
+        _testMediaInfoBadId = ObjectId.GenerateNewId().ToString();
         
         //Updated Media Item values
-        _testUpdatedMediaItem = new MediaInfo
-        {   ObjectId = _testMediaId,
-            Title = "New Test Title",
-            Description = "New test description",
+        _testMediaItem = new MediaInfo
+        {   ObjectId = _testMediaInfoId,
+            Title = "Updated Test Title",
+            Description = "Updated test description",
             ReleaseDate = DateTime.UtcNow,
             Type = "Book",
             Genres = ["Fiction","New Genre"],
-            Author = "New Test Author",
-            Isbn = " New 1234567890",
-            Publisher = " New Test Publisher",
+            Author = "Updated Test Author",
+            Isbn = "12345",
+            Publisher = " Updated Test Publisher",
             Language = "English"
         };
     }
@@ -103,7 +89,7 @@ public class InventoryManagerTest
     [Test]
     public async Task EditExistingMediaTest()
     {
-        var result = await _inventoryManager.EditExistingMedia(_testUpdatedMediaItem);
+        var result = await _inventoryManager.EditExistingMedia(_testMediaItem);
 
         Assert.That(result.Success, Is.True);
         Assert.That(result.StatusCode, Is.EqualTo(QueryResultCode.Ok));
@@ -113,19 +99,19 @@ public class InventoryManagerTest
     [Test]
     public async Task EditExistingMediaBadIdTest()
     {
-        _testMediaItem.ObjectId = _testMediaBadId;
+        _testMediaItem.ObjectId = _testMediaInfoBadId;
         var result = await _inventoryManager.EditExistingMedia(_testMediaItem);
 
         Assert.That(result.Success, Is.False);
         Assert.That(result.StatusCode, Is.EqualTo(QueryResultCode.NotFound));
-        Debug.WriteLine($"Edit Non-existent Media Result: {result.Message}");
+        Debug.WriteLine($"Edit BadId Media Result: {result.Message}");
     }
 
     [Test]
     public async Task DeleteMediaItemTest()
     {
         // This test will only pass if the media item exists and has no reservations
-        var result = await _inventoryManager.DeleteMediaItem(_testMediaId);
+        var result = await _inventoryManager.DeleteMediaItem(_testMediaItemId);
         
         Assert.That(result.Success, Is.True);
         Assert.That(result.StatusCode, Is.EqualTo(QueryResultCode.Ok));
@@ -135,13 +121,13 @@ public class InventoryManagerTest
     [Test]
     public async Task DeleteMediaItemBadIdTest()
     {
-        var result = await _inventoryManager.DeleteMediaItem(_testMediaBadId);
+        var result = await _inventoryManager.DeleteMediaItem(_testMediaInfoBadId);
 
         Assert.That(result.Success, Is.False);
         Assert.That(result.StatusCode, Is.EqualTo(QueryResultCode.NotFound));
-        Debug.WriteLine($"Delete Non-existent Media Result: {result.Message}");
+        Debug.WriteLine($"Delete BadId Media Result: {result.Message}");
     }
-
+    
     [Test]
     public async Task DeleteMediaItemWithReservationsTest()
     {
