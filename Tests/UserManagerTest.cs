@@ -156,7 +156,7 @@ public class UserManagerTest
     [Test]
     public async Task DeleteMemberTest()
     {
-
+        _testMemberId = "676eff0b7f30b6d3411432f4";
         var result = await _userManager.DeleteMember(_testMemberId);
         
         Assert.That(result.Success, Is.True);

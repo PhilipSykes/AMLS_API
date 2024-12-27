@@ -92,6 +92,7 @@ public class UserManager : IUserManager
     /// <returns>Response indicating success or failure of the deletion operation</returns>
     public async Task<Response<string>> DeleteStaff(string userId)
     {
+        Console.WriteLine("userID:"+userId);
         try
         {
             using var session = await _database.Client.StartSessionAsync();
@@ -112,8 +113,18 @@ public class UserManager : IUserManager
             }
 
             // Delete from login table
-            await _logins.DeleteOneAsync(session, l => l.UserID == userId
+            var deleteStaffLoginResult = await _logins.DeleteOneAsync(session, l => l.UserID == userId
             );
+            if (deleteStaffLoginResult.DeletedCount == 0)
+            {
+                await session.AbortTransactionAsync();
+                return new Response<string>
+                {
+                    Success = false,
+                    Message = "Staff member login not found",
+                    StatusCode = QueryResultCode.NotFound
+                };
+            }
 
             await session.CommitTransactionAsync();
             return new Response<string>
@@ -160,7 +171,18 @@ public class UserManager : IUserManager
             }
 
             // Delete from login table
-            await _logins.DeleteOneAsync(session, l => l.ObjectID == userId);
+            var deleteMemberLoginResult = await _logins.DeleteOneAsync(session, l => l.UserID == userId);
+            
+            if (deleteMemberLoginResult.DeletedCount == 0)
+            {
+                await session.AbortTransactionAsync();
+                return new Response<string>
+                {
+                    Success = false,
+                    Message = "Member login not found",
+                    StatusCode = QueryResultCode.NotFound
+                };
+            }
             await session.CommitTransactionAsync();
             return new Response<string>
             {
