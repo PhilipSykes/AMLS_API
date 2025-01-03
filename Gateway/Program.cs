@@ -25,6 +25,8 @@ builder.Configuration
 
 var jwtConfig = builder.Configuration.GetSection("JWTToken").Get<JWTTokenConfig>();
 
+
+    
 // Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer("Bearer", options =>
@@ -49,20 +51,24 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOcelot(builder.Configuration);
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-app.UseCors("AllowBlazorClient");
 app.UseHttpsRedirection();
-app.MapControllers();
-app.UseAuthentication();  
-app.UseAuthorization();
-app.UseMiddleware<Gateway.Middleware.ResponseLoggingMiddleware>();
+app.UseCors("AllowBlazorClient");
 
 await app.UseOcelot();
+app.UseAuthentication();  
+app.UseAuthorization();
+app.MapControllers();
+app.UseMiddleware<Gateway.Middleware.ResponseLoggingMiddleware>();
+
+
 
 app.Run();
 
@@ -109,18 +115,25 @@ namespace Gateway.Middleware
 
         private void LogResponse(HttpContext context, string responseText)
         {
-            var logPath = "Logs/ResponseLogs.json"; // Path to save logs
-            var logEntry = new
+            try
             {
-                Path = context.Request.Path,
-                Method = context.Request.Method,
-                Query = context.Request.QueryString.ToString(),
-                Response = JsonSerializer.Deserialize<object>(responseText),
-                Timestamp = System.DateTime.UtcNow
-            };
+                var logPath = "Logs/ResponseLogs.json"; // Path to save logs
+                var logEntry = new
+                {
+                    Path = context.Request.Path,
+                    Method = context.Request.Method,
+                    Query = context.Request.QueryString.ToString(),
+                    Response = JsonSerializer.Deserialize<object>(responseText),
+                    Timestamp = System.DateTime.UtcNow
+                };
 
-            Directory.CreateDirectory("Logs"); // Ensure Logs folder exists
-            File.AppendAllText(logPath, JsonSerializer.Serialize(logEntry) + "\n");
+                Directory.CreateDirectory("Logs"); // Ensure Logs folder exists
+                File.AppendAllText(logPath, JsonSerializer.Serialize(logEntry) + "\n");
+            }
+            catch
+            {
+                Console.WriteLine("Error logging responses");
+            }
         }
     }
 }
