@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Common.Constants;
 
 
@@ -14,7 +15,11 @@ namespace Common.Models
 
         public record Filter
         {
+            [Required]
+            [RegularExpression(@"^[a-zA-Z0-9_]*$")]
             public string Key { get; set; }
+            [Required]
+            [RegularExpression(@"^[a-zA-Z0-9_]*$")]
             public string Value { get; set; }
             public DbEnums Operation { get; set; }
             public bool IsPostLookup { get; set; }
@@ -33,8 +38,11 @@ namespace Common.Models
         
         public record LoginDetails
         {
+            [Required]
+            [RegularExpression(@"^[a-zA-Z0-9_]*$")]
             public string? UserID { get; set; }
-
+            [Required]
+            [RegularExpression(@"^[a-zA-Z0-9_]*$")]
             public string[] Branches { get; set; } = [];
             public string? Token { get; set; }
         }

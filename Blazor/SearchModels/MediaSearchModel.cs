@@ -21,10 +21,19 @@ public class AtLeastOneFieldRequiredAttribute : ValidationAttribute
 [AtLeastOneFieldRequired]
 public class MediaSearchModel
 {
+    [RegularExpression(@"^[^${}()\[\]]*$", ErrorMessage = "Invalid characters in title")]
     public string? MediaTitle { get; set; }
+
+    [RegularExpression(@"^[a-zA-Z0-9\s-_,]*$", ErrorMessage = "Invalid characters in genre")]
     public List<string> MediaGenres { get; set; } = new();
+
+    [RegularExpression(@"^[a-zA-Z0-9\s-_,]*$", ErrorMessage = "Invalid characters in author")]
     public List<string> MediaAuthors { get; set; } = new();
+
+    [RegularExpression(@"^[a-zA-Z0-9\s-_,]*$", ErrorMessage = "Invalid characters in director")]
     public List<string> MediaDirectors { get; set; } = new();
+
+    [RegularExpression(@"^[a-zA-Z0-9\s-_,]*$", ErrorMessage = "Invalid characters in studio")]
     public List<string> MediaStudios { get; set; } = new();
     public string? MediaType { get; set; }
 

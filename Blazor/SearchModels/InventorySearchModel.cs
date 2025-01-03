@@ -26,8 +26,10 @@ public class InventorySearchValidator : ValidationAttribute
 [InventorySearchValidator]
 public class InventorySearchModel
 {
+    [RegularExpression(@"^[^${}()\[\]]*$", ErrorMessage = "Invalid characters in title")]
     public string? MediaTitle { get; set; }
     public string? Branch { get; set; }
+    [RegularExpression(@"^[^${}()\[\]]*$", ErrorMessage = "Invalid characters in ID")]
     public string? Id { get; set; }
     public string? MediaType { get; set; }
 }
