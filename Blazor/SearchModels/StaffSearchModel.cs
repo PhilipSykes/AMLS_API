@@ -25,8 +25,13 @@ public class StaffSearchValidator : ValidationAttribute
 [StaffSearchValidator]
 public class StaffSearchModel
 {
+    [RegularExpression(@"^[0-9a-fA-F]{24}$", ErrorMessage = "Invalid ID format")]
     public string? Id { get; set; }
+
+    [RegularExpression(@"^[^${}()\[\]]*$", ErrorMessage = "Invalid characters in first name")]
     public string? FirstName { get; set; }
+
+    [RegularExpression(@"^[^${}()\[\]]*$", ErrorMessage = "Invalid characters in last name")]
     public string? LastName { get; set; }
     public string? Role { get; set; }
     public string? Branch { get; set; }

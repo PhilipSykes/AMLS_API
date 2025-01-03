@@ -1,10 +1,16 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Common.Models;
 
 public static class PayLoads
 {
     public record Login
     {
+        [EmailAddress]
+        [RegularExpression(@"^[^${}()\[\]]*$")]
         public required string Email { get; set; } = string.Empty;
+        
+        [RegularExpression(@"^[^${}()\[\]]*$")]
         public required string Password { get; set; } = string.Empty;
     }
     
