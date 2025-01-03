@@ -1,6 +1,12 @@
 ﻿{
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7500"
+    "BaseUrl": "https://localhost:7500",
+    "RequestIdKey": "RequestId",
+    "DefaultAuthenticationProviderKey": "Bearer",
+    "UnauthorizedResponse": {
+      "StatusCode": 401,
+      "Message": "Authentication required"
+    }
   },
   "Routes": [
     {
