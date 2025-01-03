@@ -49,6 +49,9 @@ public class CatalogController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PaginatedResponse<List<MediaInfo>>>> GetMedia(int page, int count)
     {
+        //TEST LOG 
+        Console.WriteLine($"[LOAD_BALANCE_LOG] Request handled by instance: {Environment.MachineName},TIME: {DateTime.Now}");
+        
         (int, int) pagination = ((page - 1) * count, count);
         return await _mediaSearchRepo.PaginatedSearch(DocumentTypes.MediaInfo,pagination,filters: null,_config);
     }
