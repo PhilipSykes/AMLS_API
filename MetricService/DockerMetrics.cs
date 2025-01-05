@@ -6,28 +6,29 @@ using System.Text.Json.Serialization;
 
 namespace MetricService;
 
-
 /// <summary>
 /// A service for retrieving Docker container metrics such as CPU and memory usage.
 /// </summary>
 public class DockerMetrics
 {
+    private readonly IDockerClient _dockerClient;
+    
     public class ContainerStatsResponse
     {
         [JsonPropertyName("cpu_stats")]
-        public CpuStats CpuStats { get; set; }
+        public required CpuStats CpuStats { get; set; }
 
         [JsonPropertyName("precpu_stats")]
-        public CpuStats PrecpuStats { get; set; }
+        public required CpuStats PrecpuStats { get; set; }
 
         [JsonPropertyName("memory_stats")]
-        public MemoryStats MemoryStats { get; set; }
+        public required MemoryStats MemoryStats { get; set; }
     }
 
     public class CpuStats
     {
         [JsonPropertyName("cpu_usage")]
-        public CpuUsage CpuUsage { get; set; }
+        public required CpuUsage CpuUsage { get; set; }
 
         [JsonPropertyName("system_cpu_usage")]
         public double? SystemCpuUsage { get; set; }
@@ -51,26 +52,18 @@ public class DockerMetrics
         public double? Limit { get; set; }
     }
 
-
     public class Metrics
     {
-        //CONTAINER
-        public string ContainerId { get; set; }
-        public string ContainerName { get; set; }
-        //CPU
+        public required string ContainerId { get; set; }
+        public required string ContainerName { get; set; }
         public double CpuUsage { get; set; }
         public double DeltaCpuUsage { get; set; }
         public double CpuPercentage { get; set; }
-        
-        //MEMORY
         public double MemoryUsage { get; set; }
         public double MemoryPercentage { get; set; }
         public double MemoryLimit { get; set; }
-        //TIMESTAMP
         public DateTime Timestamp { get; set; }
     }
-    
-    public DockerClient DockerClient { get; }
 
     /// <summary>
     /// Retrieves the appropriate Docker API URI for the current operating system.
@@ -105,7 +98,7 @@ public class DockerMetrics
     /// <exception cref="Exception">
     /// Thrown if the Docker daemon is not running or cannot be accessed due to missing permissions or configuration issues.
     /// </exception>
-    public static DockerClient GetDockerClient()
+    private static DockerClient GetDockerClient()
     {
         try
         {
@@ -121,9 +114,13 @@ public class DockerMetrics
     
     public DockerMetrics()
     {
-        DockerClient = GetDockerClient();
+        _dockerClient = GetDockerClient();
     }
     
+    public DockerMetrics(IDockerClient dockerClient)
+    {
+        _dockerClient = dockerClient ?? throw new ArgumentNullException(nameof(dockerClient));
+    }
 
     /// <summary>
     /// Retrieves metrics (CPU and memory usage) for all Docker containers.
@@ -137,10 +134,12 @@ public class DockerMetrics
     public async Task<List<Metrics>> GetContainerMetrics()
     {
         var metrics = new List<Metrics>();
-        var containers = await DockerClient.Containers.ListContainersAsync(new ContainersListParameters() { All = true });
+        var containers = await _dockerClient.Containers.ListContainersAsync(
+            new ContainersListParameters() { All = true });
+            
         foreach (var container in containers)
         {
-            var response = await DockerClient.Containers.GetContainerStatsAsync(
+            var response = await _dockerClient.Containers.GetContainerStatsAsync(
                 container.ID,
                 new ContainerStatsParameters{Stream = false},
                 CancellationToken.None);
@@ -151,7 +150,6 @@ public class DockerMetrics
             Console.WriteLine($"Raw stats JSON for container {container.ID}: {statsJson}");
             
             var stats = JsonSerializer.Deserialize<ContainerStatsResponse>(statsJson);
-            
             
             if (stats == null)
             {
@@ -186,7 +184,7 @@ public class DockerMetrics
             {
                 // CONTAINER
                 ContainerId = container.ID,
-                ContainerName = container.Names.FirstOrDefault()?.TrimStart('/'),
+                ContainerName = container.Names.FirstOrDefault()?.TrimStart('/') ?? "unknown",
 
                 // CPU
                 CpuUsage = cpuDelta,

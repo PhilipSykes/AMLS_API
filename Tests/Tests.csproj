@@ -13,9 +13,11 @@
         <PackageReference Include="coverlet.collector" Version="6.0.2"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.11" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1"/>
+        <PackageReference Include="Moq" Version="4.20.72" />
         <PackageReference Include="NUnit" Version="4.2.2"/>
         <PackageReference Include="NUnit.Analyzers" Version="4.3.0"/>
         <PackageReference Include="NUnit3TestAdapter" Version="4.6.0"/>
+        <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -23,12 +25,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AuthService\AuthService.csproj" />
-      <ProjectReference Include="..\Common\Common.csproj" />
-      <ProjectReference Include="..\MediaService\MediaService.csproj" />
-      <ProjectReference Include="..\MetricService\MetricService.csproj" />
-      <ProjectReference Include="..\ReservationService\ReservationService.csproj" />
-      <ProjectReference Include="..\UserService\UserService.csproj" />
+        <ProjectReference Include="..\AuthService\AuthService.csproj" />
+        <ProjectReference Include="..\Common\Common.csproj" />
+        <ProjectReference Include="..\MediaService\MediaService.csproj" />
+        <ProjectReference Include="..\MetricService\MetricService.csproj" />
+        <ProjectReference Include="..\ReservationService\ReservationService.csproj" />
+        <ProjectReference Include="..\UserService\UserService.csproj" />
     </ItemGroup>
 
 </Project>
