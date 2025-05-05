@@ -44,6 +44,37 @@ public static class EmailTemplates
                                           </body>
                                           </html>
                                           """;
+    
+    public static readonly string TwoFactorCode = """
+                                          <!DOCTYPE html>
+                                          <html>
+                                          <head>
+                                              <style>
+                                                  body {
+                                                      font-family: Arial, sans-serif;
+                                                  }
+                                                  .code {
+                                                      font-size: 24px;
+                                                      font-weight: bold;
+                                                      color: #1a56db;
+                                                      padding: 10px;
+                                                      letter-spacing: 2px;
+                                                  }
+                                              </style>
+                                          </head>
+                                          <body>
+                                          
+                                          <h1>Hello {UserName}!</h1>
+                                          <h3>Your One-Time Verification Code</h3>
+                                          
+                                          <p>Use the following code to complete your login:</p>
+                                          <div class="code">{Code}</div>
+                                          <p>This code will expire in 10 minutes.</p>
+                                          <p>If you didn't request this code, please ignore this email.</p>
+                                          
+                                          </body>
+                                          </html>
+                                          """;
         
     public static readonly string Borrow = """
                                            <!DOCTYPE html>

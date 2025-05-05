@@ -2,6 +2,7 @@
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
 @inject IAuthService AuthState
+@using System.Text.Json
 
 <style>
     .navbar {
@@ -82,7 +83,7 @@
                 RecipientAddresses = new List<string> { loginModel.Email },
                 EmailBody = new Dictionary<string, string>
                 {
-                    { "UserName", loginModel.Email },  
+                    { "UserName", loginModel.Email },
                     { "time", DateTime.Now.ToString("g") }
                 }
             }
@@ -91,18 +92,47 @@
         try
         {
             var response = await HttpClient.PostAsJsonAsync("api/auth/login", request);
+            var jsonString = await response.Content.ReadAsStringAsync();
             
-            var content = await response.Content.ReadAsStringAsync();
+            // Log the raw JSON response for debugging
+            Console.WriteLine($"Raw JSON response: {jsonString}");
             
             if (response.IsSuccessStatusCode)
             {
-                var tokenResponse = await response.Content.ReadFromJsonAsync<Response<LoginDetails>>();
+                success = "Authentication successful";
                 
-                if (tokenResponse != null)
+                try
                 {
-                    await AuthState.Login(tokenResponse.Data.Token, tokenResponse.Data.Branches);
-                    StateHasChanged();
-                    NavigationManager.NavigateTo("/");
+                    // Parse the JSON using JsonDocument for inspection
+                    using (JsonDocument doc = JsonDocument.Parse(jsonString))
+                    {
+                        JsonElement root = doc.RootElement;
+                        
+                        // Check if we have data property
+                        if (root.TryGetProperty("data", out JsonElement dataElement))
+                        {
+                            // Check if the data element has a requiresTwoFactorVerification property
+                            if (dataElement.TryGetProperty("requiresTwoFactorVerification", out JsonElement requiresTwoFactor) && 
+                                requiresTwoFactor.ValueKind == JsonValueKind.True)
+                            {
+                                // Get the email from the response data or use the email from the login
+                                string email = loginModel.Email;
+                                if (dataElement.TryGetProperty("email", out JsonElement emailElement) && 
+                                    emailElement.ValueKind == JsonValueKind.String)
+                                {
+                                    email = emailElement.GetString() ?? email;
+                                }
+                                
+                                // Navigate to the verification page
+                                NavigationManager.NavigateTo($"/verify-code/{Uri.EscapeDataString(email)}");
+                            }
+                        }
+                    }
+                }
+                catch (JsonException ex)
+                {
+                    Console.WriteLine($"JSON parsing error: {ex.Message}");
+                    error = "Error processing server response";
                 }
             }
             else
@@ -110,11 +140,10 @@
                 error = "Invalid credentials";
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             error = "Login failed.";
             Console.WriteLine($"Exception during login: {ex}");
         }
     }
-
 }

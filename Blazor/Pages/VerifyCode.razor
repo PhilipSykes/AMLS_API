@@ -1,0 +1,278 @@
+@page "/verify-code/{Email}"
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@inject IAuthService AuthState
+@inject IJSRuntime JSRuntime
+@using System.Text.Json
+
+<style>
+    .navbar {
+        display: none;
+    !important;
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-form-container">
+        <h3 class="mobile-title">Enter Code</h3>
+        <EditForm Model="@verifyModel" OnValidSubmit="HandleVerify" class="">
+            <div class="login-form">
+                <p class="info-text">Enter the 6-digit code sent to your email:</p>
+                
+                <!-- Hidden input to store the actual code value -->
+                <input type="hidden" @bind="verifyModel.Code" />
+                
+                <!-- Individual code input boxes -->
+                <div class="code-input-container">
+                    @for (int i = 0; i < 6; i++)
+                    {
+                        int index = i;
+                        <input type="text" 
+                               class="code-input"
+                               maxlength="1"
+                               inputmode="numeric"
+                               pattern="[0-9]"
+                               autocomplete="off"
+                               @ref="codeInputs[index]"
+                               @oninput="e => HandleDigitInput(e, index)"
+                               @onkeydown="e => HandleKeyDown(e, index)"
+                               @onfocus="() => SelectInputText(index)"
+                               value="@GetDigitValue(index)" />
+                    }
+                </div>
+
+                <div class="form-alert-container">
+                    @if (!string.IsNullOrEmpty(error))
+                    {
+                        <div class="alert">@error</div>
+                    }
+                    @if (!string.IsNullOrEmpty(success))
+                    {
+                        <div class="success">@success</div>
+                    }
+                </div>
+
+                <div class="form-action-container">
+                    <a href="/login" class="back-link">Back to Login</a>
+
+                    <button type="submit" class="login-button">
+                        Verify
+                    </button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Email { get; set; }
+    
+    private readonly PayLoads.VerifyCode verifyModel = new() { Email = "", Code = "" };
+    private string error, success;
+    private char[] codeDigits = new char[6];
+    private ElementReference[] codeInputs = new ElementReference[6];
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrEmpty(Email))
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        verifyModel.Email = Email;
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Initialize the JS functions we need
+            await JSRuntime.InvokeVoidAsync("eval", @"
+                window.focusElement = function(element) {
+                    if (element) element.focus();
+                };
+                
+                window.selectText = function(element) {
+                    if (element) element.select();
+                };
+            ");
+            
+            // Focus the first input box
+            if (codeInputs.Length > 0)
+            {
+                await JSRuntime.InvokeVoidAsync("focusElement", codeInputs[0]);
+            }
+        }
+    }
+    
+    private string GetDigitValue(int index)
+    {
+        return index < codeDigits.Length && codeDigits[index] != '\0' 
+            ? codeDigits[index].ToString() 
+            : "";
+    }
+    
+    private void HandleDigitInput(ChangeEventArgs e, int index)
+    {
+        string value = e.Value?.ToString() ?? "";
+        
+        if (string.IsNullOrEmpty(value))
+        {
+            codeDigits[index] = '\0';
+        }
+        else
+        {
+            // Take only the last character in case user pastes multiple
+            codeDigits[index] = value[value.Length - 1];
+            
+            // Try to focus next input if available
+            if (index < 5 && !string.IsNullOrEmpty(value))
+            {
+                _ = FocusNextInput(index);
+            }
+        }
+        
+        // Update the full code value
+        UpdateFullCode();
+    }
+    
+    private void HandleKeyDown(KeyboardEventArgs e, int index)
+    {
+        if (e.Key == "Backspace" && index > 0 && string.IsNullOrEmpty(GetDigitValue(index)))
+        {
+            // On backspace in an empty box, go to previous box
+            _ = FocusPreviousInput(index);
+        }
+        else if (e.Key == "ArrowLeft" && index > 0)
+        {
+            // Move to previous input on left arrow
+            _ = FocusPreviousInput(index);
+        }
+        else if (e.Key == "ArrowRight" && index < 5)
+        {
+            // Move to next input on right arrow
+            _ = FocusNextInput(index);
+        }
+    }
+    
+    private async Task FocusNextInput(int currentIndex)
+    {
+        if (currentIndex < 5)
+        {
+            await Task.Delay(10); // Small delay to ensure DOM is updated
+            await JSRuntime.InvokeVoidAsync("focusElement", codeInputs[currentIndex + 1]);
+        }
+    }
+    
+    private async Task FocusPreviousInput(int currentIndex)
+    {
+        if (currentIndex > 0)
+        {
+            await Task.Delay(10); // Small delay to ensure DOM is updated
+            await JSRuntime.InvokeVoidAsync("focusElement", codeInputs[currentIndex - 1]);
+        }
+    }
+    
+    private void SelectInputText(int index)
+    {
+        // Auto-select text on focus for easy replacement
+        _ = JSRuntime.InvokeVoidAsync("selectText", codeInputs[index]);
+    }
+    
+    private void UpdateFullCode()
+    {
+        verifyModel.Code = new string(codeDigits).Replace("\0", "");
+    }
+
+    private async Task HandleVerify()
+    {
+        if (verifyModel.Code.Length != 6)
+        {
+            error = "Please enter all 6 digits of the verification code";
+            return;
+        }
+        
+        error = null;
+        success = null;
+        
+        var request = new Request<PayLoads.VerifyCode>
+        {
+            Data = verifyModel,
+            EmailDetails = new()
+            {
+                RecipientAddresses = new List<string> { verifyModel.Email },
+                EmailBody = new Dictionary<string, string>
+                {
+                    { "UserName", verifyModel.Email },  
+                    { "time", DateTime.Now.ToString("g") }
+                }
+            }
+        };
+
+        try
+        {
+            var response = await HttpClient.PostAsJsonAsync("api/auth/verify-code", request);
+            var jsonString = await response.Content.ReadAsStringAsync();
+            
+            // Log the raw response for debugging
+            Console.WriteLine($"Verify code response: {jsonString}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                success = "Verification successful";
+                
+                try
+                {
+                    // Parse the JSON using JsonDocument for inspection
+                    using (JsonDocument doc = JsonDocument.Parse(jsonString))
+                    {
+                        JsonElement root = doc.RootElement;
+                        
+                        // Check if we have data property with token
+                        if (root.TryGetProperty("data", out JsonElement dataElement) &&
+                            dataElement.TryGetProperty("token", out JsonElement tokenElement) &&
+                            tokenElement.ValueKind == JsonValueKind.String)
+                        {
+                            string token = tokenElement.GetString();
+                            
+                            // Get branches if available
+                            string[] branches = Array.Empty<string>();
+                            if (dataElement.TryGetProperty("branches", out JsonElement branchesElement) &&
+                                branchesElement.ValueKind == JsonValueKind.Array)
+                            {
+                                branches = branchesElement.EnumerateArray()
+                                    .Where(e => e.ValueKind == JsonValueKind.String)
+                                    .Select(e => e.GetString())
+                                    .Where(s => !string.IsNullOrEmpty(s))
+                                    .ToArray();
+                            }
+                            
+                            // Login the user
+                            await AuthState.Login(token, branches);
+                            StateHasChanged();
+                            NavigationManager.NavigateTo("/");
+                        }
+                        else
+                        {
+                            error = "Invalid response from server";
+                        }
+                    }
+                }
+                catch (JsonException ex)
+                {
+                    Console.WriteLine($"JSON parsing error: {ex.Message}");
+                    error = "Error processing server response";
+                }
+            }
+            else
+            {
+                error = "Invalid verification code";
+            }
+        }
+        catch(Exception ex)
+        {
+            error = "Verification failed";
+            Console.WriteLine($"Exception during verification: {ex}");
+        }
+    }
+} 

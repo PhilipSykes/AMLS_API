@@ -14,6 +14,16 @@ public static class PayLoads
         public required string Password { get; set; } = string.Empty;
     }
     
+    public record VerifyCode
+    {
+        [EmailAddress]
+        [RegularExpression(@"^[^${}()\[\]]*$")]
+        public required string Email { get; set; } = string.Empty;
+        
+        [RegularExpression(@"^[0-9]{6}$")]
+        public required string Code { get; set; } = string.Empty;
+    }
+    
     public record RefreshToken
     {
         public required string Token { get; set; }

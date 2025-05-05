@@ -56,6 +56,7 @@ builder.Services.AddScoped<IDatabaseConnection, DatabaseConnection>();
 builder.Services.AddScoped<IFilterBuilder<BsonDocument>, BsonFilterBuilder>();
 builder.Services.AddScoped<ISearchRepository<Login>, SearchRepository<Login>>();
 builder.Services.AddScoped<TokenAuthService>();
+builder.Services.AddSingleton<OtpService>();
 builder.Services.AddEndpointsApiExplorer();
 
 

@@ -21,6 +21,7 @@ public static class MessageTypes
         public const string BorrowMedia = "email_borrow_media";
         public const string ReserveMedia = "email_reserve_media";
         public const string Login = "email_login";
+        public const string TwoFactorCode = "email_two_factor_code";
         public const string PasswordReset = "email_password_reset";
         public const string ProfileUpdate = "email_profile_update";
     }

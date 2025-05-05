@@ -12,6 +12,7 @@ public interface IEmailService
     Task SendReserveEmailAsync(EmailDetails data);
     Task SendLoginEmailAsync(EmailDetails data);
     Task SendBorrowEmailAsync(EmailDetails data);
+    Task SendTwoFactorCodeEmailAsync(EmailDetails data);
 }
 
 
@@ -20,7 +21,7 @@ public interface IEmailService
 /// </summary>
 public class EmailService : IEmailService
 {
-    private readonly string _appPassword = "app-password";
+    private readonly string _appPassword = "dktpdtqizcxwjerg";
     private readonly int _port = 587;
     private readonly string _senderEmail = "hallam.amls@gmail.com";
     private readonly string _smtpServer = "smtp.gmail.com";
@@ -86,6 +87,25 @@ public class EmailService : IEmailService
         catch (Exception e)
         {
             throw new Exception($"Error sending borrow email: {e.Message}");
+        }
+    }
+    
+    /// <summary>
+    /// Sends a verification code email for two-factor authentication
+    /// </summary>
+    /// <param name="data">Email details containing recipient addresses and template parameters</param>
+    /// <returns>A task representing the asynchronous email operation</returns>
+    /// <exception cref="Exception">Thrown when email sending fails</exception>
+    public async Task SendTwoFactorCodeEmailAsync(EmailDetails data)
+    {
+        try
+        {
+            var htmlBody = ReplaceTemplateParameters(EmailTemplates.TwoFactorCode, data.EmailBody);
+            await SendEmailAsync(data.RecipientAddresses, "Verification Code", htmlBody);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Error sending two-factor code email: {e.Message}");
         }
     }
     

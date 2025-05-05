@@ -15,6 +15,7 @@ public class NotificationManager : BaseMessageReceiver<EmailDetails>
         MessageTypes.EmailNotifications.Login,
         MessageTypes.EmailNotifications.BorrowMedia,
         MessageTypes.EmailNotifications.ReserveMedia,
+        MessageTypes.EmailNotifications.TwoFactorCode,
     ];
 
     public NotificationManager(IOptions<RabbitMQConfig> options, IEmailService emailService,Exchange exchange) 
@@ -37,7 +38,9 @@ public class NotificationManager : BaseMessageReceiver<EmailDetails>
             case MessageTypes.EmailNotifications.ReserveMedia:
                 await _emailService.SendReserveEmailAsync(data);
                 break;
-            
+            case MessageTypes.EmailNotifications.TwoFactorCode:
+                await _emailService.SendTwoFactorCodeEmailAsync(data);
+                break;
         }
         await Task.CompletedTask;
     }
