@@ -5,10 +5,23 @@ namespace Common.Models;
 
 public static class Operations
 {
-    public record Request<T>
+    public class Request<T>
     {
-        public T? Data { get; set; }
-        public EmailDetails? EmailDetails { get; set; }
+        /// <summary>
+        /// Main data of the request
+        /// </summary>
+        public T Data { get; set; }
+        
+        /// <summary>
+        /// Details for sending notification emails
+        /// </summary>
+        public EmailDetails EmailDetails { get; set; }
+        
+        /// <summary>
+        /// ReCaptcha verification data for secure operations
+        /// </summary>
+        public PayLoads.ReCaptchaData ReCaptchaVerification { get; set; }
+
         public List<Filter>? SearchFilters { get; set; }
     }
 

@@ -69,4 +69,20 @@ public static class PayLoads
         public required string ReservationId { get; init; }
         public required DateTime NewEndDate { get; init; }
     }
+
+    /// <summary>
+    /// Data structure for Google reCAPTCHA verification
+    /// </summary>
+    public class ReCaptchaData
+    {
+        /// <summary>
+        /// The token received from Google reCAPTCHA
+        /// </summary>
+        public string Token { get; set; }
+        
+        /// <summary>
+        /// The action that was being performed when the token was generated
+        /// </summary>
+        public string Action { get; set; }
+    }
 }

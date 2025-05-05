@@ -55,8 +55,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<IDatabaseConnection, DatabaseConnection>();
 builder.Services.AddScoped<IFilterBuilder<BsonDocument>, BsonFilterBuilder>();
 builder.Services.AddScoped<ISearchRepository<Login>, SearchRepository<Login>>();
-builder.Services.AddScoped<TokenAuthService>();
 builder.Services.AddSingleton<OtpService>();
+builder.Services.AddSingleton<ISearchRepository<Entities.Login>, MongoRepository<Entities.Login>>();
+builder.Services.AddSingleton<Exchange>();
+builder.Services.AddSingleton<TokenAuthService>();
+builder.Services.AddHttpClient();
 builder.Services.AddEndpointsApiExplorer();
 
 

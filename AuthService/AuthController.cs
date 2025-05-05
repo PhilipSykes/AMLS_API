@@ -9,6 +9,8 @@ using Common.Database;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using static Common.Models.Entities;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace AuthService;
 
@@ -23,6 +25,8 @@ public class AuthController : ControllerBase
     private readonly ISearchRepository<Login> _authSearchRepo;
     private readonly TokenAuthService _tokenAuthService;
     private readonly OtpService _otpService;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IConfiguration _config;
     
     /// <summary>
     /// Initializes a new instance of the AuthController
@@ -31,26 +35,45 @@ public class AuthController : ControllerBase
     /// <param name="authSearchRepo">Service for user search operations</param>
     /// <param name="tokenAuthService">Service for JWT token operations</param>
     /// <param name="otpService">Service for OTP code management</param>
+    /// <param name="httpClientFactory">HTTP client factory for external APIs</param>
+    /// <param name="config">Application configuration</param>
     public AuthController(
         Exchange exchange, 
         ISearchRepository<Login> authSearchRepo, 
         TokenAuthService tokenAuthService,
-        OtpService otpService)
+        OtpService otpService,
+        IHttpClientFactory httpClientFactory,
+        IConfiguration config)
     {
         _exchange = exchange;
         _authSearchRepo = authSearchRepo;
         _tokenAuthService = tokenAuthService;
         _otpService = otpService;
+        _httpClientFactory = httpClientFactory;
+        _config = config;
     }
 
     /// <summary>
-    /// Authenticates a user and sends an OTP code via email
+    /// Authenticates a user and returns a JWT token
     /// </summary>
     /// <param name="request">Login credentials containing email and password</param>
-    /// <returns>Response indicating successful authentication and OTP code sent</returns>
+    /// <returns>Response containing login details and JWT token if successful</returns>
     [HttpPost("login")]
-    public async Task<ActionResult<Response<object>>> Login([FromBody] Request<PayLoads.Login> request)
+    public async Task<ActionResult<Response<LoginDetails>>> Login([FromBody] Request<PayLoads.Login> request)
     {
+        // Verify reCAPTCHA token if present
+        if (request.ReCaptchaVerification != null && 
+            !string.IsNullOrEmpty(request.ReCaptchaVerification.Token) &&
+            !await VerifyReCaptchaTokenAsync(request.ReCaptchaVerification.Token, request.ReCaptchaVerification.Action))
+        {
+            return BadRequest(new Response<LoginDetails>
+            {
+                Success = false,
+                StatusCode = QueryResultCode.Unauthorized,
+                Message = "reCAPTCHA verification failed",
+            });
+        }
+        
         var emailFilter = new List<Filter>
         {
             new Filter(DbFieldNames.Login.Email, request.Data.Email, DbEnums.Equals)
@@ -59,7 +82,7 @@ public class AuthController : ControllerBase
 
         if (!result.Any())
         {
-            return Unauthorized(new Response<object>
+            return Unauthorized(new Response<LoginDetails>
             {
                 Success = false,
                 StatusCode = QueryResultCode.BadRequest,
@@ -69,7 +92,7 @@ public class AuthController : ControllerBase
         
         if (!PasswordService.VerifyPassword(result[0].PasswordHash, request.Data.Password))
         {
-            return Unauthorized(new Response<object>
+            return Unauthorized(new Response<LoginDetails>
             {
                 Success = false,
                 StatusCode = QueryResultCode.Unauthorized,
@@ -77,35 +100,23 @@ public class AuthController : ControllerBase
             });
         }
         
-        // Generate one-time code
-        string otpCode = _otpService.GenerateOtp(result[0]);
+        string token = _tokenAuthService.GenerateJwtToken(result[0]);
         
-        // Send OTP email instead of login confirmation
-        var emailDetails = new EmailDetails
-        {
-            UserId = result[0].UserID,
-            RecipientAddresses = new List<string> { result[0].Email },
-            EmailBody = new Dictionary<string, string>
-            {
-                { "UserName", result[0].Email },
-                { "Code", otpCode }
-            }
-        };
-        
-        // Send verification code email
-        await _exchange.PublishNotification(
-            MessageTypes.EmailNotifications.TwoFactorCode, 
-            emailDetails);
+        //Runs publish message in background
+        _ = _exchange.PublishNotification(
+            MessageTypes.EmailNotifications.Login, 
+            request.EmailDetails);
             
-        return Ok(new Response<object>
+        return Ok(new Response<LoginDetails>
         {
             Success = true,
-            Message = "Verification code sent to your email",
+            Message = "Login successful",
             StatusCode = QueryResultCode.Ok,
-            Data = new 
+            Data = new LoginDetails()
             {
-                Email = result[0].Email,
-                RequiresTwoFactorVerification = true
+                UserID = result[0].UserID,
+                Branches = result[0].Branches,
+                Token = token
             }
         });
     }
@@ -181,6 +192,79 @@ public class AuthController : ControllerBase
                 StatusCode = QueryResultCode.Unauthorized,
                 Message = "Invalid token"
             });
+        }
+    }
+    
+    /// <summary>
+    /// Verifies a Google reCAPTCHA v3 token with Google's verification API
+    /// </summary>
+    /// <param name="token">The reCAPTCHA token to verify</param>
+    /// <param name="action">The action that was being performed</param>
+    /// <returns>True if the token is valid, false otherwise</returns>
+    private async Task<bool> VerifyReCaptchaTokenAsync(string token, string action)
+    {
+        try
+        {
+            // Get the reCAPTCHA secret key from configuration
+            var secretKey = _config["ReCaptcha:SecretKey"];
+            if (string.IsNullOrEmpty(secretKey))
+            {
+                // If no secret key is configured, allow the request in development
+                // In production, you would reject the request
+                #if DEBUG
+                return true;
+                #else
+                return false;
+                #endif
+            }
+            
+            // Create the HTTP client
+            var client = _httpClientFactory.CreateClient();
+            
+            // Prepare the verification request
+            var content = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "secret", secretKey },
+                { "response", token }
+            });
+            
+            // Send the verification request to Google
+            var response = await client.PostAsync("https://www.google.com/recaptcha/api/siteverify", content);
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            
+            // Parse the response
+            using var doc = JsonDocument.Parse(jsonResponse);
+            var root = doc.RootElement;
+            
+            // Check if the verification was successful
+            if (root.TryGetProperty("success", out var success) && success.GetBoolean())
+            {
+                // Verify the action matches what we expect
+                if (root.TryGetProperty("action", out var responseAction) && 
+                    responseAction.GetString() == action)
+                {
+                    // Check the score (0.0 to 1.0)
+                    if (root.TryGetProperty("score", out var score))
+                    {
+                        // Score threshold can be adjusted based on your security needs
+                        return score.GetDouble() >= 0.5;
+                    }
+                }
+            }
+            
+            return false;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"reCAPTCHA verification error: {ex.Message}");
+            
+            // In development, allow the request if verification fails
+            // In production, you would reject the request
+            #if DEBUG
+            return true;
+            #else
+            return false;
+            #endif
         }
     }
 }

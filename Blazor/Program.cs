@@ -70,5 +70,6 @@ builder.Services.AddAuthorizationCore(options =>
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<AuthenticationStateProvider, ClientAuthStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ReCaptchaService>();
 
 await builder.Build().RunAsync();

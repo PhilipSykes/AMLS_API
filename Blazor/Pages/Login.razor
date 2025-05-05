@@ -2,12 +2,27 @@
 @inject HttpClient HttpClient
 @inject NavigationManager NavigationManager
 @inject IAuthService AuthState
+@inject ReCaptchaService ReCaptcha
 @using System.Text.Json
 
 <style>
     .navbar {
         display: none;
     !important;
+    }
+    .recaptcha-terms {
+        font-family: "Serif-Title", serif;
+        font-size: 0.75rem;
+        color: #6b7280;
+        text-align: center;
+        margin-top: 1rem;
+    }
+    .recaptcha-terms a {
+        color: #4a72b0;
+        text-decoration: none;
+    }
+    .recaptcha-terms a:hover {
+        text-decoration: underline;
     }
 </style>
 
@@ -57,9 +72,22 @@
                 <div class="form-action-container">
                     <a href="#" class="forgot-password">Forgot Password?</a>
 
-                    <button type="submit" class="login-button">
-                        Next
+                    <button type="submit" class="login-button" disabled="@isProcessing">
+                        @if (isProcessing)
+                        {
+                            <span>Verifying...</span>
+                        }
+                        else
+                        {
+                            <span>Next</span>
+                        }
                     </button>
+                </div>
+                
+                <div class="recaptcha-terms">
+                    This site is protected by reCAPTCHA and the Google
+                    <a href="https://policies.google.com/privacy" target="_blank">Privacy Policy</a> and
+                    <a href="https://policies.google.com/terms" target="_blank">Terms of Service</a> apply.
                 </div>
             </div>
         </EditForm>
@@ -69,28 +97,59 @@
 @code {
     private readonly PayLoads.Login loginModel = new() { Email = "", Password = "" };
     private string error, success;
+    private bool isProcessing = false;
+    private string recaptchaToken = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        // Execute reCAPTCHA when the page loads
+        await GetReCaptchaToken();
+    }
+    
+    private async Task GetReCaptchaToken()
+    {
+        recaptchaToken = await ReCaptcha.ExecuteReCaptchaAsync("login");
+    }
 
     private async Task HandleLogin()
     {
-        error = null;
-        success = null;
-        loginModel.Email = loginModel.Email?.ToLowerInvariant();
-        var request = new Request<PayLoads.Login>
-        {
-            Data = loginModel,
-            EmailDetails = new()
+        try {
+            isProcessing = true;
+            error = null;
+            success = null;
+            
+            // Execute reCAPTCHA again just before login
+            await GetReCaptchaToken();
+            
+            // Verify the token is valid
+            if (string.IsNullOrEmpty(recaptchaToken) || !await ReCaptcha.VerifyTokenAsync(recaptchaToken))
             {
-                RecipientAddresses = new List<string> { loginModel.Email },
-                EmailBody = new Dictionary<string, string>
-                {
-                    { "UserName", loginModel.Email },
-                    { "time", DateTime.Now.ToString("g") }
-                }
+                error = "Security verification failed. Please try again.";
+                isProcessing = false;
+                return;
             }
-        };
+            
+            loginModel.Email = loginModel.Email?.ToLowerInvariant();
+            var request = new Request<PayLoads.Login>
+            {
+                Data = loginModel,
+                EmailDetails = new()
+                {
+                    RecipientAddresses = new List<string> { loginModel.Email },
+                    EmailBody = new Dictionary<string, string>
+                    {
+                        { "UserName", loginModel.Email },  
+                        { "time", DateTime.Now.ToString("g") },
+                    }
+                },
+                ReCaptchaVerification = new PayLoads.ReCaptchaData
+                {
+                    Token = recaptchaToken,
+                    Action = "login"
+                }
+            };
 
-        try
-        {
             var response = await HttpClient.PostAsJsonAsync("api/auth/login", request);
             var jsonString = await response.Content.ReadAsStringAsync();
             
@@ -111,7 +170,33 @@
                         // Check if we have data property
                         if (root.TryGetProperty("data", out JsonElement dataElement))
                         {
-                            // Check if the data element has a requiresTwoFactorVerification property
+                            // Check if the data element has a token property for regular login
+                            if (dataElement.TryGetProperty("token", out JsonElement tokenElement) && 
+                                tokenElement.ValueKind == JsonValueKind.String)
+                            {
+                                string token = tokenElement.GetString();
+                                
+                                if (!string.IsNullOrEmpty(token))
+                                {
+                                    // Get branches if available
+                                    string[] branches = null;
+                                    if (dataElement.TryGetProperty("branches", out JsonElement branchesElement) && 
+                                        branchesElement.ValueKind == JsonValueKind.Array)
+                                    {
+                                        branches = branchesElement.EnumerateArray()
+                                            .Select(e => e.GetString())
+                                            .Where(s => !string.IsNullOrEmpty(s))
+                                            .ToArray();
+                                    }
+                                    
+                                    await AuthState.Login(token, branches);
+                                    StateHasChanged();
+                                    NavigationManager.NavigateTo("/");
+                                    return;
+                                }
+                            }
+                            
+                            // Check if two-factor verification is required
                             if (dataElement.TryGetProperty("requiresTwoFactorVerification", out JsonElement requiresTwoFactor) && 
                                 requiresTwoFactor.ValueKind == JsonValueKind.True)
                             {
@@ -125,8 +210,12 @@
                                 
                                 // Navigate to the verification page
                                 NavigationManager.NavigateTo($"/verify-code/{Uri.EscapeDataString(email)}");
+                                return;
                             }
                         }
+                        
+                        // If we get here, something unexpected happened
+                        error = "Unable to process login response";
                     }
                 }
                 catch (JsonException ex)
@@ -144,6 +233,10 @@
         {
             error = "Login failed.";
             Console.WriteLine($"Exception during login: {ex}");
+        }
+        finally
+        {
+            isProcessing = false;
         }
     }
 }
