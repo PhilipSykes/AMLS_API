@@ -33,6 +33,7 @@
         condition: service_started
     volumes:
       - ./Common/certificates:/app/certificates
+      - ./AuthService/appsettings.Docker.json:/app/appsettings.Docker.json
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=https://+:6000

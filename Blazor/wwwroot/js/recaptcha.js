@@ -5,7 +5,7 @@ window.recaptchaExecute = function (action) {
     return new Promise((resolve, reject) => {
         try {
             grecaptcha.ready(function () {
-                grecaptcha.execute('6Lf-OOUnAAAAAJxE-A0pIVJ8aaBlGCwlXSW2ZsCd', { action: action })
+                grecaptcha.execute('6Lf1Yy8rAAAAACDOzaMNQW1Tot5gz-aDh_Y7kPUJ', { action: action })
                     .then(function (token) {
                         resolve(token);
                     })

@@ -24,6 +24,24 @@
     .recaptcha-terms a:hover {
         text-decoration: underline;
     }
+    .rate-limit-error {
+        background-color: #fee2e2;
+        border: 1px solid #ef4444;
+        color: #b91c1c;
+        padding: 1rem;
+        border-radius: 0.375rem;
+        margin-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+    .rate-limit-error .title {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+    .rate-limit-error .retry {
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
 </style>
 
 <div class="login-container">
@@ -59,7 +77,18 @@
                 </div>
 
                 <div class="form-alert-container">
-                    @if (!string.IsNullOrEmpty(error))
+                    @if (isRateLimited)
+                    {
+                        <div class="rate-limit-error">
+                            <div class="title">@rateLimitTitle</div>
+                            <div>@rateLimitDetail</div>
+                            @if (retryAfter > 0)
+                            {
+                                <div class="retry">You can try again in @FormatRetryTime(retryAfter)</div>
+                            }
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(error))
                     {
                         <div class="alert">@error</div>
                     }
@@ -72,7 +101,7 @@
                 <div class="form-action-container">
                     <a href="#" class="forgot-password">Forgot Password?</a>
 
-                    <button type="submit" class="login-button" disabled="@isProcessing">
+                    <button type="submit" class="login-button" disabled="@(isProcessing || isRateLimited)">
                         @if (isProcessing)
                         {
                             <span>Verifying...</span>
@@ -99,6 +128,12 @@
     private string error, success;
     private bool isProcessing = false;
     private string recaptchaToken = string.Empty;
+    
+    // Rate limiting properties
+    private bool isRateLimited = false;
+    private string rateLimitTitle = string.Empty;
+    private string rateLimitDetail = string.Empty;
+    private int retryAfter = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -111,6 +146,20 @@
     {
         recaptchaToken = await ReCaptcha.ExecuteReCaptchaAsync("login");
     }
+    
+    private string FormatRetryTime(int seconds)
+    {
+        if (seconds < 60)
+            return $"{seconds} second{(seconds == 1 ? "" : "s")}";
+        
+        int minutes = seconds / 60;
+        int remainingSeconds = seconds % 60;
+        
+        if (remainingSeconds == 0)
+            return $"{minutes} minute{(minutes == 1 ? "" : "s")}";
+        
+        return $"{minutes} minute{(minutes == 1 ? "" : "s")} and {remainingSeconds} second{(remainingSeconds == 1 ? "" : "s")}";
+    }
 
     private async Task HandleLogin()
     {
@@ -118,6 +167,7 @@
             isProcessing = true;
             error = null;
             success = null;
+            isRateLimited = false;
             
             // Execute reCAPTCHA again just before login
             await GetReCaptchaToken();
@@ -155,6 +205,41 @@
             
             // Log the raw JSON response for debugging
             Console.WriteLine($"Raw JSON response: {jsonString}");
+            
+            // Handle rate limiting (429 Too Many Requests)
+            if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                isRateLimited = true;
+                
+                try
+                {
+                    using (JsonDocument doc = JsonDocument.Parse(jsonString))
+                    {
+                        JsonElement root = doc.RootElement;
+                        
+                        // Extract rate limit information
+                        if (root.TryGetProperty("title", out JsonElement titleElement))
+                            rateLimitTitle = titleElement.GetString() ?? "Too Many Login Attempts";
+                            
+                        if (root.TryGetProperty("detail", out JsonElement detailElement))
+                            rateLimitDetail = detailElement.GetString() ?? "You have exceeded the login attempt limit. Please try again later.";
+                            
+                        if (root.TryGetProperty("retryAfter", out JsonElement retryAfterElement) && 
+                            retryAfterElement.ValueKind == JsonValueKind.Number)
+                            retryAfter = retryAfterElement.GetInt32();
+                    }
+                }
+                catch (Exception)
+                {
+                    // Fallback if we can't parse the response
+                    rateLimitTitle = "Too Many Login Attempts";
+                    rateLimitDetail = "You have exceeded the login attempt limit. Please try again later.";
+                }
+                
+                isProcessing = false;
+                StateHasChanged();
+                return;
+            }
             
             if (response.IsSuccessStatusCode)
             {

@@ -10,6 +10,42 @@
   },
   "Routes": [
     {
+      "UpstreamPathTemplate": "/api/auth/login",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/auth/login",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "localhost", "Port": 7007}
+      ],
+      "LoadBalancerOptions": {"Type": "LeastConnection"},
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "ClientWhitelist": [],
+        "Period": "5m",
+        "PeriodTimespan": 300,
+        "Limit": 5
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/auth/verify-code",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/auth/verify-code",
+      "DownstreamScheme": "https",
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamHostAndPorts": [
+        {"Host": "localhost", "Port": 7007}
+      ],
+      "LoadBalancerOptions": {"Type": "LeastConnection"},
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "ClientWhitelist": [],
+        "Period": "5m",
+        "PeriodTimespan": 300,
+        "Limit": 10
+      }
+    },
+    {
       "UpstreamPathTemplate": "/api/auth/{everything}",
       "UpstreamHttpMethod": [ "POST" ],
       "DownstreamPathTemplate": "/auth/{everything}",
@@ -32,6 +68,13 @@
       "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
+      },
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "ClientWhitelist": [],
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 60
       }
     },
     {
@@ -45,7 +88,14 @@
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "SystemAdmin"}
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "SystemAdmin"},
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "ClientWhitelist": [],
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 30
+      }
     },
     {
       "UpstreamPathTemplate": "/api/catalog/{everything}",
@@ -55,9 +105,15 @@
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamHostAndPorts": [
         {"Host": "localhost", "Port": 7006}
-      ]
+      ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "ClientWhitelist": [],
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 100
+      }
     },
-
     {
       "UpstreamPathTemplate": "/api/inventory/{everything}",
       "UpstreamHttpMethod": [ "POST","GET","PUT","DELETE" ],
@@ -69,7 +125,14 @@
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": ["BranchLibrarian", "BranchManager"]}
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": ["BranchLibrarian", "BranchManager"]},
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "ClientWhitelist": [],
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 60
+      }
     },
     {
       "UpstreamPathTemplate": "/api/reservations/{everything}",
@@ -81,7 +144,14 @@
         {"Host": "localhost", "Port": 7003}
       ],
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"},
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "ClientWhitelist": [],
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 30
+      }
     },
     {
       "UpstreamPathTemplate": "/api/loans/{everything}",
@@ -93,7 +163,14 @@
         {"Host": "localhost", "Port": 7003}
       ],
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"}
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Member"},
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "ClientWhitelist": [],
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 30
+      }
     },
     {
       "UpstreamPathTemplate": "/api/metric/{everything}",
@@ -106,7 +183,14 @@
       ],
       "LoadBalancerOptions": {"Type": "LeastConnection"},
       "AuthenticationOptions": {"AuthenticationProviderKey": "Bearer"},
-      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "SystemAdmin"}
+      "RouteClaimsRequirement": {"http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "SystemAdmin"},
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "ClientWhitelist": [],
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 60
+      }
     }
   ]
 }
